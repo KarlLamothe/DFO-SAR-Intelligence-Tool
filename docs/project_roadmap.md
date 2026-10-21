@@ -113,6 +113,11 @@ Information captured:
 - Document URLs
 - Species-document relationships
 
+Future Enhancement:
+- Extract province/jurisdiction information from species profile text.
+- Generate province_presence and province_count fields.
+- Validate against Registry source material before inclusion in master datasets.
+
 ---
 
 # Phase 2: Quality Assurance
