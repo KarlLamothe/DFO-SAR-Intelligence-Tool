@@ -1,0 +1,10 @@
+source("scripts/00_setup.R")
+
+species_master <- read.csv("data_processed/freshwater_species_master.csv")
+species_profiles <- read.csv("data_processed/species_profiles.csv")
+species_threats <- read.csv("data_processed/species_threats.csv")
+species_documents <- read.csv("data_processed/species_documents.csv")
+saveRDS(species_master, "app/data/species_master.rds")
+saveRDS(species_profiles, "app/data/species_profiles.rds")
+saveRDS(species_threats, "app/data/species_threats.rds")
+saveRDS(species_documents, "app/data/species_documents.rds")
