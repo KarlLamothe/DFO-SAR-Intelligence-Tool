@@ -1,6 +1,5 @@
 source("scripts/00_setup.R")
 
-api_key <- "3A1E8E87503C069448999238ABD05EE9"
 extract_profile("110-407")
 
 # test for redside dace
