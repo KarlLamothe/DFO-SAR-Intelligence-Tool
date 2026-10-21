@@ -61,8 +61,7 @@ attachment_info <- purrr::map_dfr(
   seq_len(nrow(documents_raw)),
   function(i){
     attachment <- parse_attachment(
-      documents_raw$attachments[[i]]
-    )
+      documents_raw$attachments[[i]])
     if(is.null(attachment)){
       return(
         tibble(
@@ -129,7 +128,8 @@ species_document_summary <- species_documents %>%
 
 # checks
 document_types %>%
-  count(documentTypeId, sort = TRUE)
+  count(documentTypeId, sort = TRUE) %>%
+  print(n = 33)
 
 species_documents %>%
   count(primary_document_type,sort = TRUE)
@@ -139,14 +139,21 @@ species_master %>%
             by = c("id" = "species_id")) %>%
   count(sara_status,sort = TRUE)
 
+species_documents <- species_documents %>%
+  mutate(
+    documentTypeId = purrr::map_chr(
+      documentTypeId,
+      ~ paste(.x, collapse = "; ")))
+
 # export
 species_documents_export <- species_documents %>%
   select(species_id,record_name,common_name,scientific_name,sara_status,
-         cosewic_status,document_id,primary_document_type,documentTitle,
+         cosewic_status,document_id,documentTypeId,primary_document_type,documentTitle,
          documentDescription,documentCreateDate,attachment_id,attachment_title,
          attachment_date,document_url)
-
 
 write_csv(species_documents_export, "data_processed/species_documents.csv")
 write_csv(species_document_summary, "data_processed/species_document_summary.csv")
 
+head(species_document_summary)
+species_document_summary$ontario_present

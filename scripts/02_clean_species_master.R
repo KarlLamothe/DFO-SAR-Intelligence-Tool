@@ -19,8 +19,7 @@ species_master <- raw_species %>%
          sara_status = legalStatusId,
          cosewic_status = cosewicStatusId,
          status = coalesce(legalStatusId, cosewicStatusId),
-         schedule = legalScheduleId,
-         ontario_present = str_detect(ranges, "Ontario"))
+         schedule = legalScheduleId)
 
 # reorder columns
 species_master <- species_master %>%

@@ -121,13 +121,11 @@ species_threats %>%
 
 # summary file
 species_threat_summary <- species_threats %>%
-  distinct(id, record_name, threat_category)
-species_threat_summary %>%
-  count(record_name, sort = TRUE)
-
-species_threats %>%
-  count(threat_category, matched_term, sort = TRUE)
-
+  distinct(id,record_name,common_name,threat_category) %>%
+  group_by(id,record_name,common_name) %>%
+  summarise(n_threat_categories = n(),
+            threat_categories = paste(sort(threat_category),collapse = "; "),
+            .groups = "drop")
 write_csv(species_threat_summary,"data_processed/species_threats_summary.csv")
 
 # look for species with unusually high threat counts

@@ -1,769 +1,120 @@
-id,record_name,threat_category
-96-535,Fourhorn Sculpin - Freshwater form,Mining
-118-70,Spotted Sucker,Habitat Loss
-118-70,Spotted Sucker,Sedimentation
-118-70,Spotted Sucker,Nutrient Enrichment
-118-70,Spotted Sucker,Contaminants
-118-70,Spotted Sucker,Invasive Species
-121-408,Umatilla Dace,Barriers
-121-408,Umatilla Dace,Sedimentation
-121-408,Umatilla Dace,Contaminants
-121-408,Umatilla Dace,Agriculture
-121-408,Umatilla Dace,Predation
-121-408,Umatilla Dace,Competition
-601-0,Hadley Lake Benthic Threespine Stickleback,Predation
-610-0,Hadley Lake Limnetic Threespine Stickleback,Predation
-850-594,Grass Pickerel,Habitat Loss
-850-594,Grass Pickerel,Flow Alteration
-850-594,Grass Pickerel,Barriers
-850-594,Grass Pickerel,Sedimentation
-850-594,Grass Pickerel,Nutrient Enrichment
-850-594,Grass Pickerel,Contaminants
-850-594,Grass Pickerel,Agriculture
-850-594,Grass Pickerel,Invasive Species
-850-594,Grass Pickerel,Climate Change
-850-594,Grass Pickerel,Harvest
-850-594,Grass Pickerel,Disease
-850-594,Grass Pickerel,Wetland Loss
-850-594,Grass Pickerel,Residential and Commercial Development
-850-594,Grass Pickerel,Riparian Degradation
-850-594,Grass Pickerel,Aquatic Vegetation Loss
-952-671,Misty Lake Lentic Threespine Stickleback,Barriers
-952-671,Misty Lake Lentic Threespine Stickleback,Contaminants
-952-671,Misty Lake Lentic Threespine Stickleback,Runoff
-952-671,Misty Lake Lentic Threespine Stickleback,Invasive Species
-952-671,Misty Lake Lentic Threespine Stickleback,Climate Change
-952-671,Misty Lake Lentic Threespine Stickleback,Water Withdrawal
-952-671,Misty Lake Lentic Threespine Stickleback,Transportation
-952-671,Misty Lake Lentic Threespine Stickleback,Hybridization
-952-671,Misty Lake Lentic Threespine Stickleback,Predation
-952-671,Misty Lake Lentic Threespine Stickleback,Competition
-952-671,Misty Lake Lentic Threespine Stickleback,Recreation
-952-671,Misty Lake Lentic Threespine Stickleback,Riparian Degradation
-952-671,Misty Lake Lentic Threespine Stickleback,Aquatic Vegetation Loss
-1448-1050,Lake Chub - Liard Hot Springs populations,Sedimentation
-1448-1050,Lake Chub - Liard Hot Springs populations,Water Quality
-1448-1050,Lake Chub - Liard Hot Springs populations,Invasive Species
-1448-1050,Lake Chub - Liard Hot Springs populations,Climate Change
-1448-1050,Lake Chub - Liard Hot Springs populations,Predation
-1448-1050,Lake Chub - Liard Hot Springs populations,Competition
-1448-1050,Lake Chub - Liard Hot Springs populations,Recreation
-1448-1050,Lake Chub - Liard Hot Springs populations,Residential and Commercial Development
-1532-1102,Brassy Minnow - Western Arctic population,Habitat Fragmentation
-1532-1102,Brassy Minnow - Western Arctic population,Climate Change
-1532-1102,Brassy Minnow - Western Arctic population,Predation
-68-0,Blue Walleye,Harvest
-68-0,Blue Walleye,Predation
-68-0,Blue Walleye,Competition
-98-417,Green Sturgeon,Habitat Loss
-98-417,Green Sturgeon,Barriers
-98-417,Green Sturgeon,Contaminants
-98-417,Green Sturgeon,Recreation
-98-417,Green Sturgeon,Knowledge Gaps
-98-417,Green Sturgeon,Residential and Commercial Development
-98-417,Green Sturgeon,Incidental Capture
-600-242,Vananda Creek Benthic Threespine Stickleback,Habitat Loss
-600-242,Vananda Creek Benthic Threespine Stickleback,Flow Alteration
-600-242,Vananda Creek Benthic Threespine Stickleback,Barriers
-600-242,Vananda Creek Benthic Threespine Stickleback,Sedimentation
-600-242,Vananda Creek Benthic Threespine Stickleback,Contaminants
-600-242,Vananda Creek Benthic Threespine Stickleback,Invasive Species
-600-242,Vananda Creek Benthic Threespine Stickleback,Climate Change
-600-242,Vananda Creek Benthic Threespine Stickleback,Disease
-600-242,Vananda Creek Benthic Threespine Stickleback,Water Withdrawal
-600-242,Vananda Creek Benthic Threespine Stickleback,Forestry
-600-242,Vananda Creek Benthic Threespine Stickleback,Mining
-600-242,Vananda Creek Benthic Threespine Stickleback,Hybridization
-600-242,Vananda Creek Benthic Threespine Stickleback,Recreation
-600-242,Vananda Creek Benthic Threespine Stickleback,Residential and Commercial Development
-600-242,Vananda Creek Benthic Threespine Stickleback,Riparian Degradation
-600-242,Vananda Creek Benthic Threespine Stickleback,Aquatic Vegetation Loss
-1154-791,Atlantic Sturgeon - St. Lawrence populations,Contaminants
-1154-791,Atlantic Sturgeon - St. Lawrence populations,Harvest
-1154-791,Atlantic Sturgeon - St. Lawrence populations,Channel Modification
-1154-791,Atlantic Sturgeon - St. Lawrence populations,Residential and Commercial Development
-1339-963,Pygmy Whitefish - Waterton Lake population,Urbanization
-1339-963,Pygmy Whitefish - Waterton Lake population,Water Quality
-1339-963,Pygmy Whitefish - Waterton Lake population,Agriculture
-1339-963,Pygmy Whitefish - Waterton Lake population,Invasive Species
-1339-963,Pygmy Whitefish - Waterton Lake population,Climate Change
-1339-963,Pygmy Whitefish - Waterton Lake population,Forestry
-1339-963,Pygmy Whitefish - Waterton Lake population,Mining
-1339-963,Pygmy Whitefish - Waterton Lake population,Predation
-1339-963,Pygmy Whitefish - Waterton Lake population,Residential and Commercial Development
-1408-1021,European Whitefish - Squanga Lake small-bodied population,Contaminants
-1408-1021,European Whitefish - Squanga Lake small-bodied population,Invasive Species
-1408-1021,European Whitefish - Squanga Lake small-bodied population,Climate Change
-1408-1021,European Whitefish - Squanga Lake small-bodied population,Recreation
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Urbanization
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Barriers
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Habitat Fragmentation
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Contaminants
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Agriculture
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Invasive Species
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Climate Change
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Harvest
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Disease
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Forestry
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Mining
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Transportation
-1552-1122,Plains Sucker - Saskatchewan-Nelson population,Recreation
-123-282,White Sturgeon,Habitat Loss
-123-282,White Sturgeon,Invasive Species
-123-282,White Sturgeon,Harvest
-73-52,Blackfin Cisco,Invasive Species
-73-52,Blackfin Cisco,Predation
-73-52,Blackfin Cisco,Residential and Commercial Development
-103-112,Vancouver Lamprey,Water Quality
-103-112,Vancouver Lamprey,Climate Change
-104-412,Northern Brook Lamprey,Flow Alteration
-104-412,Northern Brook Lamprey,Invasive Species
-104-412,Northern Brook Lamprey,Climate Change
-604-245,Vananda Creek Limnetic Threespine Stickleback,Habitat Loss
-604-245,Vananda Creek Limnetic Threespine Stickleback,Flow Alteration
-604-245,Vananda Creek Limnetic Threespine Stickleback,Barriers
-604-245,Vananda Creek Limnetic Threespine Stickleback,Sedimentation
-604-245,Vananda Creek Limnetic Threespine Stickleback,Contaminants
-604-245,Vananda Creek Limnetic Threespine Stickleback,Invasive Species
-604-245,Vananda Creek Limnetic Threespine Stickleback,Climate Change
-604-245,Vananda Creek Limnetic Threespine Stickleback,Disease
-604-245,Vananda Creek Limnetic Threespine Stickleback,Water Withdrawal
-604-245,Vananda Creek Limnetic Threespine Stickleback,Forestry
-604-245,Vananda Creek Limnetic Threespine Stickleback,Mining
-604-245,Vananda Creek Limnetic Threespine Stickleback,Hybridization
-604-245,Vananda Creek Limnetic Threespine Stickleback,Recreation
-604-245,Vananda Creek Limnetic Threespine Stickleback,Residential and Commercial Development
-604-245,Vananda Creek Limnetic Threespine Stickleback,Riparian Degradation
-750-302,Enos Lake Benthic Threespine Stickleback,Barriers
-750-302,Enos Lake Benthic Threespine Stickleback,Sedimentation
-750-302,Enos Lake Benthic Threespine Stickleback,Invasive Species
-750-302,Enos Lake Benthic Threespine Stickleback,Hybridization
-750-302,Enos Lake Benthic Threespine Stickleback,Predation
-750-302,Enos Lake Benthic Threespine Stickleback,Competition
-750-302,Enos Lake Benthic Threespine Stickleback,Residential and Commercial Development
-750-302,Enos Lake Benthic Threespine Stickleback,Riparian Degradation
-750-302,Enos Lake Benthic Threespine Stickleback,Aquatic Vegetation Loss
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Habitat Loss
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Urbanization
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Flow Alteration
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Habitat Fragmentation
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Agriculture
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Invasive Species
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Climate Change
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Harvest
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Forestry
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Mining
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Transportation
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Hybridization
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Competition
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Recreation
-1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Residential and Commercial Development
-1346-975,Channel Darter - St. Lawrence populations,Urbanization
-1346-975,Channel Darter - St. Lawrence populations,Flow Alteration
-1346-975,Channel Darter - St. Lawrence populations,Sedimentation
-1346-975,Channel Darter - St. Lawrence populations,Nutrient Enrichment
-1346-975,Channel Darter - St. Lawrence populations,Contaminants
-1346-975,Channel Darter - St. Lawrence populations,Agriculture
-1346-975,Channel Darter - St. Lawrence populations,Invasive Species
-1346-975,Channel Darter - St. Lawrence populations,Wetland Loss
-1346-975,Channel Darter - St. Lawrence populations,Shoreline Development
-1346-975,Channel Darter - St. Lawrence populations,Mining
-1346-975,Channel Darter - St. Lawrence populations,Residential and Commercial Development
-1359-980,Deepwater Sculpin - Waterton Lake population,Urbanization
-1359-980,Deepwater Sculpin - Waterton Lake population,Nutrient Enrichment
-1359-980,Deepwater Sculpin - Waterton Lake population,Agriculture
-1359-980,Deepwater Sculpin - Waterton Lake population,Invasive Species
-1359-980,Deepwater Sculpin - Waterton Lake population,Climate Change
-1359-980,Deepwater Sculpin - Waterton Lake population,Knowledge Gaps
-1411-1024,European Whitefish - Dezadeash Lake large-bodied population,Contaminants
-1411-1024,European Whitefish - Dezadeash Lake large-bodied population,Invasive Species
-1411-1024,European Whitefish - Dezadeash Lake large-bodied population,Climate Change
-1411-1024,European Whitefish - Dezadeash Lake large-bodied population,Recreation
-1076-734,Eastern Sand Darter - Quebec population,Habitat Loss
-1076-734,Eastern Sand Darter - Quebec population,Urbanization
-1076-734,Eastern Sand Darter - Quebec population,Barriers
-1076-734,Eastern Sand Darter - Quebec population,Contaminants
-1076-734,Eastern Sand Darter - Quebec population,Agriculture
-1076-734,Eastern Sand Darter - Quebec population,Invasive Species
-1076-734,Eastern Sand Darter - Quebec population,Climate Change
-83-109,Shortnose Cisco,Harvest
-83-109,Shortnose Cisco,Hybridization
-83-109,Shortnose Cisco,Predation
-83-109,Shortnose Cisco,Residential and Commercial Development
-89-405,Black Buffalo,Contaminants
-111-413,River Redhorse,Habitat Loss
-111-413,River Redhorse,Urbanization
-111-413,River Redhorse,Flow Alteration
-111-413,River Redhorse,Barriers
-111-413,River Redhorse,Habitat Fragmentation
-111-413,River Redhorse,Sedimentation
-111-413,River Redhorse,Contaminants
-111-413,River Redhorse,Agriculture
-111-413,River Redhorse,Invasive Species
-111-413,River Redhorse,Climate Change
-111-413,River Redhorse,Harvest
-111-413,River Redhorse,Disease
-115-414,Silver Shiner,Urbanization
-115-414,Silver Shiner,Flow Alteration
-115-414,Silver Shiner,Barriers
-115-414,Silver Shiner,Sedimentation
-115-414,Silver Shiner,Nutrient Enrichment
-115-414,Silver Shiner,Contaminants
-115-414,Silver Shiner,Agriculture
-115-414,Silver Shiner,Invasive Species
-119-406,Spring Cisco,Runoff
-119-406,Spring Cisco,Water Quality
-119-406,Spring Cisco,Agriculture
-119-406,Spring Cisco,Invasive Species
-119-406,Spring Cisco,Predation
-119-406,Spring Cisco,Competition
-119-406,Spring Cisco,Residential and Commercial Development
-1553-1123,Plains Sucker - Missouri population,Urbanization
-1553-1123,Plains Sucker - Missouri population,Barriers
-1553-1123,Plains Sucker - Missouri population,Habitat Fragmentation
-1553-1123,Plains Sucker - Missouri population,Contaminants
-1553-1123,Plains Sucker - Missouri population,Agriculture
-1553-1123,Plains Sucker - Missouri population,Invasive Species
-1553-1123,Plains Sucker - Missouri population,Climate Change
-1553-1123,Plains Sucker - Missouri population,Harvest
-1553-1123,Plains Sucker - Missouri population,Disease
-1553-1123,Plains Sucker - Missouri population,Forestry
-1553-1123,Plains Sucker - Missouri population,Mining
-1553-1123,Plains Sucker - Missouri population,Transportation
-1553-1123,Plains Sucker - Missouri population,Recreation
-1490-1070,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Climate Change
-1490-1070,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Water Withdrawal
-63-46,Paddlefish,Barriers
-63-46,Paddlefish,Contaminants
-63-46,Paddlefish,Harvest
-64-47,Atlantic Whitefish,Barriers
-64-47,Atlantic Whitefish,Invasive Species
-64-47,Atlantic Whitefish,Harvest
-64-47,Atlantic Whitefish,Incidental Capture
-554-227,Paxton Lake Limnetic Threespine Stickleback,Habitat Loss
-554-227,Paxton Lake Limnetic Threespine Stickleback,Flow Alteration
-554-227,Paxton Lake Limnetic Threespine Stickleback,Water Quality
-554-227,Paxton Lake Limnetic Threespine Stickleback,Invasive Species
-554-227,Paxton Lake Limnetic Threespine Stickleback,Water Withdrawal
-554-227,Paxton Lake Limnetic Threespine Stickleback,Hybridization
-554-227,Paxton Lake Limnetic Threespine Stickleback,Aquatic Vegetation Loss
-842-601,Lake Sturgeon - Great Lakes - Upper St. Lawrence populations,Barriers
-842-601,Lake Sturgeon - Great Lakes - Upper St. Lawrence populations,Contaminants
-842-601,Lake Sturgeon - Great Lakes - Upper St. Lawrence populations,Invasive Species
-842-601,Lake Sturgeon - Great Lakes - Upper St. Lawrence populations,Harvest
-971-784,Northern Brook Lamprey - Saskatchewan - Nelson River populations,Barriers
-971-784,Northern Brook Lamprey - Saskatchewan - Nelson River populations,Invasive Species
-971-784,Northern Brook Lamprey - Saskatchewan - Nelson River populations,Climate Change
-971-784,Northern Brook Lamprey - Saskatchewan - Nelson River populations,Transportation
-1116-769,Mountain Sucker - Milk River populations,Habitat Loss
-1116-769,Mountain Sucker - Milk River populations,Urbanization
-1116-769,Mountain Sucker - Milk River populations,Agriculture
-1116-769,Mountain Sucker - Milk River populations,Invasive Species
-1116-769,Mountain Sucker - Milk River populations,Climate Change
-1116-769,Mountain Sucker - Milk River populations,Water Withdrawal
-1116-769,Mountain Sucker - Milk River populations,Residential and Commercial Development
-1345-976,Channel Darter - Lake Ontario populations,Urbanization
-1345-976,Channel Darter - Lake Ontario populations,Flow Alteration
-1345-976,Channel Darter - Lake Ontario populations,Sedimentation
-1345-976,Channel Darter - Lake Ontario populations,Nutrient Enrichment
-1345-976,Channel Darter - Lake Ontario populations,Contaminants
-1345-976,Channel Darter - Lake Ontario populations,Agriculture
-1345-976,Channel Darter - Lake Ontario populations,Invasive Species
-1345-976,Channel Darter - Lake Ontario populations,Wetland Loss
-1345-976,Channel Darter - Lake Ontario populations,Shoreline Development
-1345-976,Channel Darter - Lake Ontario populations,Mining
-1345-976,Channel Darter - Lake Ontario populations,Residential and Commercial Development
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Habitat Loss
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Urbanization
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Barriers
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Contaminants
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Agriculture
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Invasive Species
-1543-1111,Eastern Sand Darter - Southwestern Ontario population,Climate Change
-71-0,Banff Longnose Dace,Barriers
-71-0,Banff Longnose Dace,Wetland Loss
-71-0,Banff Longnose Dace,Predation
-71-0,Banff Longnose Dace,Competition
-72-51,Black Redhorse,Urbanization
-72-51,Black Redhorse,Flow Alteration
-72-51,Black Redhorse,Contaminants
-72-51,Black Redhorse,Water Quality
-72-51,Black Redhorse,Agriculture
-72-51,Black Redhorse,Invasive Species
-72-51,Black Redhorse,Climate Change
-85-321,Banded Killifish - Newfoundland populations,Urbanization
-85-321,Banded Killifish - Newfoundland populations,Water Quality
-85-321,Banded Killifish - Newfoundland populations,Forestry
-97-416,Giant Threespine Stickleback,Urbanization
-97-416,Giant Threespine Stickleback,Invasive Species
-97-416,Giant Threespine Stickleback,Forestry
-97-416,Giant Threespine Stickleback,Predation
-97-416,Giant Threespine Stickleback,Recreation
-108-280,Pugnose Shiner,Habitat Loss
-108-280,Pugnose Shiner,Urbanization
-108-280,Pugnose Shiner,Habitat Fragmentation
-108-280,Pugnose Shiner,Water Quality
-108-280,Pugnose Shiner,Agriculture
-108-280,Pugnose Shiner,Invasive Species
-108-280,Pugnose Shiner,Residential and Commercial Development
-108-280,Pugnose Shiner,Aquatic Vegetation Loss
-841-596,Lake Sturgeon - Southern Hudson Bay - James Bay populations,Barriers
-841-596,Lake Sturgeon - Southern Hudson Bay - James Bay populations,Contaminants
-841-596,Lake Sturgeon - Southern Hudson Bay - James Bay populations,Invasive Species
-841-596,Lake Sturgeon - Southern Hudson Bay - James Bay populations,Harvest
-1117-770,Mountain Sucker - Pacific populations,Habitat Loss
-1117-770,Mountain Sucker - Pacific populations,Flow Alteration
-1117-770,Mountain Sucker - Pacific populations,Sedimentation
-1117-770,Mountain Sucker - Pacific populations,Contaminants
-1117-770,Mountain Sucker - Pacific populations,Agriculture
-1117-770,Mountain Sucker - Pacific populations,Invasive Species
-1117-770,Mountain Sucker - Pacific populations,Climate Change
-1117-770,Mountain Sucker - Pacific populations,Channel Modification
-1117-770,Mountain Sucker - Pacific populations,Residential and Commercial Development
-1412-1025,Lake Whitefish - Squanga Lake large-bodied population,Contaminants
-1412-1025,Lake Whitefish - Squanga Lake large-bodied population,Invasive Species
-1412-1025,Lake Whitefish - Squanga Lake large-bodied population,Climate Change
-1412-1025,Lake Whitefish - Squanga Lake large-bodied population,Recreation
-1531-1101,Brassy Minnow - Pacific population,Urbanization
-1531-1101,Brassy Minnow - Pacific population,Contaminants
-1531-1101,Brassy Minnow - Pacific population,Agriculture
-1531-1101,Brassy Minnow - Pacific population,Invasive Species
-1531-1101,Brassy Minnow - Pacific population,Climate Change
-1531-1101,Brassy Minnow - Pacific population,Forestry
-1531-1101,Brassy Minnow - Pacific population,Transportation
-1531-1101,Brassy Minnow - Pacific population,Predation
-1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Invasive Species
-1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Harvest
-1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Water Withdrawal
-1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Mining
-1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Residential and Commercial Development
-1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Aquatic Vegetation Loss
-914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Urbanization
-914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Nutrient Enrichment
-914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Agriculture
-914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Invasive Species
-914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Climate Change
-914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Knowledge Gaps
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Habitat Loss
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Urbanization
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Agriculture
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Invasive Species
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Forestry
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Mining
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Hybridization
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Predation
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Competition
-861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Residential and Commercial Development
-84-110,Gravel Chub,Sedimentation
-105-419,Orangespotted Sunfish,Contaminants
-105-419,Orangespotted Sunfish,Predation
-105-419,Orangespotted Sunfish,Competition
-297-323,Northern Madtom,Sedimentation
-297-323,Northern Madtom,Contaminants
-297-323,Northern Madtom,Water Quality
-297-323,Northern Madtom,Invasive Species
-297-323,Northern Madtom,Climate Change
-467-911,Cutlip Minnow,Urbanization
-467-911,Cutlip Minnow,Sedimentation
-467-911,Cutlip Minnow,Agriculture
-467-911,Cutlip Minnow,Invasive Species
-546-69,Bridle Shiner,Sedimentation
-546-69,Bridle Shiner,Wetland Loss
-546-69,Bridle Shiner,Aquatic Vegetation Loss
-1122-764,Dolly Varden - Western Arctic populations,Flow Alteration
-1122-764,Dolly Varden - Western Arctic populations,Water Quality
-1122-764,Dolly Varden - Western Arctic populations,Climate Change
-1122-764,Dolly Varden - Western Arctic populations,Harvest
-1122-764,Dolly Varden - Western Arctic populations,Water Withdrawal
-1122-764,Dolly Varden - Western Arctic populations,Residential and Commercial Development
-1362-985,Lake Sturgeon - Saskatchewan - Nelson River populations,Barriers
-1362-985,Lake Sturgeon - Saskatchewan - Nelson River populations,Contaminants
-1362-985,Lake Sturgeon - Saskatchewan - Nelson River populations,Invasive Species
-1362-985,Lake Sturgeon - Saskatchewan - Nelson River populations,Harvest
-1093-756,Rocky Mountain Sculpin - Pacific populations,Habitat Loss
-1093-756,Rocky Mountain Sculpin - Pacific populations,Flow Alteration
-1093-756,Rocky Mountain Sculpin - Pacific populations,Sedimentation
-1093-756,Rocky Mountain Sculpin - Pacific populations,Water Quality
-1093-756,Rocky Mountain Sculpin - Pacific populations,Transportation
-1093-756,Rocky Mountain Sculpin - Pacific populations,Recreation
-1299-949,Little Quarry Lake Benthic Threespine Stickleback,Invasive Species
-1299-949,Little Quarry Lake Benthic Threespine Stickleback,Harvest
-1299-949,Little Quarry Lake Benthic Threespine Stickleback,Water Withdrawal
-1299-949,Little Quarry Lake Benthic Threespine Stickleback,Mining
-1299-949,Little Quarry Lake Benthic Threespine Stickleback,Residential and Commercial Development
-1299-949,Little Quarry Lake Benthic Threespine Stickleback,Aquatic Vegetation Loss
-1530-1100,Eastern Sand Darter - West Lake population,Habitat Loss
-1530-1100,Eastern Sand Darter - West Lake population,Urbanization
-1530-1100,Eastern Sand Darter - West Lake population,Barriers
-1530-1100,Eastern Sand Darter - West Lake population,Contaminants
-1530-1100,Eastern Sand Darter - West Lake population,Agriculture
-1530-1100,Eastern Sand Darter - West Lake population,Invasive Species
-1530-1100,Eastern Sand Darter - West Lake population,Climate Change
-845-588,Rocky Mountain Sculpin - Eastslope populations,Flow Alteration
-845-588,Rocky Mountain Sculpin - Eastslope populations,Sedimentation
-845-588,Rocky Mountain Sculpin - Eastslope populations,Climate Change
-845-588,Rocky Mountain Sculpin - Eastslope populations,Water Withdrawal
-81-59,Shorthead Sculpin,Urbanization
-81-59,Shorthead Sculpin,Flow Alteration
-81-59,Shorthead Sculpin,Sedimentation
-81-59,Shorthead Sculpin,Contaminants
-81-59,Shorthead Sculpin,Water Quality
-81-59,Shorthead Sculpin,Agriculture
-81-59,Shorthead Sculpin,Invasive Species
-81-59,Shorthead Sculpin,Climate Change
-81-59,Shorthead Sculpin,Water Withdrawal
-81-59,Shorthead Sculpin,Forestry
-81-59,Shorthead Sculpin,Mining
-81-59,Shorthead Sculpin,Predation
-94-415,Unarmoured Threespine Stickleback,Urbanization
-94-415,Unarmoured Threespine Stickleback,Invasive Species
-94-415,Unarmoured Threespine Stickleback,Predation
-94-415,Unarmoured Threespine Stickleback,Recreation
-101-63,Lake Chubsucker,Urbanization
-101-63,Lake Chubsucker,Sedimentation
-101-63,Lake Chubsucker,Nutrient Enrichment
-101-63,Lake Chubsucker,Contaminants
-101-63,Lake Chubsucker,Agriculture
-101-63,Lake Chubsucker,Invasive Species
-101-63,Lake Chubsucker,Climate Change
-101-63,Lake Chubsucker,Wetland Loss
-101-63,Lake Chubsucker,Shoreline Development
-101-63,Lake Chubsucker,Channel Modification
-101-63,Lake Chubsucker,Knowledge Gaps
-101-63,Lake Chubsucker,Residential and Commercial Development
-110-407,Redside Dace,Sedimentation
-110-407,Redside Dace,Water Quality
-116-301,Speckled Dace,Flow Alteration
-116-301,Speckled Dace,Barriers
-116-301,Speckled Dace,Sedimentation
-116-301,Speckled Dace,Invasive Species
-116-301,Speckled Dace,Climate Change
-116-301,Speckled Dace,Wetland Loss
-116-301,Speckled Dace,Water Withdrawal
-116-301,Speckled Dace,Forestry
-116-301,Speckled Dace,Predation
-117-113,Spotted Gar,Habitat Loss
-117-113,Spotted Gar,Sedimentation
-117-113,Spotted Gar,Harvest
-117-113,Spotted Gar,Shoreline Development
-117-113,Spotted Gar,Channel Modification
-117-113,Spotted Gar,Riparian Degradation
-117-113,Spotted Gar,Aquatic Vegetation Loss
-317-18,Western Silvery Minnow,Flow Alteration
-317-18,Western Silvery Minnow,Sedimentation
-317-18,Western Silvery Minnow,Climate Change
-544-222,Paxton Lake Benthic Threespine Stickleback,Habitat Loss
-544-222,Paxton Lake Benthic Threespine Stickleback,Flow Alteration
-544-222,Paxton Lake Benthic Threespine Stickleback,Water Quality
-544-222,Paxton Lake Benthic Threespine Stickleback,Invasive Species
-544-222,Paxton Lake Benthic Threespine Stickleback,Water Withdrawal
-544-222,Paxton Lake Benthic Threespine Stickleback,Hybridization
-544-222,Paxton Lake Benthic Threespine Stickleback,Aquatic Vegetation Loss
-624-370,Columbia Sculpin,Urbanization
-624-370,Columbia Sculpin,Barriers
-624-370,Columbia Sculpin,Water Quality
-624-370,Columbia Sculpin,Invasive Species
-624-370,Columbia Sculpin,Climate Change
-624-370,Columbia Sculpin,Mining
-624-370,Columbia Sculpin,Knowledge Gaps
-624-370,Columbia Sculpin,Residential and Commercial Development
-958-677,Lake Sturgeon - Western Hudson Bay populations,Barriers
-958-677,Lake Sturgeon - Western Hudson Bay populations,Contaminants
-958-677,Lake Sturgeon - Western Hudson Bay populations,Invasive Species
-958-677,Lake Sturgeon - Western Hudson Bay populations,Harvest
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Water Quality
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Invasive Species
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Climate Change
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Harvest
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Mining
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Hybridization
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Predation
-1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Residential and Commercial Development
-1179-859,Plains Minnow,Runoff
-1179-859,Plains Minnow,Agriculture
-1179-859,Plains Minnow,Invasive Species
-1179-859,Plains Minnow,Climate Change
-1410-1023,European Whitefish - Dezadeash Lake small-bodied population,Contaminants
-1410-1023,European Whitefish - Dezadeash Lake small-bodied population,Invasive Species
-1410-1023,European Whitefish - Dezadeash Lake small-bodied population,Climate Change
-1410-1023,European Whitefish - Dezadeash Lake small-bodied population,Recreation
-1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,Sedimentation
-1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,Nutrient Enrichment
-1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,Contaminants
-1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,Invasive Species
-1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,Shoreline Development
-1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,Channel Modification
-1491-1071,Rocky Mountain Sculpin - Missouri River populations,Climate Change
-1491-1071,Rocky Mountain Sculpin - Missouri River populations,Water Withdrawal
-75-54,Copper Redhorse,Habitat Loss
-75-54,Copper Redhorse,Urbanization
-75-54,Copper Redhorse,Flow Alteration
-75-54,Copper Redhorse,Barriers
-75-54,Copper Redhorse,Contaminants
-75-54,Copper Redhorse,Agriculture
-75-54,Copper Redhorse,Recreation
-79-57,Lake Whitefish - Lake Simcoe population,Nutrient Enrichment
-79-57,Lake Whitefish - Lake Simcoe population,Contaminants
-79-57,Lake Whitefish - Lake Simcoe population,Predation
-91-375,Blackstripe Topminnow,Flow Alteration
-91-375,Blackstripe Topminnow,Agriculture
-91-375,Blackstripe Topminnow,Climate Change
-91-375,Blackstripe Topminnow,Wetland Loss
-91-375,Blackstripe Topminnow,Water Withdrawal
-91-375,Blackstripe Topminnow,Riparian Degradation
-91-375,Blackstripe Topminnow,Aquatic Vegetation Loss
-95-411,Chestnut Lamprey,Sedimentation
-95-411,Chestnut Lamprey,Nutrient Enrichment
-95-411,Chestnut Lamprey,Contaminants
-99-409,Greenside Darter,Sedimentation
-99-409,Greenside Darter,Contaminants
-100-410,Kiyi,Mining
-100-410,Kiyi,Residential and Commercial Development
-833-450,Striped Bass - St. Lawrence River population,Sedimentation
-833-450,Striped Bass - St. Lawrence River population,Contaminants
-833-450,Striped Bass - St. Lawrence River population,Agriculture
-833-450,Striped Bass - St. Lawrence River population,Invasive Species
-833-450,Striped Bass - St. Lawrence River population,Harvest
-833-450,Striped Bass - St. Lawrence River population,Disease
-833-450,Striped Bass - St. Lawrence River population,Channel Modification
-833-450,Striped Bass - St. Lawrence River population,Residential and Commercial Development
-1151-793,Silver Lamprey - Great Lakes - Upper St. Lawrence populations,Barriers
-1151-793,Silver Lamprey - Great Lakes - Upper St. Lawrence populations,Invasive Species
-1151-793,Silver Lamprey - Great Lakes - Upper St. Lawrence populations,Climate Change
-1151-793,Silver Lamprey - Great Lakes - Upper St. Lawrence populations,Transportation
-1201-872,Bull Trout - South Coast British Columbia population,Habitat Loss
-1201-872,Bull Trout - South Coast British Columbia population,Urbanization
-1201-872,Bull Trout - South Coast British Columbia population,Flow Alteration
-1201-872,Bull Trout - South Coast British Columbia population,Habitat Fragmentation
-1201-872,Bull Trout - South Coast British Columbia population,Agriculture
-1201-872,Bull Trout - South Coast British Columbia population,Invasive Species
-1201-872,Bull Trout - South Coast British Columbia population,Climate Change
-1201-872,Bull Trout - South Coast British Columbia population,Harvest
-1201-872,Bull Trout - South Coast British Columbia population,Forestry
-1201-872,Bull Trout - South Coast British Columbia population,Mining
-1201-872,Bull Trout - South Coast British Columbia population,Transportation
-1201-872,Bull Trout - South Coast British Columbia population,Hybridization
-1201-872,Bull Trout - South Coast British Columbia population,Competition
-1201-872,Bull Trout - South Coast British Columbia population,Recreation
-1201-872,Bull Trout - South Coast British Columbia population,Residential and Commercial Development
-1202-869,Bull Trout - Western Arctic population,Habitat Loss
-1202-869,Bull Trout - Western Arctic population,Urbanization
-1202-869,Bull Trout - Western Arctic population,Flow Alteration
-1202-869,Bull Trout - Western Arctic population,Habitat Fragmentation
-1202-869,Bull Trout - Western Arctic population,Agriculture
-1202-869,Bull Trout - Western Arctic population,Invasive Species
-1202-869,Bull Trout - Western Arctic population,Climate Change
-1202-869,Bull Trout - Western Arctic population,Harvest
-1202-869,Bull Trout - Western Arctic population,Forestry
-1202-869,Bull Trout - Western Arctic population,Mining
-1202-869,Bull Trout - Western Arctic population,Transportation
-1202-869,Bull Trout - Western Arctic population,Hybridization
-1202-869,Bull Trout - Western Arctic population,Competition
-1202-869,Bull Trout - Western Arctic population,Recreation
-1202-869,Bull Trout - Western Arctic population,Residential and Commercial Development
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Urbanization
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Water Quality
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Agriculture
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Invasive Species
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Climate Change
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Forestry
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Mining
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Predation
-1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Residential and Commercial Development
-860-604,Westslope Cutthroat Trout - Pacific populations,Habitat Loss
-860-604,Westslope Cutthroat Trout - Pacific populations,Urbanization
-860-604,Westslope Cutthroat Trout - Pacific populations,Agriculture
-860-604,Westslope Cutthroat Trout - Pacific populations,Invasive Species
-860-604,Westslope Cutthroat Trout - Pacific populations,Forestry
-860-604,Westslope Cutthroat Trout - Pacific populations,Mining
-860-604,Westslope Cutthroat Trout - Pacific populations,Hybridization
-860-604,Westslope Cutthroat Trout - Pacific populations,Predation
-860-604,Westslope Cutthroat Trout - Pacific populations,Competition
-860-604,Westslope Cutthroat Trout - Pacific populations,Residential and Commercial Development
-88-534,Bigmouth Shiner,Habitat Loss
-88-534,Bigmouth Shiner,Urbanization
-88-534,Bigmouth Shiner,Flow Alteration
-88-534,Bigmouth Shiner,Sedimentation
-88-534,Bigmouth Shiner,Competition
-112-19,Carmine Shiner,Flow Alteration
-112-19,Carmine Shiner,Barriers
-112-19,Carmine Shiner,Sedimentation
-112-19,Carmine Shiner,Nutrient Enrichment
-112-19,Carmine Shiner,Runoff
-112-19,Carmine Shiner,Agriculture
-112-19,Carmine Shiner,Invasive Species
-112-19,Carmine Shiner,Harvest
-112-19,Carmine Shiner,Wetland Loss
-112-19,Carmine Shiner,Mining
-112-19,Carmine Shiner,Transportation
-112-19,Carmine Shiner,Recreation
-112-19,Carmine Shiner,Knowledge Gaps
-112-19,Carmine Shiner,Residential and Commercial Development
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Water Quality
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Invasive Species
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Climate Change
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Harvest
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Mining
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Hybridization
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Predation
-547-223,Rainbow Smelt - Lake Utopia small-bodied population,Residential and Commercial Development
-1205-2544,Bull Trout - Pacific population,Habitat Loss
-1205-2544,Bull Trout - Pacific population,Urbanization
-1205-2544,Bull Trout - Pacific population,Flow Alteration
-1205-2544,Bull Trout - Pacific population,Habitat Fragmentation
-1205-2544,Bull Trout - Pacific population,Agriculture
-1205-2544,Bull Trout - Pacific population,Invasive Species
-1205-2544,Bull Trout - Pacific population,Climate Change
-1205-2544,Bull Trout - Pacific population,Harvest
-1205-2544,Bull Trout - Pacific population,Forestry
-1205-2544,Bull Trout - Pacific population,Mining
-1205-2544,Bull Trout - Pacific population,Transportation
-1205-2544,Bull Trout - Pacific population,Hybridization
-1205-2544,Bull Trout - Pacific population,Competition
-1205-2544,Bull Trout - Pacific population,Recreation
-1205-2544,Bull Trout - Pacific population,Residential and Commercial Development
-1415-1028,Lake Whitefish - Little Teslin Lake large-bodied population,Contaminants
-1415-1028,Lake Whitefish - Little Teslin Lake large-bodied population,Invasive Species
-1415-1028,Lake Whitefish - Little Teslin Lake large-bodied population,Climate Change
-1415-1028,Lake Whitefish - Little Teslin Lake large-bodied population,Recreation
-1449-1051,Lake Chub - Atlin Warm Springs populations,Sedimentation
-1449-1051,Lake Chub - Atlin Warm Springs populations,Water Quality
-1449-1051,Lake Chub - Atlin Warm Springs populations,Invasive Species
-1449-1051,Lake Chub - Atlin Warm Springs populations,Climate Change
-1449-1051,Lake Chub - Atlin Warm Springs populations,Predation
-1449-1051,Lake Chub - Atlin Warm Springs populations,Competition
-1449-1051,Lake Chub - Atlin Warm Springs populations,Recreation
-1449-1051,Lake Chub - Atlin Warm Springs populations,Residential and Commercial Development
-300-213,Coastrange Sculpin - Cultus Lake population,Nutrient Enrichment
-300-213,Coastrange Sculpin - Cultus Lake population,Invasive Species
-300-213,Coastrange Sculpin - Cultus Lake population,Climate Change
-300-213,Coastrange Sculpin - Cultus Lake population,Predation
-300-213,Coastrange Sculpin - Cultus Lake population,Residential and Commercial Development
-67-50,Salish Sucker,Habitat Fragmentation
-67-50,Salish Sucker,Sedimentation
-67-50,Salish Sucker,Contaminants
-67-50,Salish Sucker,Predation
-82-60,Shortjaw Cisco,Habitat Loss
-82-60,Shortjaw Cisco,Urbanization
-82-60,Shortjaw Cisco,Agriculture
-82-60,Shortjaw Cisco,Predation
-82-60,Shortjaw Cisco,Competition
-120-421,Squanga Whitefish,Habitat Loss
-120-421,Squanga Whitefish,Urbanization
-120-421,Squanga Whitefish,Flow Alteration
-120-421,Squanga Whitefish,Sedimentation
-120-421,Squanga Whitefish,Contaminants
-593-241,Western Brook Lamprey - Morrison Creek population,Flow Alteration
-593-241,Western Brook Lamprey - Morrison Creek population,Nutrient Enrichment
-593-241,Western Brook Lamprey - Morrison Creek population,Water Withdrawal
-749-303,Enos Lake Limnetic Threespine Stickleback,Barriers
-749-303,Enos Lake Limnetic Threespine Stickleback,Sedimentation
-749-303,Enos Lake Limnetic Threespine Stickleback,Invasive Species
-749-303,Enos Lake Limnetic Threespine Stickleback,Hybridization
-749-303,Enos Lake Limnetic Threespine Stickleback,Predation
-749-303,Enos Lake Limnetic Threespine Stickleback,Competition
-749-303,Enos Lake Limnetic Threespine Stickleback,Residential and Commercial Development
-749-303,Enos Lake Limnetic Threespine Stickleback,Riparian Degradation
-749-303,Enos Lake Limnetic Threespine Stickleback,Aquatic Vegetation Loss
-876-603,Upper Great Lakes Kiyi,Nutrient Enrichment
-876-603,Upper Great Lakes Kiyi,Contaminants
-876-603,Upper Great Lakes Kiyi,Water Quality
-876-603,Upper Great Lakes Kiyi,Invasive Species
-876-603,Upper Great Lakes Kiyi,Climate Change
-876-603,Upper Great Lakes Kiyi,Harvest
-876-603,Upper Great Lakes Kiyi,Disease
-876-603,Upper Great Lakes Kiyi,Residential and Commercial Development
-953-672,Misty Lake Lotic Threespine Stickleback,Barriers
-953-672,Misty Lake Lotic Threespine Stickleback,Contaminants
-953-672,Misty Lake Lotic Threespine Stickleback,Runoff
-953-672,Misty Lake Lotic Threespine Stickleback,Invasive Species
-953-672,Misty Lake Lotic Threespine Stickleback,Climate Change
-953-672,Misty Lake Lotic Threespine Stickleback,Water Withdrawal
-953-672,Misty Lake Lotic Threespine Stickleback,Transportation
-953-672,Misty Lake Lotic Threespine Stickleback,Hybridization
-953-672,Misty Lake Lotic Threespine Stickleback,Predation
-953-672,Misty Lake Lotic Threespine Stickleback,Competition
-953-672,Misty Lake Lotic Threespine Stickleback,Recreation
-953-672,Misty Lake Lotic Threespine Stickleback,Riparian Degradation
-953-672,Misty Lake Lotic Threespine Stickleback,Aquatic Vegetation Loss
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Urbanization
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Sedimentation
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Contaminants
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Agriculture
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Invasive Species
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Recreation
-1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Incidental Capture
-66-49,Nooksack Dace,Habitat Loss
-66-49,Nooksack Dace,Urbanization
-66-49,Nooksack Dace,Flow Alteration
-66-49,Nooksack Dace,Sedimentation
-66-49,Nooksack Dace,Nutrient Enrichment
-66-49,Nooksack Dace,Contaminants
-66-49,Nooksack Dace,Runoff
-66-49,Nooksack Dace,Water Quality
-66-49,Nooksack Dace,Agriculture
-66-49,Nooksack Dace,Invasive Species
-66-49,Nooksack Dace,Climate Change
-66-49,Nooksack Dace,Wetland Loss
-66-49,Nooksack Dace,Channel Modification
-66-49,Nooksack Dace,Mining
-66-49,Nooksack Dace,Transportation
-66-49,Nooksack Dace,Riparian Degradation
-69-0,Deepwater Cisco,Invasive Species
-69-0,Deepwater Cisco,Predation
-69-0,Deepwater Cisco,Residential and Commercial Development
-107-376,Pugnose Minnow,Habitat Loss
-107-376,Pugnose Minnow,Sedimentation
-107-376,Pugnose Minnow,Nutrient Enrichment
-107-376,Pugnose Minnow,Contaminants
-107-376,Pugnose Minnow,Invasive Species
-107-376,Pugnose Minnow,Climate Change
-891-632,American Eel,Barriers
-891-632,American Eel,Contaminants
-891-632,American Eel,Climate Change
-891-632,American Eel,Harvest
-891-632,American Eel,Disease
-1049-802,Silver Lamprey - Saskatchewan - Nelson River populations,Barriers
-1049-802,Silver Lamprey - Saskatchewan - Nelson River populations,Invasive Species
-1049-802,Silver Lamprey - Saskatchewan - Nelson River populations,Climate Change
-1049-802,Silver Lamprey - Saskatchewan - Nelson River populations,Transportation
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Habitat Loss
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Urbanization
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Nutrient Enrichment
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Runoff
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Water Quality
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Agriculture
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Invasive Species
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Climate Change
-1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Harvest
-1344-977,Channel Darter - Lake Erie populations,Urbanization
-1344-977,Channel Darter - Lake Erie populations,Flow Alteration
-1344-977,Channel Darter - Lake Erie populations,Sedimentation
-1344-977,Channel Darter - Lake Erie populations,Nutrient Enrichment
-1344-977,Channel Darter - Lake Erie populations,Contaminants
-1344-977,Channel Darter - Lake Erie populations,Agriculture
-1344-977,Channel Darter - Lake Erie populations,Invasive Species
-1344-977,Channel Darter - Lake Erie populations,Wetland Loss
-1344-977,Channel Darter - Lake Erie populations,Shoreline Development
-1344-977,Channel Darter - Lake Erie populations,Mining
-1344-977,Channel Darter - Lake Erie populations,Residential and Commercial Development
-1409-1022,European Whitefish - Little Teslin Lake small-bodied population,Contaminants
-1409-1022,European Whitefish - Little Teslin Lake small-bodied population,Invasive Species
-1409-1022,European Whitefish - Little Teslin Lake small-bodied population,Climate Change
-1409-1022,European Whitefish - Little Teslin Lake small-bodied population,Recreation
-1533-1103,Brassy Minnow - Missouri population,Habitat Fragmentation
-1533-1103,Brassy Minnow - Missouri population,Climate Change
-1533-1103,Brassy Minnow - Missouri population,Predation
-122-89,Warmouth,Agriculture
-122-89,Warmouth,Invasive Species
-122-89,Warmouth,Wetland Loss
-122-89,Warmouth,Riparian Degradation
-122-89,Warmouth,Aquatic Vegetation Loss
-1075-742,Eastern Sand Darter - Ontario population,Habitat Loss
-1075-742,Eastern Sand Darter - Ontario population,Urbanization
-1075-742,Eastern Sand Darter - Ontario population,Barriers
-1075-742,Eastern Sand Darter - Ontario population,Contaminants
-1075-742,Eastern Sand Darter - Ontario population,Agriculture
-1075-742,Eastern Sand Darter - Ontario population,Invasive Species
-1075-742,Eastern Sand Darter - Ontario population,Climate Change
-76-55,Deepwater Sculpin - Great Lakes populations,Contaminants
+id,record_name,common_name,n_threat_categories,threat_categories
+100-410,Kiyi,Kiyi,2,Mining; Residential and Commercial Development
+101-63,Lake Chubsucker,Lake Chubsucker,12,Agriculture; Channel Modification; Climate Change; Contaminants; Invasive Species; Knowledge Gaps; Nutrient Enrichment; Residential and Commercial Development; Sedimentation; Shoreline Development; Urbanization; Wetland Loss
+103-112,Vancouver Lamprey,Vancouver Lamprey,2,Climate Change; Water Quality
+1039-716,Rainbow Smelt - Lake Utopia large-bodied population,Rainbow Smelt,8,Climate Change; Harvest; Hybridization; Invasive Species; Mining; Predation; Residential and Commercial Development; Water Quality
+104-412,Northern Brook Lamprey,Northern Brook Lamprey,3,Climate Change; Flow Alteration; Invasive Species
+1049-802,Silver Lamprey - Saskatchewan - Nelson River populations,Silver Lamprey,4,Barriers; Climate Change; Invasive Species; Transportation
+105-419,Orangespotted Sunfish,Orangespotted Sunfish,3,Competition; Contaminants; Predation
+107-376,Pugnose Minnow,Pugnose Minnow,6,Climate Change; Contaminants; Habitat Loss; Invasive Species; Nutrient Enrichment; Sedimentation
+1075-742,Eastern Sand Darter - Ontario population,Eastern Sand Darter,7,Agriculture; Barriers; Climate Change; Contaminants; Habitat Loss; Invasive Species; Urbanization
+1076-734,Eastern Sand Darter - Quebec population,Eastern Sand Darter,7,Agriculture; Barriers; Climate Change; Contaminants; Habitat Loss; Invasive Species; Urbanization
+108-280,Pugnose Shiner,Pugnose Shiner,8,Agriculture; Aquatic Vegetation Loss; Habitat Fragmentation; Habitat Loss; Invasive Species; Residential and Commercial Development; Urbanization; Water Quality
+1093-756,Rocky Mountain Sculpin - Pacific populations,Rocky Mountain Sculpin,6,Flow Alteration; Habitat Loss; Recreation; Sedimentation; Transportation; Water Quality
+110-407,Redside Dace,Redside Dace,2,Sedimentation; Water Quality
+111-413,River Redhorse,River Redhorse,12,Agriculture; Barriers; Climate Change; Contaminants; Disease; Flow Alteration; Habitat Fragmentation; Habitat Loss; Harvest; Invasive Species; Sedimentation; Urbanization
+1116-769,Mountain Sucker - Milk River populations,Mountain Sucker,7,Agriculture; Climate Change; Habitat Loss; Invasive Species; Residential and Commercial Development; Urbanization; Water Withdrawal
+1117-770,Mountain Sucker - Pacific populations,Mountain Sucker,9,Agriculture; Channel Modification; Climate Change; Contaminants; Flow Alteration; Habitat Loss; Invasive Species; Residential and Commercial Development; Sedimentation
+112-19,Carmine Shiner,Carmine Shiner,14,Agriculture; Barriers; Flow Alteration; Harvest; Invasive Species; Knowledge Gaps; Mining; Nutrient Enrichment; Recreation; Residential and Commercial Development; Runoff; Sedimentation; Transportation; Wetland Loss
+1122-764,Dolly Varden - Western Arctic populations,Dolly Varden,6,Climate Change; Flow Alteration; Harvest; Residential and Commercial Development; Water Quality; Water Withdrawal
+115-414,Silver Shiner,Silver Shiner,8,Agriculture; Barriers; Contaminants; Flow Alteration; Invasive Species; Nutrient Enrichment; Sedimentation; Urbanization
+1151-793,Silver Lamprey - Great Lakes - Upper St. Lawrence populations,Silver Lamprey,4,Barriers; Climate Change; Invasive Species; Transportation
+1154-791,Atlantic Sturgeon - St. Lawrence populations,Atlantic Sturgeon,4,Channel Modification; Contaminants; Harvest; Residential and Commercial Development
+116-301,Speckled Dace,Speckled Dace,9,Barriers; Climate Change; Flow Alteration; Forestry; Invasive Species; Predation; Sedimentation; Water Withdrawal; Wetland Loss
+117-113,Spotted Gar,Spotted Gar,7,Aquatic Vegetation Loss; Channel Modification; Habitat Loss; Harvest; Riparian Degradation; Sedimentation; Shoreline Development
+1179-859,Plains Minnow,Plains Minnow,4,Agriculture; Climate Change; Invasive Species; Runoff
+118-70,Spotted Sucker,Spotted Sucker,5,Contaminants; Habitat Loss; Invasive Species; Nutrient Enrichment; Sedimentation
+119-406,Spring Cisco,Spring Cisco,7,Agriculture; Competition; Invasive Species; Predation; Residential and Commercial Development; Runoff; Water Quality
+1193-864,Silver Chub - Great Lakes - Upper St. Lawrence populations,Silver Chub,9,Agriculture; Climate Change; Habitat Loss; Harvest; Invasive Species; Nutrient Enrichment; Runoff; Urbanization; Water Quality
+120-421,Squanga Whitefish,Squanga Whitefish,5,Contaminants; Flow Alteration; Habitat Loss; Sedimentation; Urbanization
+1201-872,Bull Trout - South Coast British Columbia population,Bull Trout,15,Agriculture; Climate Change; Competition; Flow Alteration; Forestry; Habitat Fragmentation; Habitat Loss; Harvest; Hybridization; Invasive Species; Mining; Recreation; Residential and Commercial Development; Transportation; Urbanization
+1202-869,Bull Trout - Western Arctic population,Bull Trout,15,Agriculture; Climate Change; Competition; Flow Alteration; Forestry; Habitat Fragmentation; Habitat Loss; Harvest; Hybridization; Invasive Species; Mining; Recreation; Residential and Commercial Development; Transportation; Urbanization
+1204-867,Bull Trout - Saskatchewan - Nelson Rivers population,Bull Trout,15,Agriculture; Climate Change; Competition; Flow Alteration; Forestry; Habitat Fragmentation; Habitat Loss; Harvest; Hybridization; Invasive Species; Mining; Recreation; Residential and Commercial Development; Transportation; Urbanization
+1205-2544,Bull Trout - Pacific population,Bull Trout,15,Agriculture; Climate Change; Competition; Flow Alteration; Forestry; Habitat Fragmentation; Habitat Loss; Harvest; Hybridization; Invasive Species; Mining; Recreation; Residential and Commercial Development; Transportation; Urbanization
+121-408,Umatilla Dace,Umatilla Dace,6,Agriculture; Barriers; Competition; Contaminants; Predation; Sedimentation
+122-89,Warmouth,Warmouth,5,Agriculture; Aquatic Vegetation Loss; Invasive Species; Riparian Degradation; Wetland Loss
+123-282,White Sturgeon,White Sturgeon,3,Habitat Loss; Harvest; Invasive Species
+1299-949,Little Quarry Lake Benthic Threespine Stickleback,Little Quarry Lake Benthic Threespine Stickleback,6,Aquatic Vegetation Loss; Harvest; Invasive Species; Mining; Residential and Commercial Development; Water Withdrawal
+1300-951,Little Quarry Lake Limnetic Threespine Stickleback,Little Quarry Lake Limnetic Threespine Stickleback,6,Aquatic Vegetation Loss; Harvest; Invasive Species; Mining; Residential and Commercial Development; Water Withdrawal
+1320-958,River Darter - Great Lakes - Upper St. Lawrence populations,River Darter,6,Channel Modification; Contaminants; Invasive Species; Nutrient Enrichment; Sedimentation; Shoreline Development
+1322-960,Northern Sunfish - Great Lakes - Upper St. Lawrence populations,Northern Sunfish,7,Agriculture; Contaminants; Incidental Capture; Invasive Species; Recreation; Sedimentation; Urbanization
+1338-968,Pygmy Whitefish - Great Lakes - Upper St. Lawrence populations,Pygmy Whitefish,9,Agriculture; Climate Change; Forestry; Invasive Species; Mining; Predation; Residential and Commercial Development; Urbanization; Water Quality
+1339-963,Pygmy Whitefish - Waterton Lake population,Pygmy Whitefish,9,Agriculture; Climate Change; Forestry; Invasive Species; Mining; Predation; Residential and Commercial Development; Urbanization; Water Quality
+1344-977,Channel Darter - Lake Erie populations,Channel Darter,11,Agriculture; Contaminants; Flow Alteration; Invasive Species; Mining; Nutrient Enrichment; Residential and Commercial Development; Sedimentation; Shoreline Development; Urbanization; Wetland Loss
+1345-976,Channel Darter - Lake Ontario populations,Channel Darter,11,Agriculture; Contaminants; Flow Alteration; Invasive Species; Mining; Nutrient Enrichment; Residential and Commercial Development; Sedimentation; Shoreline Development; Urbanization; Wetland Loss
+1346-975,Channel Darter - St. Lawrence populations,Channel Darter,11,Agriculture; Contaminants; Flow Alteration; Invasive Species; Mining; Nutrient Enrichment; Residential and Commercial Development; Sedimentation; Shoreline Development; Urbanization; Wetland Loss
+1359-980,Deepwater Sculpin - Waterton Lake population,Deepwater Sculpin,6,Agriculture; Climate Change; Invasive Species; Knowledge Gaps; Nutrient Enrichment; Urbanization
+1362-985,Lake Sturgeon - Saskatchewan - Nelson River populations,Lake Sturgeon,4,Barriers; Contaminants; Harvest; Invasive Species
+1408-1021,European Whitefish - Squanga Lake small-bodied population,European Whitefish,4,Climate Change; Contaminants; Invasive Species; Recreation
+1409-1022,European Whitefish - Little Teslin Lake small-bodied population,European Whitefish,4,Climate Change; Contaminants; Invasive Species; Recreation
+1410-1023,European Whitefish - Dezadeash Lake small-bodied population,European Whitefish,4,Climate Change; Contaminants; Invasive Species; Recreation
+1411-1024,European Whitefish - Dezadeash Lake large-bodied population,European Whitefish,4,Climate Change; Contaminants; Invasive Species; Recreation
+1412-1025,Lake Whitefish - Squanga Lake large-bodied population,Lake Whitefish,4,Climate Change; Contaminants; Invasive Species; Recreation
+1415-1028,Lake Whitefish - Little Teslin Lake large-bodied population,Lake Whitefish,4,Climate Change; Contaminants; Invasive Species; Recreation
+1448-1050,Lake Chub - Liard Hot Springs populations,Lake Chub,8,Climate Change; Competition; Invasive Species; Predation; Recreation; Residential and Commercial Development; Sedimentation; Water Quality
+1449-1051,Lake Chub - Atlin Warm Springs populations,Lake Chub,8,Climate Change; Competition; Invasive Species; Predation; Recreation; Residential and Commercial Development; Sedimentation; Water Quality
+1490-1070,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Rocky Mountain Sculpin,2,Climate Change; Water Withdrawal
+1491-1071,Rocky Mountain Sculpin - Missouri River populations,Rocky Mountain Sculpin,2,Climate Change; Water Withdrawal
+1530-1100,Eastern Sand Darter - West Lake population,Eastern Sand Darter,7,Agriculture; Barriers; Climate Change; Contaminants; Habitat Loss; Invasive Species; Urbanization
+1531-1101,Brassy Minnow - Pacific population,Brassy Minnow,8,Agriculture; Climate Change; Contaminants; Forestry; Invasive Species; Predation; Transportation; Urbanization
+1532-1102,Brassy Minnow - Western Arctic population,Brassy Minnow,3,Climate Change; Habitat Fragmentation; Predation
+1533-1103,Brassy Minnow - Missouri population,Brassy Minnow,3,Climate Change; Habitat Fragmentation; Predation
+1543-1111,Eastern Sand Darter - Southwestern Ontario population,Eastern Sand Darter,7,Agriculture; Barriers; Climate Change; Contaminants; Habitat Loss; Invasive Species; Urbanization
+1552-1122,Plains Sucker - Saskatchewan-Nelson population,Plains Sucker,13,Agriculture; Barriers; Climate Change; Contaminants; Disease; Forestry; Habitat Fragmentation; Harvest; Invasive Species; Mining; Recreation; Transportation; Urbanization
+1553-1123,Plains Sucker - Missouri population,Plains Sucker,13,Agriculture; Barriers; Climate Change; Contaminants; Disease; Forestry; Habitat Fragmentation; Harvest; Invasive Species; Mining; Recreation; Transportation; Urbanization
+297-323,Northern Madtom,Northern Madtom,5,Climate Change; Contaminants; Invasive Species; Sedimentation; Water Quality
+300-213,Coastrange Sculpin - Cultus Lake population,Coastrange Sculpin,5,Climate Change; Invasive Species; Nutrient Enrichment; Predation; Residential and Commercial Development
+317-18,Western Silvery Minnow,Western Silvery Minnow,3,Climate Change; Flow Alteration; Sedimentation
+467-911,Cutlip Minnow,Cutlip Minnow,4,Agriculture; Invasive Species; Sedimentation; Urbanization
+544-222,Paxton Lake Benthic Threespine Stickleback,Paxton Lake Benthic Threespine Stickleback,7,Aquatic Vegetation Loss; Flow Alteration; Habitat Loss; Hybridization; Invasive Species; Water Quality; Water Withdrawal
+546-69,Bridle Shiner,Bridle Shiner,3,Aquatic Vegetation Loss; Sedimentation; Wetland Loss
+547-223,Rainbow Smelt - Lake Utopia small-bodied population,Rainbow Smelt,8,Climate Change; Harvest; Hybridization; Invasive Species; Mining; Predation; Residential and Commercial Development; Water Quality
+554-227,Paxton Lake Limnetic Threespine Stickleback,Paxton Lake Limnetic Threespine Stickleback,7,Aquatic Vegetation Loss; Flow Alteration; Habitat Loss; Hybridization; Invasive Species; Water Quality; Water Withdrawal
+593-241,Western Brook Lamprey - Morrison Creek population,Western Brook Lamprey,3,Flow Alteration; Nutrient Enrichment; Water Withdrawal
+600-242,Vananda Creek Benthic Threespine Stickleback,Vananda Creek Benthic Threespine Stickleback,16,Aquatic Vegetation Loss; Barriers; Climate Change; Contaminants; Disease; Flow Alteration; Forestry; Habitat Loss; Hybridization; Invasive Species; Mining; Recreation; Residential and Commercial Development; Riparian Degradation; Sedimentation; Water Withdrawal
+601-0,Hadley Lake Benthic Threespine Stickleback,Hadley Lake Benthic Threespine Stickleback,1,Predation
+604-245,Vananda Creek Limnetic Threespine Stickleback,Vananda Creek Limnetic Threespine Stickleback,15,Barriers; Climate Change; Contaminants; Disease; Flow Alteration; Forestry; Habitat Loss; Hybridization; Invasive Species; Mining; Recreation; Residential and Commercial Development; Riparian Degradation; Sedimentation; Water Withdrawal
+610-0,Hadley Lake Limnetic Threespine Stickleback,Hadley Lake Limnetic Threespine Stickleback,1,Predation
+624-370,Columbia Sculpin,Columbia Sculpin,8,Barriers; Climate Change; Invasive Species; Knowledge Gaps; Mining; Residential and Commercial Development; Urbanization; Water Quality
+63-46,Paddlefish,Paddlefish,3,Barriers; Contaminants; Harvest
+64-47,Atlantic Whitefish,Atlantic Whitefish,4,Barriers; Harvest; Incidental Capture; Invasive Species
+66-49,Nooksack Dace,Nooksack Dace,16,Agriculture; Channel Modification; Climate Change; Contaminants; Flow Alteration; Habitat Loss; Invasive Species; Mining; Nutrient Enrichment; Riparian Degradation; Runoff; Sedimentation; Transportation; Urbanization; Water Quality; Wetland Loss
+67-50,Salish Sucker,Salish Sucker,4,Contaminants; Habitat Fragmentation; Predation; Sedimentation
+68-0,Blue Walleye,Blue Walleye,3,Competition; Harvest; Predation
+69-0,Deepwater Cisco,Deepwater Cisco,3,Invasive Species; Predation; Residential and Commercial Development
+71-0,Banff Longnose Dace,Banff Longnose Dace,4,Barriers; Competition; Predation; Wetland Loss
+72-51,Black Redhorse,Black Redhorse,7,Agriculture; Climate Change; Contaminants; Flow Alteration; Invasive Species; Urbanization; Water Quality
+73-52,Blackfin Cisco,Blackfin Cisco,3,Invasive Species; Predation; Residential and Commercial Development
+749-303,Enos Lake Limnetic Threespine Stickleback,Enos Lake Limnetic Threespine Stickleback,9,Aquatic Vegetation Loss; Barriers; Competition; Hybridization; Invasive Species; Predation; Residential and Commercial Development; Riparian Degradation; Sedimentation
+75-54,Copper Redhorse,Copper Redhorse,7,Agriculture; Barriers; Contaminants; Flow Alteration; Habitat Loss; Recreation; Urbanization
+750-302,Enos Lake Benthic Threespine Stickleback,Enos Lake Benthic Threespine Stickleback,9,Aquatic Vegetation Loss; Barriers; Competition; Hybridization; Invasive Species; Predation; Residential and Commercial Development; Riparian Degradation; Sedimentation
+76-55,Deepwater Sculpin - Great Lakes populations,Deepwater Sculpin,1,Contaminants
+79-57,Lake Whitefish - Lake Simcoe population,Lake Whitefish,3,Contaminants; Nutrient Enrichment; Predation
+81-59,Shorthead Sculpin,Shorthead Sculpin,12,Agriculture; Climate Change; Contaminants; Flow Alteration; Forestry; Invasive Species; Mining; Predation; Sedimentation; Urbanization; Water Quality; Water Withdrawal
+82-60,Shortjaw Cisco,Shortjaw Cisco,5,Agriculture; Competition; Habitat Loss; Predation; Urbanization
+83-109,Shortnose Cisco,Shortnose Cisco,4,Harvest; Hybridization; Predation; Residential and Commercial Development
+833-450,Striped Bass - St. Lawrence River population,Striped Bass,8,Agriculture; Channel Modification; Contaminants; Disease; Harvest; Invasive Species; Residential and Commercial Development; Sedimentation
+84-110,Gravel Chub,Gravel Chub,1,Sedimentation
+841-596,Lake Sturgeon - Southern Hudson Bay - James Bay populations,Lake Sturgeon,4,Barriers; Contaminants; Harvest; Invasive Species
+842-601,Lake Sturgeon - Great Lakes - Upper St. Lawrence populations,Lake Sturgeon,4,Barriers; Contaminants; Harvest; Invasive Species
+845-588,Rocky Mountain Sculpin - Eastslope populations,Rocky Mountain Sculpin,4,Climate Change; Flow Alteration; Sedimentation; Water Withdrawal
+85-321,Banded Killifish - Newfoundland populations,Banded Killifish,3,Forestry; Urbanization; Water Quality
+850-594,Grass Pickerel,Grass Pickerel,15,Agriculture; Aquatic Vegetation Loss; Barriers; Climate Change; Contaminants; Disease; Flow Alteration; Habitat Loss; Harvest; Invasive Species; Nutrient Enrichment; Residential and Commercial Development; Riparian Degradation; Sedimentation; Wetland Loss
+860-604,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,10,Agriculture; Competition; Forestry; Habitat Loss; Hybridization; Invasive Species; Mining; Predation; Residential and Commercial Development; Urbanization
+861-605,Westslope Cutthroat Trout - Saskatchewan - Nelson Rivers populations,Westslope Cutthroat Trout,10,Agriculture; Competition; Forestry; Habitat Loss; Hybridization; Invasive Species; Mining; Predation; Residential and Commercial Development; Urbanization
+876-603,Upper Great Lakes Kiyi,Upper Great Lakes Kiyi,8,Climate Change; Contaminants; Disease; Harvest; Invasive Species; Nutrient Enrichment; Residential and Commercial Development; Water Quality
+88-534,Bigmouth Shiner,Bigmouth Shiner,5,Competition; Flow Alteration; Habitat Loss; Sedimentation; Urbanization
+89-405,Black Buffalo,Black Buffalo,1,Contaminants
+891-632,American Eel,American Eel,5,Barriers; Climate Change; Contaminants; Disease; Harvest
+91-375,Blackstripe Topminnow,Blackstripe Topminnow,7,Agriculture; Aquatic Vegetation Loss; Climate Change; Flow Alteration; Riparian Degradation; Water Withdrawal; Wetland Loss
+914-637,Deepwater Sculpin - Great Lakes - Upper St. Lawrence populations,Deepwater Sculpin,6,Agriculture; Climate Change; Invasive Species; Knowledge Gaps; Nutrient Enrichment; Urbanization
+94-415,Unarmoured Threespine Stickleback,Unarmoured Threespine Stickleback,4,Invasive Species; Predation; Recreation; Urbanization
+95-411,Chestnut Lamprey,Chestnut Lamprey,3,Contaminants; Nutrient Enrichment; Sedimentation
+952-671,Misty Lake Lentic Threespine Stickleback,Misty Lake Lentic Threespine Stickleback,13,Aquatic Vegetation Loss; Barriers; Climate Change; Competition; Contaminants; Hybridization; Invasive Species; Predation; Recreation; Riparian Degradation; Runoff; Transportation; Water Withdrawal
+953-672,Misty Lake Lotic Threespine Stickleback,Misty Lake Lotic Threespine Stickleback,13,Aquatic Vegetation Loss; Barriers; Climate Change; Competition; Contaminants; Hybridization; Invasive Species; Predation; Recreation; Riparian Degradation; Runoff; Transportation; Water Withdrawal
+958-677,Lake Sturgeon - Western Hudson Bay populations,Lake Sturgeon,4,Barriers; Contaminants; Harvest; Invasive Species
+96-535,Fourhorn Sculpin - Freshwater form,Fourhorn Sculpin,1,Mining
+97-416,Giant Threespine Stickleback,Giant Threespine Stickleback,5,Forestry; Invasive Species; Predation; Recreation; Urbanization
+971-784,Northern Brook Lamprey - Saskatchewan - Nelson River populations,Northern Brook Lamprey,4,Barriers; Climate Change; Invasive Species; Transportation
+98-417,Green Sturgeon,Green Sturgeon,7,Barriers; Contaminants; Habitat Loss; Incidental Capture; Knowledge Gaps; Recreation; Residential and Commercial Development
+99-409,Greenside Darter,Greenside Darter,2,Contaminants; Sedimentation
