@@ -1,6 +1,6 @@
 # List of packages being used
 list.of.packages <- c("tidyverse","rvest","xml2","httr","DBI","RSQLite",
-                      "janitor","lubridate","stringr","glue")
+                      "janitor","lubridate","stringr","glue","jsonlite")
 
 # Identify packages in the list that are not on the computer
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
@@ -19,6 +19,7 @@ library(janitor)
 library(lubridate) 
 library(stringr) 
 library(glue)  
+library(jsonlite)  
 
 suppressPackageStartupMessages({
   library(tidyverse)      
@@ -31,40 +32,62 @@ suppressPackageStartupMessages({
   library(lubridate) 
   library(stringr) 
   library(glue) 
+  library(jsonlite)  
 })
 
 options(scipen=999) # Remove scientific notation
 
-############################################################################# 
-#APP THEME (on-screen)
-#############################################################################
-theme_app <- theme_bw() +
-  theme(axis.title   = element_text(size=18, family="sans", colour="black"),
-        axis.text.x  = element_text(size=14, family="sans", colour="black"),
-        axis.text.y  = element_text(size=14, family="sans", colour="black"),
-        strip.text   = element_text(size=15, family="sans", colour="black"),
-        plot.title   = element_text(size=20, family="sans", colour="black"),
-        panel.border = element_rect(colour="grey60", linewidth = 0.5),
-        panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(colour = "grey90",linewidth = 0.4),
-        legend.position = "bottom",
-        legend.direction = "horizontal",
-        legend.text = element_text(size = 14),
-        legend.key.width = unit(1.5, "cm"))
+#Helper functions
+# remove html tags
+remove_html <- function(x) {
+  gsub("<.*?>", "", x)
+}
 
-# Apply it app-wide
-theme_set(theme_app)
+# extract species profile
+extract_profile <- function(species_id, profile_obj){
+  
+  if(length(profile_obj) == 0){
+    
+    return(
+      tibble(
+        id = species_id,
+        description = NA_character_,
+        population = NA_character_,
+        habitat = NA_character_,
+        biology = NA_character_,
+        threats = NA_character_,
+        critical_habitat = NA_character_,
+        federal_protection = NA_character_,
+        other_protection = NA_character_
+      )
+    )
+    
+  }
+  
+  profile_json <- jsonlite::fromJSON(
+    profile_obj[[1]]
+  )
+  
+  tibble(
+    id = species_id,
+    description = profile_json$description,
+    population = profile_json$population,
+    habitat = profile_json$habitat,
+    biology = profile_json$biology,
+    threats = profile_json$threats,
+    critical_habitat = profile_json$criticalHabitat,
+    federal_protection = profile_json$federalProtection,
+    other_protection = profile_json$otherProtection
+  )
+  
+}
 
-#############################################################################
-#EXPORT THEME (smaller text)
-#############################################################################
-theme_export <- theme_bw() +
-  theme(axis.title   = element_text(size=11,   family="sans", colour="black"),
-        axis.text.x  = element_text(size=9,    family="sans", colour="black"),
-        axis.text.y  = element_text(size=9,    family="sans", colour="black"),
-        strip.text   = element_text(size=10,   family="sans", colour="black"),
-        plot.title   = element_text(size=12,   family="sans", colour="black"),
-        panel.border = element_rect(colour="black"),
-        legend.position = "bottom",
-        legend.text = element_text(size = 9),
-        legend.key.width = grid::unit(1.2, "cm"))
+# clean html
+clean_html <- function(x){
+  x <- stringr::str_remove_all(x, "<.*?>")
+  stringr::str_squish(x)
+}
+
+# get api
+api_key <- Sys.getenv("SAR_API_KEY")
+endpoint <- Sys.getenv("SAR_ENDPOINT")
