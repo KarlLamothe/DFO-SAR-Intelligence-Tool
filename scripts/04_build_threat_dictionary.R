@@ -92,7 +92,7 @@ species_threats <- purrr::map_dfr(
 colnames(species_master)
 species_threats <- species_threats %>%
   left_join(species_master %>%
-              select(id, common_name, scientific_name, sara_status), by = "id")
+              select(id, record_name, common_name, scientific_name, sara_status), by = "id")
 head(species_threats)
 
 # export
@@ -117,28 +117,37 @@ species_threats %>%
   count(threat_category, sort = TRUE)
 
 species_threats %>%
-  count(common_name, sort = TRUE)
-
+  count(record_name, sort = TRUE)
 
 # summary file
 species_threat_summary <- species_threats %>%
-  distinct(id, common_name, threat_category)
+  distinct(id, record_name, threat_category)
 species_threat_summary %>%
-  count(common_name, sort = TRUE)
+  count(record_name, sort = TRUE)
 
 species_threats %>%
   count(threat_category, matched_term, sort = TRUE)
 
+write_csv(species_threat_summary,"data_processed/species_threats_summary.csv")
+
+# look for species with unusually high threat counts
 species_threats %>%
-  distinct(id, threat_category) %>%
-  count(id,sort = TRUE)
+  filter(record_name == "Nooksack Dace") %>%
+  distinct(threat_category) %>%
+  arrange(threat_category)
 
-#write_csv(species_threat_summary,"data_processed/species_threats_summary.csv")
+# which threat categories are driving a given record
+species_threats %>%
+  distinct(record_name, threat_category) %>%
+  count(threat_category, sort = TRUE)
 
-# investigate multiple DU 
-species_master %>%
-  filter(common_name == "Bull Trout") %>%
-  select(id,common_name,scientific_name,cosewicPopulation,
-         sara_status,cosewic_status,ranges)
+species_threats %>%
+  distinct(record_name, threat_category) %>%
+  count(threat_category, sort = TRUE)
 
-colnames(species_master)
+# threat category frequency
+threat_category_frequency <- species_threats %>%
+  distinct(id, record_name, threat_category) %>%
+  count( threat_category, sort = TRUE)
+
+write_csv(threat_category_frequency,"data_processed/threat_category_frequency.csv")

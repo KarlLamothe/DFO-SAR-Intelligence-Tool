@@ -91,3 +91,17 @@ clean_html <- function(x){
 # get api
 api_key <- Sys.getenv("SAR_API_KEY")
 endpoint <- Sys.getenv("SAR_ENDPOINT")
+document_endpoint <- Sys.getenv("SAR_DOCUMENT_ENDPOINT")
+
+# parse attachments
+parse_attachment <- function(x){
+  if(length(x) == 0){
+    return(NULL)
+  }
+  tryCatch(
+    jsonlite::fromJSON(x),
+    error = function(e){
+      NULL
+    }
+  )
+}
