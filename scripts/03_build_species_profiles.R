@@ -71,8 +71,8 @@ species_full_export <- species_full %>%
 names(species_full_export)[sapply(species_full_export, is.list)]
 
 # save data
-write.csv(species_profiles_clean, "data_processed/species_profiles.csv")
-write.csv(species_full_export, "data_processed/species_full.csv")
+#write.csv(species_profiles_clean, "data_processed/species_profiles.csv")
+#write.csv(species_full_export, "data_processed/species_full.csv")
 
 # quick checks
 species_full_export %>%
