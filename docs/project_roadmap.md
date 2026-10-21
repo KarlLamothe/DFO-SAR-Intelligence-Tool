@@ -4,7 +4,7 @@
 
 Develop a structured intelligence platform for freshwater Species at Risk (SAR) records using publicly available Species at Risk Registry information.
 
----
+------------------------------------------------------------------------
 
 # Phase 1: Data Acquisition
 
@@ -22,7 +22,7 @@ Scripts:
 - 01_build_species_master.R
 - 02_clean_species_master.R
 
----
+------------------------------------------------------------------------
 
 ## Species Profiles
 
@@ -46,7 +46,13 @@ Information captured:
 - Threats
 - Protection information
 
----
+Future Enhancement: 
+
+- Extract province/jurisdiction information from species profile text. 
+- Generate province_presence and province_count fields. 
+- Validate against Registry source material before inclusion in master datasets.
+
+------------------------------------------------------------------------
 
 ## Threat Classification
 
@@ -89,7 +95,7 @@ Current threat categories include:
 - Water Withdrawal
 - Wetland Loss
 
----
+------------------------------------------------------------------------
 
 ## Document Inventory
 
@@ -113,12 +119,7 @@ Information captured:
 - Document URLs
 - Species-document relationships
 
-Future Enhancement:
-- Extract province/jurisdiction information from species profile text.
-- Generate province_presence and province_count fields.
-- Validate against Registry source material before inclusion in master datasets.
-
----
+------------------------------------------------------------------------
 
 # Phase 2: Quality Assurance
 
@@ -131,7 +132,7 @@ Potential future tasks:
 - Duplicate record assessment
 - Validation against Registry species pages
 
----
+------------------------------------------------------------------------
 
 # Phase 3: Analysis
 
@@ -144,7 +145,7 @@ Potential products:
 - Recovery document coverage analyses
 - Species information completeness assessments
 
----
+------------------------------------------------------------------------
 
 # Phase 4: Database Development
 
@@ -163,7 +164,7 @@ Proposed tables:
 - threats
 - documents
 
----
+------------------------------------------------------------------------
 
 # Phase 5: Application Development
 
@@ -177,4 +178,4 @@ Potential products:
 - Document explorer
 - Reporting tools
 
----
+------------------------------------------------------------------------
