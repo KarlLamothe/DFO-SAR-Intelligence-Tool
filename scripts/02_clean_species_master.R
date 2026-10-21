@@ -11,6 +11,11 @@ species_master <- raw_species %>%
          cosewicScientificName = remove_html(cosewicScientificName),
          common_name = coalesce(legalCommonName, cosewicCommonName),
          scientific_name = coalesce(legalScientificName, cosewicScientificName),
+         record_name = case_when(
+           !is.na(cosewicPopulation) &
+             cosewicPopulation != "" ~
+             paste(common_name, "-", cosewicPopulation),
+           TRUE ~ common_name),
          sara_status = legalStatusId,
          cosewic_status = cosewicStatusId,
          status = coalesce(legalStatusId, cosewicStatusId),
@@ -19,7 +24,7 @@ species_master <- raw_species %>%
 
 # reorder columns
 species_master <- species_master %>%
-  relocate(id, common_name, scientific_name, sara_status, cosewic_status,
+  relocate(id, common_name, scientific_name, sara_status, cosewic_status, record_name,
            schedule, taxonomyId)
 
 # look at status of species

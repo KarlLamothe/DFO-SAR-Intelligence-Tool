@@ -1,16 +1,16 @@
 source("scripts/00_setup.R")
 
-extract_profile("110-407")
-
-# test for redside dace
-redside_profile <- extract_profile("110-407")
-colnames(redside_profile)
-
-redside_profile_clean <- redside_profile %>%
-  mutate(across(c(description, population, habitat, biology, threats, other_protection),
-                clean_html))
-redside_profile_clean$threats
-
+species_master <- read.csv("data_processed/freshwater_species_master.csv")
+colnames(species_master)
+## test for redside dace
+#redside_profile <- extract_profile("110-407")
+#colnames(redside_profile)
+#
+#redside_profile_clean <- redside_profile %>%
+#  mutate(across(c(description, population, habitat, biology, threats, other_protection),
+#                clean_html))
+#redside_profile_clean$threats
+#
 # moving to all species
 species_profiles <- purrr::map2_dfr(
   freshwater_species$id,
@@ -34,8 +34,10 @@ str(species_profiles_clean)
 
 # add species names
 species_profiles_clean <- species_profiles_clean %>%
-  left_join(freshwater_species %>%
-              select(id, commonName, legalScientificName, legalStatusId), by = "id")
+  left_join(species_master %>%
+              select(id, record_name, common_name, scientific_name, 
+                     sara_status, cosewic_status), by = "id")
+colnames(species_profiles_clean)
 
 # remove fields without entries across all species
 species_profiles_clean <- species_profiles_clean %>%
@@ -43,6 +45,9 @@ species_profiles_clean <- species_profiles_clean %>%
     -critical_habitat,
     -federal_protection
   )
+
+species_profiles_clean <- species_profiles_clean %>%
+  relocate(id, record_name, common_name, scientific_name, sara_status, cosewic_status)
 
 # combine data
 species_full <- freshwater_species %>%
@@ -80,8 +85,9 @@ species_full_export %>%
 
 species_full_export %>%
   filter(!is.na(threats) ) %>%
-  select(commonName, threats) %>%
+  select(common_name, threats) %>%
   slice(2)
+colnames(species_full_export)
 
 profile_presence <- species_profiles %>%
   summarise(

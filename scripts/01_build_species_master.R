@@ -22,5 +22,17 @@ freshwater_species <- all_species %>%
   filter(taxonomyId == "Fishes (freshwater)")
 nrow(freshwater_species)
 
+# include RecordName
+freshwater_species <- freshwater_species %>%
+  mutate(
+    recordName = case_when(
+      !is.na(cosewicPopulation) &
+        cosewicPopulation != "" ~
+        paste(commonName, "-", cosewicPopulation),
+      TRUE ~ commonName
+    )
+  )
+colnames(freshwater_species)
+
 # save raw master
 write_csv(freshwater_species, "data_processed/freshwater_species_master_raw.csv")
