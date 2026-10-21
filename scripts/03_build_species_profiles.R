@@ -2,6 +2,7 @@ source("scripts/00_setup.R")
 
 species_master <- read.csv("data_processed/freshwater_species_master.csv")
 colnames(species_master)
+
 ## test for redside dace
 #redside_profile <- extract_profile("110-407")
 #colnames(redside_profile)
@@ -10,7 +11,7 @@ colnames(species_master)
 #  mutate(across(c(description, population, habitat, biology, threats, other_protection),
 #                clean_html))
 #redside_profile_clean$threats
-#
+
 # moving to all species
 species_profiles <- purrr::map2_dfr(
   freshwater_species$id,
@@ -19,12 +20,6 @@ species_profiles <- purrr::map2_dfr(
 
 # clean this up
 str(species_profiles)
-clean_html <- function(x){
-  x |>
-    stringr::str_remove_all("<.*?>") |>
-    stringr::str_replace_all("&nbsp;", " ") |>
-    stringr::str_squish()
-}
 
 species_profiles_clean <- species_profiles %>%
   mutate(across(c(description, population, habitat, biology, threats,
@@ -38,13 +33,11 @@ species_profiles_clean <- species_profiles_clean %>%
               select(id, record_name, common_name, scientific_name, 
                      sara_status, cosewic_status), by = "id")
 colnames(species_profiles_clean)
+head(species_profiles_clean)
 
 # remove fields without entries across all species
 species_profiles_clean <- species_profiles_clean %>%
-  select(
-    -critical_habitat,
-    -federal_protection
-  )
+  select(-critical_habitat, -federal_protection)
 
 species_profiles_clean <- species_profiles_clean %>%
   relocate(id, record_name, common_name, scientific_name, sara_status, cosewic_status)
@@ -61,18 +54,24 @@ list_cols
 
 # remove lists
 species_full_export <- species_full %>%
-  select(-profiles, -teams, -related) %>%
-  mutate(ranges = purrr::map_chr( ranges, ~ paste(.x, collapse = "; ")),
-         prevCosewicCommonName = purrr::map_chr(
-           prevCosewicCommonName, ~ paste(.x, collapse = "; ")),
-         prevCosewicScientificName = purrr::map_chr(
-           prevCosewicScientificName, ~ paste(.x, collapse = "; ")))
+  select(-profiles)
 
 names(species_full_export)[sapply(species_full_export, is.list)]
+head(species_full_export)
+
+# change to sentence case rather than all caps
+species_full_export <- species_full_export %>%
+  mutate(across(c(
+    cosewicStatusId, legalStatusId, legalScheduleId, statusChange),
+    ~ .x %>%
+      str_replace_all("_", " ") %>%
+      str_to_title()))
+head(species_full_export)
+head(species_profiles_clean)
 
 # save data
-#write.csv(species_profiles_clean, "data_processed/species_profiles.csv")
-#write.csv(species_full_export, "data_processed/species_full.csv")
+write.csv(species_profiles_clean, "data_processed/species_profiles.csv")
+write.csv(species_full_export, "data_processed/species_full.csv")
 
 # quick checks
 species_full_export %>%
@@ -100,5 +99,4 @@ profile_presence <- species_profiles %>%
     federal_protection = sum(!is.na(federal_protection)),
     other_protection = sum(!is.na(other_protection))
   )
-
 profile_presence

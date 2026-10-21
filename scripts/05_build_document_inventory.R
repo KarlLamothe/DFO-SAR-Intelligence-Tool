@@ -41,13 +41,6 @@ get_primary_document_type <- function(x){
   hit[1]
 }
 
-clean_html <- function(x){
-  x |>
-    stringr::str_remove_all("<.*?>") |>
-    stringr::str_replace_all("&nbsp;", " ") |>
-    stringr::str_squish()
-}
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -151,9 +144,17 @@ species_documents_export <- species_documents %>%
          cosewic_status,document_id,documentTypeId,primary_document_type,documentTitle,
          documentDescription,documentCreateDate,attachment_id,attachment_title,
          attachment_date,document_url)
+head(species_documents_export)
+
+# change to sentence case rather than all caps
+species_documents_export <- species_documents_export %>%
+  mutate(across(c(
+    documentTypeId, primary_document_type),
+    ~ .x %>%
+      str_replace_all("_", " ") %>%
+      str_to_title()))
+head(species_documents_export)
+head(species_document_summary)
 
 write_csv(species_documents_export, "data_processed/species_documents.csv")
 write_csv(species_document_summary, "data_processed/species_document_summary.csv")
-
-head(species_document_summary)
-species_document_summary$ontario_present

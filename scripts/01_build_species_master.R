@@ -10,7 +10,7 @@ get_species_page <- function(skip = 0, top = 100){
   jsonlite::fromJSON(content_text)$value
 }
 
-# scape all species
+# all species
 all_species <- purrr::map_dfr(
   seq(0, 1200, by = 100),
   get_species_page
@@ -34,5 +34,13 @@ freshwater_species <- freshwater_species %>%
   )
 colnames(freshwater_species)
 
+# only include columns that are useful
+head(freshwater_species)
+freshwater_species<-freshwater_species[c(2,3,7,11,12,14:20,22:29,31,33,35,36,40:45)]
+
+# clean up html text
+freshwater_species <- freshwater_species %>%
+  mutate(across(where(is.character), clean_html))
+
 # save raw master
-#write_csv(freshwater_species, "data_processed/freshwater_species_master_raw.csv")
+write_csv(freshwater_species, "data_processed/freshwater_species_master_raw.csv")
