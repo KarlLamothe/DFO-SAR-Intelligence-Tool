@@ -1,121 +1,177 @@
-# Freshwater SAR Intelligence Tool
+# Freshwater SAR Species Explorer
 
-## Overview
+An interactive Shiny application for exploring Canadian freshwater fish species listed under the Species at Risk Act (SARA).
 
-The Freshwater Species at Risk (SAR) Intelligence Tool is an R-based workflow that compiles, organizes, and standardizes information from the Canadian Species at Risk Public Registry for freshwater fish species.
+The application integrates species profile information, threat data, recovery planning documents, and species imagery from the Species at Risk Public Registry.
 
-The project currently integrates:
+## Features
 
-- Species inventory information
-- Species profile information
-- Threat classifications
-- Registry document inventories
+### Dashboard
 
-The resulting datasets support species-at-risk science, recovery planning, threat assessment, habitat offsetting analyses, and information synthesis.
+- Summary statistics
+- Species records
+- Recovery and planning documents
+- Threat groups
+- Document types
+- Visual summaries of SARA status and threat prevalence
 
----
+### Species Overview
 
-## Project Structure
-
-```
-.
-├── data_raw/
-├── data_processed/
-├── docs/
-├── scripts/
-├── .Renviron
-├── .gitignore
-└── README.md
-```
-
----
-
-## Workflow
-
-```
-01_build_species_master.R
-        ↓
-02_clean_species_master.R
-        ↓
-03_build_species_profiles.R
-        ↓
-04_build_threat_dictionary.R
-        ↓
-05_build_document_inventory.R
-```
-
----
-
-## Processed Data Outputs
-
-### freshwater_species_master_raw.csv
-
-Raw freshwater fish records retrieved from the Registry API.
-
-### freshwater_species_master.csv
-
-Cleaned freshwater species inventory.
-
-### species_profiles.csv
-
-Species profile information including:
-
+- Common and scientific names
+- SARA status
+- COSEWIC status
+- Designatable unit information
+- Species photographs
 - Description
-- Population
-- Habitat
-- Biology
-- Threats
-- Other protection information
+- Population information
+- Habitat information
+- Biology information
 
-### species_full.csv
+### Threats
 
-Combined species inventory and profile dataset.
+- Consolidated threat groups
+- Species-specific threat summaries
+- Threat information extracted from profile pages
 
-### species_threats.csv
+### Documents
 
-Keyword-based threat classifications.
+- Recovery Strategies
+- Action Plans
+- Management Plans
+- COSEWIC Assessments and Status Reports
+- Additional SARA Registry documents
+- Direct links to source documents
 
-### species_threat_summary.csv
+### Explore
 
-Summary of threat categories by species record.
+Filter species by:
 
-### species_documents.csv
+- Threat Group
+- SARA Status
 
-Inventory of Registry documents associated with freshwater fish records.
+Interactive results table:
 
-### species_document_summary.csv
-
-Summary of document coverage by species record.
-
----
-
-## Current Status
-
-### Completed
-
-- Species inventory extraction
-- Species profile extraction
-- Threat classification framework
-- Document inventory framework
-- Data dictionary development
-
-### Planned
-
-- Threat classification refinement
-- Analytical summaries
-- SQLite database implementation
-- Shiny dashboard development
-- Additional document extraction and synthesis
-
----
+- Click a species to automatically load it in the Species Overview
 
 ## Data Sources
 
-- Species at Risk Public Registry
-- Registry Azure Search services
-- Registry document repositories
+Data are derived from:
 
----
+- Species at Risk Public Registry
+- Species profile pages
+- Recovery and planning documents
+- Species images provided through Registry metadata
+
+## Threat Group Consolidation
+
+Several Registry threat categories are consolidated into broader groups:
+
+| Registry Categories | Consolidated Group |
+|---------------------|-------------------|
+| Urbanization, Residential and Commercial Development | Urban Development |
+| Agriculture, Agricultural and Forestry Effluents | Agriculture |
+| Barriers, Transportation and Service Corridors | Connectivity |
+| Contaminants, Sedimentation | Water Quality |
+
+## Included Taxa
+
+The current application focuses on freshwater fishes listed under Schedule 1 of SARA with statuses of:
+
+- Endangered
+- Threatened
+- Extirpated
+
+## Recent Updates
+
+### v0.5.0
+
+- Added Explore tab
+- Added threat and status filtering
+- Added click-to-navigate species selection
+- Fixed document attachment parsing
+- Restored broken document links
+- Added species photographs
+- Added photo attribution
+- Added image fallback support
+- Consolidated About and Dashboard sections
+
+## Requirements
+
+```r
+library(shiny)
+library(dplyr)
+library(DT)
+library(shinydashboard)
+library(bslib)
+library(ggplot2)
+```
+
+## Running the App
+
+Go to the app folder and set your working directory to that source file location. Then, in your console, run:
+
+```r
+shiny::runApp()
+```
+
+## Project Structure
+
+```text
+project/
+│
+├── app.R
+├── README.md
+│
+├── data/
+│   ├── species_master.rds
+│   ├── species_profiles.rds
+│   ├── species_threats.rds
+│   └── species_documents.rds
+│
+├── data_processed/
+│   ├── freshwater_species_master.csv
+│   ├── species_documents.csv
+│   └── species_document_summary.csv
+│
+├── scripts/
+│   ├── build_species_master.R
+│   ├── build_species_profiles.R
+│   ├── build_species_threats.R
+│   └── build_species_documents.R
+│
+└── www/
+    └── images/
+        ├── atlantic_whitefish.jpg
+        ├── american_eel.jpg
+        ├── redside_dace.jpg
+        ├── ...
+        └── no_image_available.jpg
+```
+
+## Future Enhancements
+
+Potential future enhancements include:
+
+- Expanding the species image library to provide photographs for all listed taxa
+- Supporting additional aquatic taxa beyond freshwater fishes
+- Adding export functionality for filtered Explore results
+- Developing additional dashboard visualizations and summary metrics
+- Enhancing search and filtering capabilities
+- Providing direct links to Species at Risk Public Registry species profile pages
+- Incorporating species distribution or range maps where available
+- Adding species comparison tools based on status, threats, and recovery planning information
+
+## Acknowledgements
+
+This application was developed using information obtained from the Species at Risk Public Registry and associated recovery planning resources. It is intended to improve access to species profile, threat, and recovery planning information for freshwater fish species listed under the Species at Risk Act (SARA).
+
+## License
+
+This project is provided for research, analysis, and information-sharing purposes. Users should consult the Species at Risk Public Registry for official species status information and recovery planning documents.
+
+## Contact
+
+For questions, suggestions, or data updates, please contact the project maintainer.
 
 ## Author
 
