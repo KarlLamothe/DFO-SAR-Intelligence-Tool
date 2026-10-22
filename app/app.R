@@ -4,6 +4,7 @@ library(DT)
 library(shinydashboard)
 library(bslib)
 library(ggplot2)
+library(stringr)
 
 # load data
 species_master <- readRDS("data/species_master.rds")
@@ -30,17 +31,7 @@ species_master_app <- species_master_app %>%
                                gsub(" ", "_", .),".jpg"))
 
 species_threats_app <- species_threats %>%
-  filter(sara_status %in% c("Threatened","Endangered", "Extirpated")) %>%
-  mutate(threat_group = case_when(
-    threat_category %in% c(
-        "Urbanization", "Residential and Commercial Development") ~ "Urban Development",
-    threat_category %in% c(
-      "Agriculture", "Agricultural and Forestry Effluents") ~ "Agriculture",
-    threat_category %in% c(
-        "Barriers", "Transportation and Service Corridors") ~ "Connectivity",
-    threat_category %in% c(
-      "Contaminants", "Sedimentation") ~ "Water Quality",
-    TRUE ~ threat_category))
+  filter(sara_status %in% c("Threatened", "Endangered", "Extirpated"))
 
 # user interface
 ui <- fluidPage(
@@ -89,38 +80,32 @@ ui <- fluidPage(
                      br(),
                      h3("About This Application"),
                      p("This application provides access to species profiles, threat information, and recovery planning documents for Schedule 1 freshwater fishes listed under the Species at Risk Act (SARA)."),
-                     h4("Data Sources"),
-                     tags$ul(
-                       tags$li("Species at Risk Public Registry"),
-                       tags$li("Species profile pages"),
-                       tags$li("Recovery and planning documents")),
-                     h4("Coverage"),
-                     tags$ul(
-                       tags$li(
-                         paste(
-                           n_distinct(species_master_app$record_name),
-                           "species records")),
-                       tags$li(
-                         paste(
-                           n_distinct(species_documents$document_id),
-                           "documents")),
-                       tags$li(
-                         paste(
-                           n_distinct(species_threats_app$threat_group),
-                           "threat groups"))),
+                     fluidRow(column(6,h4("Data Sources"),
+                         tags$ul(
+                           tags$li("Species at Risk Public Registry"),
+                           tags$li("Species profile pages"),
+                           tags$li("Recovery and planning documents"))),
+                       column(6,h4("Coverage"),
+                         tags$ul(
+                           tags$li(
+                             paste(n_distinct(species_master_app$record_name),
+                               "species records")),
+                           tags$li(paste(n_distinct(species_documents$document_id),
+                               "documents")),
+                           tags$li(paste(n_distinct(species_threats_app$threat_category),
+                               "threat groups"))))),
                      hr(),
-                     fluidRow(
-                       column(3, valueBoxOutput("species_box")),
-                       column(3, valueBoxOutput("document_box")),
-                       column(3, valueBoxOutput("threat_box")),
-                       column(3, valueBoxOutput("doctype_box"))),
-                     hr(),
-                     fluidRow(column(6, h3("Fish Taxa by SARA Status",
-                                           style = "text-align:center;"),
-                                     plotOutput("status_plot", height = "300px")),
-                              column(6, h3("Most Common Threat Categories",
-                                           style = "text-align:center;"),
-                                     plotOutput("threat_plot", height = "300px")))),
+                     fluidRow(column(6,h3(
+                       "Designatable Units with the Most Threat Categories",
+                       style = "text-align:center;"),
+                       DTOutput("top_threat_species")),
+                       column(6,h3("Most Common Threat Categories",
+                                   style = "text-align:center;"),
+                              DTOutput("common_threats"))),
+                  tags$p(
+                    style = "font-style: italic; color: #666666;",
+                    "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
+                  )),
         tabPanel(
           "Overview",
           br(),
@@ -140,6 +125,8 @@ ui <- fluidPage(
           br(),
           h3(textOutput("n_threats")),
           DTOutput("threats"),
+          tags$p(style = "font-style: italic; color: #666666;",
+                 "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments."),
           br(),
           h3("Threat Information"),
           textOutput("profile_threats")),
@@ -168,7 +155,8 @@ ui <- fluidPage(
 server <- function(input, output, session){
   selected_species <- reactive({
     species_master_app %>%
-      filter(record_name == input$record)
+      filter(record_name == input$record)%>%
+      slice(1)
   })
   
   selected_record_from_explore <- reactiveVal(NULL)
@@ -183,15 +171,33 @@ server <- function(input, output, session){
   
   explore_results <- reactive({
     dat <- species_threats_app %>%
-      filter(threat_group == input$explore_threat)
+      filter(threat_category == input$explore_threat)
     if(input$explore_status != "All"){
       dat <- dat %>%
         filter(sara_status == input$explore_status)}
     dat %>%
       distinct(common_name, record_name, sara_status)
-    
   })
   
+  selected_profile <- reactive({
+    prof <- species_profiles %>%
+      filter(record_name == input$record)
+    has_text <- nrow(prof) > 0 &&
+      any(
+        !is.na(prof$description) |
+          !is.na(prof$population) |
+          !is.na(prof$habitat) |
+          !is.na(prof$biology))
+    if(!has_text){
+      prof <- species_profiles %>%
+        filter(common_name == input$species) %>%
+        filter(!is.na(description)) %>%
+        slice(1)
+    }
+    prof
+  })
+
+
   observeEvent(input$explore_species_rows_selected, {
     row <- input$explore_species_rows_selected
     if(length(row) == 0) return()
@@ -204,7 +210,7 @@ server <- function(input, output, session){
   observe({
     updateSelectInput(session, "explore_threat",
                       choices = sort(
-                        unique(species_threats_app$threat_group)))
+                        unique(species_threats_app$threat_category)))
   })
   
   observeEvent(input$species, {
@@ -228,6 +234,8 @@ server <- function(input, output, session){
   ######################################################
   output$species_header <- renderUI({
     sp <- selected_species()
+    species_url <- paste0(
+      "https://species-registry.canada.ca/index-en.html#/species/", sp$id[1])
     img_file <- sp$local_image_file[1]
     if(is.na(img_file) || !file.exists(file.path(
       "www","images",img_file))){
@@ -260,91 +268,45 @@ server <- function(input, output, session){
         ),
         column(9, h2(sp$common_name),
                tags$h4(tags$em(sp$scientific_name)),
+               tags$p(tags$a("View Species Profile on the SAR Registry",
+                   href = species_url, target = "_blank")),
                tags$p(strong("Designatable Unit: "),sp$record_name),
                tags$p(strong("SARA Status: "),sp$sara_status),
                tags$p(strong("COSEWIC Status: "),sp$cosewic_status))),
       tags$hr())})
   
-  output$species_box <- renderValueBox({
-    valueBox(
-      value = n_distinct(species_master_app$record_name),
-      subtitle = "Species Records", color = "blue")
-  })
-  
-  output$document_box <- renderValueBox({
-    valueBox(value = n_distinct(species_documents$document_id),
-             subtitle = "Documents", color = "blue")
-  })
-  
-  output$threat_box <- renderValueBox({
-    valueBox(value = n_distinct(species_threats_app$threat_group),
-             subtitle = "Threat Groups",color = "blue")
-  })
-  
-  output$doctype_box <- renderValueBox({
-    valueBox(value = n_distinct(species_documents$primary_document_type),
-      subtitle = "Document Types", color = "blue")
-  })
-  
-  output$status_plot <- renderPlot({
-    species_master_app %>%
-      count(sara_status) %>%
-      ggplot(aes(x = reorder(sara_status, n), y = n)) +
-      geom_col(fill="#2C7FB8") + coord_flip() +
-      guides(fill = "none") +
-      labs(y="Number of Taxa")+
-      dashboard_theme + 
-      theme(axis.title.y = element_blank())
-  })
-  
-  output$threat_plot <- renderPlot({
-    species_threats_app %>%
-      distinct(record_name, threat_group) %>%
-      count(threat_group, sort = TRUE) %>%
-      slice_head(n = 5) %>%
-      ggplot(aes(x = reorder(threat_group, n), y = n)) +
-      geom_col(fill = "#2C7FB8") +
-      coord_flip() +
-      labs(x = NULL, y = "Number of Taxa", title = NULL) +
-      dashboard_theme +
-      theme(axis.title.x = element_blank())
-  })
-  
 # description
 output$description <- renderText({
-  species_profiles %>%
-    filter(record_name == input$record) %>%
+  selected_profile() %>%
     pull(description)
 })
 
 output$habitat <- renderText({
-  species_profiles %>%
-    filter(record_name == input$record) %>%
+  selected_profile() %>%
     pull(habitat)
 })
 
 output$n_threats <- renderText({
   n <- species_threats_app %>%
     filter(record_name == input$record) %>%
-    distinct(threat_group) %>%
+    distinct(threat_category) %>%
     nrow()
   paste(n, "Threat Categories")
   
 })
 
 output$profile_threats <- renderText({
-  species_profiles %>%
-    filter(record_name == input$record) %>%
+  selected_profile() %>%
     pull(threats)
 })
 
 output$threats <- renderDT({
-  species_threats_app %>%
+  dat <- species_threats_app %>%
     filter(record_name == input$record) %>%
-    select(threat_group) %>%
-    distinct() %>%
-    rename(`Threat Group` = threat_group) %>%
-    datatable(options = list( pageLength = 10, dom = "t"), rownames = FALSE)
+    select(threat_category) %>%
+    distinct()
+  names(dat) <- ""
+  datatable(dat, rownames = FALSE, options = list(pageLength = 10, dom = "t"))
 })
 
 output$documents <- renderDT({
@@ -370,14 +332,12 @@ output$n_documents <- renderText({
 })
 
 output$biology <- renderText({
-  species_profiles %>%
-    filter(record_name == input$record) %>%
+  selected_profile() %>%
     pull(biology)
 })
 
 output$population <- renderText({
-  species_profiles %>%
-    filter(record_name == input$record) %>%
+  selected_profile() %>%
     pull(population)
 })
 
@@ -393,6 +353,29 @@ output$explore_species <- renderDT({
 output$explore_species_count <- renderText({
   paste(nrow(explore_results()), "Species Records")})
 
+output$top_threat_species <- renderDT({
+  species_threats_app %>%
+    distinct(record_name, threat_category) %>%
+    count(record_name, sort = TRUE, name = "Threat Categories") %>%
+    slice_head(n = 10) %>%
+    rename(`Designatable Units` = record_name) %>%
+    datatable( rownames = FALSE,options = list(pageLength = 10,dom = "t",
+                                               ordering = FALSE))
+})
+
+output$common_threats <- renderDT({
+  species_threats_app %>%
+    distinct(record_name, threat_category) %>%
+    count(threat_category, sort = TRUE, name = "Designatable Units") %>%
+    rename(`Threat Category` = threat_category) %>%
+    datatable( rownames = FALSE, options = list(pageLength = 10,dom = "t",
+                                                ordering = FALSE,
+                                                columnDefs = list(
+                                                  list(width = "70%", targets = 0),
+                                                  list(width = "30%", targets = 1)
+                                                )
+    ))
+})
 
 
 }
