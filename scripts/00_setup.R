@@ -115,4 +115,3 @@ parse_attachment <- function(x){
   dates <- purrr::map_chr(parsed, ~ .x$attachmentPublicationDate)
   parsed[[which.max(as.Date(dates))]]
 }
-parse_attachment(attachments)

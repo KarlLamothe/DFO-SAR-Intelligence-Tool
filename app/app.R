@@ -22,14 +22,12 @@ dashboard_theme <- theme_bw() +
 
 # app specific data
 species_master_app <- species_master %>%
-  filter(
-    sara_status %in% c(
-      #"Special Concern",
-      "Threatened",
-      "Endangered",
-      "Extirpated"
-    )
-  )
+  filter(sara_status %in% c("Threatened", "Endangered","Extirpated"))
+
+species_master_app <- species_master_app %>%
+  mutate(image_file = paste0(common_name %>%
+                               tolower() %>%
+                               gsub(" ", "_", .),".jpg"))
 
 species_threats_app <- species_threats %>%
   filter(sara_status %in% c("Threatened","Endangered", "Extirpated")) %>%
@@ -85,41 +83,44 @@ ui <- fluidPage(
         "Population / Designatable Unit",
         choices = NULL)),
     mainPanel(
-      tabsetPanel( id = "main_tabs",
-                   
-        tabPanel(
-          "About",
-          br(),
-          h3("Freshwater SAR Species Explorer"),
-          p("This application provides access to profile, threat, and document information
-    for Schedule 1 freshwater fishes listed under the Species at Risk Act."),
-          h4("Data Sources"),
-          tags$ul(
-            tags$li("Species at Risk Public Registry"),
-            tags$li("Species profiles"),
-            tags$li("Recovery and planning documents")),
-          h4("Statistics"),
-          tags$ul(tags$li(paste(
-            n_distinct(species_master_app$record_name),"species records")),
-            tags$li(paste(n_distinct(species_documents$document_id),"documents")),
-            tags$li(paste(n_distinct(species_threats_app$threat_group), "threat groups")))),
-        
-        tabPanel(
-          "Dashboard",
-          br(),
-          fluidRow(
-            column(3, valueBoxOutput("species_box")),
-            column(3, valueBoxOutput("document_box")),
-            column(3, valueBoxOutput("threat_box")),
-            column(3, valueBoxOutput("doctype_box"))),
-          hr(),
-          fluidRow(column(6, h3("Fish Taxa by SARA Status",
-                                style = "text-align:center;"),
-                          plotOutput("status_plot",height = "300px")),
-                   column(6, h3("Most Common Threat Categories",
-                                style = "text-align:center;"),
-                          plotOutput("threat_plot", height = "300px")))),
-        
+      tabsetPanel(id = "main_tabs",
+                  tabPanel(
+                     "Dashboard",
+                     br(),
+                     h3("About This Application"),
+                     p("This application provides access to species profiles, threat information, and recovery planning documents for Schedule 1 freshwater fishes listed under the Species at Risk Act (SARA)."),
+                     h4("Data Sources"),
+                     tags$ul(
+                       tags$li("Species at Risk Public Registry"),
+                       tags$li("Species profile pages"),
+                       tags$li("Recovery and planning documents")),
+                     h4("Coverage"),
+                     tags$ul(
+                       tags$li(
+                         paste(
+                           n_distinct(species_master_app$record_name),
+                           "species records")),
+                       tags$li(
+                         paste(
+                           n_distinct(species_documents$document_id),
+                           "documents")),
+                       tags$li(
+                         paste(
+                           n_distinct(species_threats_app$threat_group),
+                           "threat groups"))),
+                     hr(),
+                     fluidRow(
+                       column(3, valueBoxOutput("species_box")),
+                       column(3, valueBoxOutput("document_box")),
+                       column(3, valueBoxOutput("threat_box")),
+                       column(3, valueBoxOutput("doctype_box"))),
+                     hr(),
+                     fluidRow(column(6, h3("Fish Taxa by SARA Status",
+                                           style = "text-align:center;"),
+                                     plotOutput("status_plot", height = "300px")),
+                              column(6, h3("Most Common Threat Categories",
+                                           style = "text-align:center;"),
+                                     plotOutput("threat_plot", height = "300px")))),
         tabPanel(
           "Overview",
           br(),
@@ -227,14 +228,42 @@ server <- function(input, output, session){
   ######################################################
   output$species_header <- renderUI({
     sp <- selected_species()
+    img_file <- sp$local_image_file[1]
+    if(is.na(img_file) || !file.exists(file.path(
+      "www","images",img_file))){
+      img_file <- "no_image_available.jpg"
+    }
     tagList(
-      h2(sp$common_name),
-      tags$h4(tags$em(sp$scientific_name)),
-      tags$p( strong("Designatable Unit: "), sp$record_name),
-      tags$p(strong("SARA Status: "), sp$sara_status),
-      tags$p(strong("COSEWIC Status: "), sp$cosewic_status),
-      tags$hr())
-  })
+      fluidRow(
+        column(3, tags$img(
+          src = paste0("images/", img_file),
+            style = "
+            width:100%;
+            max-height:200px;
+            object-fit:contain;
+            background-color:white;
+            border-radius:8px;
+            border:1px solid #d9d9d9;
+          "
+          ),
+          if (
+            !is.na(sp$photoCopyright[1]) &&
+            sp$photoCopyright[1] != ""
+          ) {
+            tags$p(style = 
+            "font-size:11px;
+             color:grey; 
+            margin-top:5px;",
+                   sp$photoCopyright[1])
+          }
+          
+        ),
+        column(9, h2(sp$common_name),
+               tags$h4(tags$em(sp$scientific_name)),
+               tags$p(strong("Designatable Unit: "),sp$record_name),
+               tags$p(strong("SARA Status: "),sp$sara_status),
+               tags$p(strong("COSEWIC Status: "),sp$cosewic_status))),
+      tags$hr())})
   
   output$species_box <- renderValueBox({
     valueBox(

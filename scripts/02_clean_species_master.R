@@ -44,5 +44,17 @@ species_master %>%
 species_master %>%
   count(sara_status, sort = TRUE)
 
+species_master <- species_master %>%
+  mutate(
+    local_image_file = paste0(
+      gsub(" ", "_", tolower(common_name)),
+      ".jpg"
+    ),
+    image_url = paste0(
+      "https://ecprccsarstacct.z9.web.core.windows.net/files/photo/",
+      imageFileName
+    )
+  )
+
 # save
-#write_csv(species_master, "data_processed/freshwater_species_master.csv")
+write_csv(species_master, "data_processed/freshwater_species_master.csv")
