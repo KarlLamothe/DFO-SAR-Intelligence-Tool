@@ -105,10 +105,14 @@ parse_attachment <- function(x){
   if(length(x) == 0){
     return(NULL)
   }
-  tryCatch(
-    jsonlite::fromJSON(x),
-    error = function(e){
-      NULL
-    }
-  )
+  parsed <- purrr::map(x, ~ tryCatch(
+      jsonlite::fromJSON(.x),
+      error = function(e) NULL))
+  parsed <- parsed[!purrr::map_lgl(parsed, is.null)]
+  if(length(parsed) == 0){
+    return(NULL)
+  }
+  dates <- purrr::map_chr(parsed, ~ .x$attachmentPublicationDate)
+  parsed[[which.max(as.Date(dates))]]
 }
+parse_attachment(attachments)

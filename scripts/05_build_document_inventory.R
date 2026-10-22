@@ -53,8 +53,7 @@ documents_raw <- purrr::map_dfr(
 attachment_info <- purrr::map_dfr(
   seq_len(nrow(documents_raw)),
   function(i){
-    attachment <- parse_attachment(
-      documents_raw$attachments[[i]])
+    attachment <- parse_attachment(documents_raw$attachments[[i]])
     if(is.null(attachment)){
       return(
         tibble(
