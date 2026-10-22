@@ -4,32 +4,6 @@ This document describes the datasets generated through the Freshwater Species at
 
 ---
 
-# Dataset Relationships
-
-```text
-freshwater_species_master_raw
-           ↓
-freshwater_species_master
-           ↓
-species_profiles
-           ↓
-species_full
-
-species_profiles
-           ↓
-species_threats
-           ↓
-species_threat_summary
-
-freshwater_species_master
-           ↓
-species_documents
-           ↓
-species_document_summary
-```
-
----
-
 # Primary Keys
 
 | Dataset | Primary Key |
@@ -63,22 +37,6 @@ Raw freshwater fish dataset downloaded directly from the Registry API.
 
 Contains all fields returned by the Species at Risk Registry species search endpoint for freshwater fish records.
 
-## Key Fields
-
-| Field | Description |
-|---------|------------|
-| id | Registry species identifier |
-| commonName | Registry common name |
-| legalScientificName | Registry scientific name |
-| legalStatusId | SARA legal status |
-| cosewicStatusId | COSEWIC assessment status |
-| profiles | Embedded profile JSON |
-| ranges | Geographic range information |
-| teams | Registry team information |
-| related | Related registry records |
-
----
-
 # freshwater_species_master.csv
 
 Cleaned and standardized species dataset.
@@ -87,20 +45,6 @@ Cleaned and standardized species dataset.
 
 Primary species table used throughout the project. One row represents one Registry species record, population, or designatable unit.
 
-## Fields
-
-| Field | Description |
-|---------|------------|
-| id | Registry species identifier |
-| record_name | Unique species record name (species plus population/designatable unit where applicable) |
-| common_name | Common species name |
-| scientific_name | Scientific name |
-| sara_status | SARA Schedule 1 status |
-| cosewic_status | Current COSEWIC status |
-| species_url | URL for the Registry species page |
-
----
-
 # species_profiles.csv
 
 Species profile information extracted from profile records.
@@ -108,23 +52,6 @@ Species profile information extracted from profile records.
 ## Description
 
 Contains biological and ecological information extracted from species profiles available through the Registry API.
-
-## Fields
-
-| Field | Description |
-|---------|------------|
-| id | Registry species identifier |
-| record_name | Unique species record name |
-| common_name | Common species name |
-| scientific_name | Scientific name |
-| sara_status | SARA Schedule 1 status |
-| cosewic_status | Current COSEWIC status |
-| description | General species description |
-| population | Population information |
-| habitat | Habitat description |
-| biology | Biological and life-history information |
-| threats | Threat description as presented in the Registry |
-| other_protection | Other protection information identified in the Registry |
 
 ---
 
@@ -136,44 +63,11 @@ Combined species and profile dataset.
 
 Joins the cleaned species master table with profile information.
 
-## Fields
-
-| Field | Description |
-|---------|------------|
-| id | Registry species identifier |
-| record_name | Unique species record name |
-| common_name | Common species name |
-| scientific_name | Scientific name |
-| sara_status | SARA Schedule 1 status |
-| cosewic_status | Current COSEWIC status |
-| description | Species description |
-| population | Population information |
-| habitat | Habitat description |
-| biology | Biological information |
-| threats | Threat information |
-| other_protection | Other protection information |
-
 ---
 
 # species_threats.csv
 
 Threat classification dataset.
-
-## Description
-
-Threat statements extracted from species profiles and categorized using a rule-based threat dictionary.
-
-## Fields
-
-| Field | Description |
-|---------|------------|
-| id | Registry species identifier |
-| record_name | Unique species record name |
-| common_name | Common species name |
-| scientific_name | Scientific name |
-| sara_status | SARA Schedule 1 status |
-| threat_category | Standardized threat category |
-| matched_term | Dictionary term that triggered classification |
 
 ## Example Threat Categories
 
@@ -213,17 +107,6 @@ Threat summary dataset.
 
 Summarizes standardized threat categories for each species record.
 
-## Fields
-
-| Field | Description |
-|---------|------------|
-| id | Registry species identifier |
-| record_name | Unique species record name |
-| common_name | Common species name |
-| n_threat_categories | Number of unique threat categories identified |
-
----
-
 # species_documents.csv
 
 Document inventory dataset.
@@ -232,25 +115,7 @@ Document inventory dataset.
 
 Inventory of Registry documents associated with freshwater fish records.
 
-## Fields
-
-| Field | Description |
-|---------|------------|
-| species_id | Registry species identifier |
-| record_name | Unique species record name |
-| common_name | Common species name |
-| scientific_name | Scientific name |
-| sara_status | SARA Schedule 1 status |
-| cosewic_status | Current COSEWIC status |
-| document_id | Registry document identifier |
-| primary_document_type | Simplified document classification |
-| documentTitle | Registry document title |
-| documentDescription | Registry document description |
-| documentCreateDate | Document creation date |
-| attachment_id | Registry attachment identifier |
-| attachment_title | Attachment title |
-| attachment_date | Attachment publication date |
-| document_url | Direct URL to associated document |
+Where multiple document attachments exist (e.g., proposed, final, or amended versions of a document), the most recent attachment is selected and used to generate the document URL.
 
 ## Example Document Types
 
@@ -274,19 +139,11 @@ Document summary dataset.
 
 Summarizes Registry document coverage for each species record.
 
-## Fields
+# Application Assets
 
-| Field | Description |
-|---------|------------|
-| species_id | Registry species identifier |
-| record_name | Unique species record name |
-| common_name | Common species name |
-| scientific_name | Scientific name |
-| sara_status | SARA Schedule 1 status |
-| cosewic_status | Current COSEWIC status |
-| n_documents | Number of associated Registry documents |
+## Species Images
 
----
+Species photographs are obtained from Registry image metadata and downloaded for local use within the Shiny application.
 
 # Notes
 
@@ -295,3 +152,5 @@ Summarizes Registry document coverage for each species record.
 - Threat classifications are generated using a rule-based keyword dictionary and should be considered screening-level classifications.
 - Document inventories are restricted to species records identified within the freshwater fish dataset.
 - Document URLs are derived from attachment metadata and Registry file paths.
+- Species images are obtained from Registry image metadata and downloaded locally for use within the Shiny application.
+- Where multiple document attachments exist for a Registry document, the most recent attachment is used to generate document URLs.

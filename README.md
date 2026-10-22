@@ -81,20 +81,6 @@ The current application focuses on freshwater fishes listed under Schedule 1 of 
 - Threatened
 - Extirpated
 
-## Recent Updates
-
-### v0.5.0
-
-- Added Explore tab
-- Added threat and status filtering
-- Added click-to-navigate species selection
-- Fixed document attachment parsing
-- Restored broken document links
-- Added species photographs
-- Added photo attribution
-- Added image fallback support
-- Consolidated About and Dashboard sections
-
 ## Requirements
 
 ```r
@@ -119,33 +105,49 @@ shiny::runApp()
 ```text
 project/
 │
-├── app.R
-├── README.md
-│
-├── data/
-│   ├── species_master.rds
-│   ├── species_profiles.rds
-│   ├── species_threats.rds
-│   └── species_documents.rds
+├── app/
+│   ├── app.R
+|   |
+|   ├── data/
+│   |   ├── species_master.rds
+│   |   ├── species_profiles.rds
+│   |   ├── species_threats.rds
+│   |   └── species_documents.rds
+|   |
+│   └── www/
+|       └── images/
+|           ├── atlantic_whitefish.jpg
+|           ├── american_eel.jpg
+|           ├── redside_dace.jpg
+|           ├── ...
+|           └── no_image_available.jpg
 │
 ├── data_processed/
 │   ├── freshwater_species_master.csv
+│   ├── freshwater_species_master_raw.csv
+│   ├── species_document_summary.csv
 │   ├── species_documents.csv
-│   └── species_document_summary.csv
+│   ├── species_full.csv
+│   ├── species_profiles.csv
+│   ├── species_threats.csv
+│   ├── species_threats_summary.csv
+│   └── threat_category_frequency.csv
 │
-├── scripts/
-│   ├── build_species_master.R
-│   ├── build_species_profiles.R
-│   ├── build_species_threats.R
-│   └── build_species_documents.R
-│
-└── www/
-    └── images/
-        ├── atlantic_whitefish.jpg
-        ├── american_eel.jpg
-        ├── redside_dace.jpg
-        ├── ...
-        └── no_image_available.jpg
+├── docs/
+│   ├── data_dictionary.md
+│   └── project_roadmap.md
+|
+└── scripts/
+    ├── 00_setup.R
+    ├── 01_build_species_master.R
+    ├── 02_clean_species_master.R
+    ├── 03_build_species_profiles.R
+    ├── 04_build_threat_dictionary.R
+    ├── 05_build_document_inventory.R
+    ├── 06_exploratory_analysis.R
+    ├── 07_prepare_shiny_data.R
+    └── 08_download_images.R
+
 ```
 
 ## Future Enhancements
@@ -171,9 +173,7 @@ This project is provided for research, analysis, and information-sharing purpose
 
 ## Contact
 
-For questions, suggestions, or data updates, please contact the project maintainer.
-
-## Author
+For questions, suggestions, or data updates, please contact:
 
 Karl Lamothe; karl.lamothe@dfo-mpo.gc.ca
 Fisheries and Oceans Canada
