@@ -86,6 +86,7 @@ ui <- fluidPage(
         choices = NULL)),
     mainPanel(
       tabsetPanel( id = "main_tabs",
+                   
         tabPanel(
           "About",
           br(),
@@ -102,6 +103,7 @@ ui <- fluidPage(
             n_distinct(species_master_app$record_name),"species records")),
             tags$li(paste(n_distinct(species_documents$document_id),"documents")),
             tags$li(paste(n_distinct(species_threats_app$threat_group), "threat groups")))),
+        
         tabPanel(
           "Dashboard",
           br(),
@@ -117,6 +119,7 @@ ui <- fluidPage(
                    column(6, h3("Most Common Threat Categories",
                                 style = "text-align:center;"),
                           plotOutput("threat_plot", height = "300px")))),
+        
         tabPanel(
           "Overview",
           br(),
@@ -130,6 +133,7 @@ ui <- fluidPage(
           h3("Biology"),
           textOutput("biology")
         ),
+        
         tabPanel(
           "Threats",
           br(),
@@ -138,13 +142,18 @@ ui <- fluidPage(
           br(),
           h3("Threat Information"),
           textOutput("profile_threats")),
+        
         tabPanel(
           "Documents",
           br(),
           h3(textOutput("n_documents")),
           DTOutput("documents")),
+        
         tabPanel("Explore",
           br(),
+          selectInput("explore_status","SARA Status",
+                      choices = c("All","Endangered","Threatened","Extirpated"),
+            selected = "All"),
           selectInput("explore_threat", "Threat Group",choices = NULL),
           br(),
           h3(textOutput("explore_species_count")),
@@ -163,20 +172,23 @@ server <- function(input, output, session){
   
   selected_record_from_explore <- reactiveVal(NULL)
   
-  observe({
-    species_choices <- species_master_app
+  observe({species_choices <- species_master_app
     if(input$status != "All"){
       species_choices <- species_choices %>%
-        filter(sara_status == input$status)
-    }
+        filter(sara_status == input$status)}
     updateSelectInput(
       session,"species", choices = sort(unique(species_choices$common_name)))
   })
   
   explore_results <- reactive({
-    species_threats_app %>%
-      filter(threat_group == input$explore_threat) %>%
+    dat <- species_threats_app %>%
+      filter(threat_group == input$explore_threat)
+    if(input$explore_status != "All"){
+      dat <- dat %>%
+        filter(sara_status == input$explore_status)}
+    dat %>%
       distinct(common_name, record_name, sara_status)
+    
   })
   
   observeEvent(input$explore_species_rows_selected, {
@@ -209,8 +221,10 @@ server <- function(input, output, session){
                         selected = records[1])
     }
   })
-  
-# output
+
+  ######################################################
+  # outputs
+  ######################################################
   output$species_header <- renderUI({
     sp <- selected_species()
     tagList(
@@ -339,38 +353,17 @@ output$population <- renderText({
 })
 
 output$explore_species <- renderDT({
-  
-  dat <- species_threats_app %>%
-    filter(threat_group == input$explore_threat) %>%
-    distinct(record_name, common_name, sara_status) %>%
-    select(common_name, record_name, sara_status) %>%
-    rename(
-      `Common Name` = common_name,
-      `Designatable Unit` = record_name,
-      `SARA Status` = sara_status
-    )
-  
-  datatable(
-    dat,
-    rownames = FALSE,
-    selection = list(
-      mode = "single",
-      target = "row"
-    ),
-    options = list(
-      pageLength = 10
-    )
-  )
-  
-}, server = FALSE)
+  dat <- explore_results() %>%
+    rename(`Common Name` = common_name,
+           `Designatable Unit` = record_name,
+           `SARA Status` = sara_status)
+  datatable(dat, rownames = FALSE, 
+            selection = list(mode = "single",target = "row"),
+            options = list(pageLength = 10))}, server = FALSE)
 
 output$explore_species_count <- renderText({
-  n <- species_threats_app %>%
-    filter(threat_group == input$explore_threat) %>%
-    distinct(record_name) %>%
-    nrow()
-  paste(n,"Species Records")
-})
+  paste(nrow(explore_results()), "Species Records")})
+
 
 
 }
