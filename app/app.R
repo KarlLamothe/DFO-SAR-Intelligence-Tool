@@ -102,7 +102,10 @@ ui <- fluidPage(
                      "Dashboard",
                      br(),
                      h3("About This Application"),
-                     p("This application provides access to species profiles, threat information, and recovery planning documents for Schedule 1 freshwater fishes listed under the Species at Risk Act (SARA)."),
+                     p("The Freshwater SAR Species Explorer provides access to species profiles, threat information, species documents, and recovery planning information for Schedule 1 freshwater fishes listed under the Species at Risk Act (SARA). This tool was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize"),
+                     h4("Important Notes"),
+                     tags$ul(tags$li("Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information and should not be interpreted as formal threat assessments."),
+                             tags$li("Recovery planning metrics are based on Recovery Strategies, Action Plans, and Progress Reports identified within Registry planning documents.")),
                      fluidRow(column(6,h4("Data Sources"),
                          tags$ul(
                            tags$li("Species at Risk Public Registry"),
@@ -185,6 +188,22 @@ ui <- fluidPage(
           DTOutput("explore_species"))
       )
     )
+  ),
+  hr(),
+  tags$div(
+    style = "
+    font-size:12px;
+    color:#6c757d;
+    margin-top:20px;
+    margin-bottom:20px;
+  ",
+    "Freshwater SAR Species Explorer v1.0",
+    tags$br(),
+    "Data sources: Species at Risk Public Registry, species profile pages, recovery planning documents, and associated public information.",
+    tags$br(),
+    paste("Application updated:", format(Sys.Date(), "%Y-%m-%d")),
+    tags$br(),
+    "Contact: Karl Lamothe, Fisheries and Oceans Canada"
   )
 )
 
