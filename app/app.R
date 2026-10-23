@@ -3,8 +3,6 @@ library(shiny)
 library(DT)
 library(shinydashboard)
 library(bslib)
-library(ggplot2)
-library(stringr)
 
 # load data
 species_master <- readRDS("data/species_master.rds")
@@ -217,14 +215,6 @@ server <- function(input, output, session){
   
   selected_record_from_explore <- reactiveVal(NULL)
   
-  observe({species_choices <- species_master_app
-    if(input$status != "All"){
-      species_choices <- species_choices %>%
-        filter(sara_status == input$status)}
-    updateSelectInput(
-      session,"species", choices = sort(unique(species_choices$common_name)))
-  })
-  
   explore_results <- reactive({
     dat <- species_threats_app %>%
       filter(threat_category == input$explore_threat)
@@ -253,7 +243,17 @@ server <- function(input, output, session){
     prof
   })
 
-
+  ######################################################
+  # OBSERVES
+  ######################################################
+  observe({species_choices <- species_master_app
+  if(input$status != "All"){
+    species_choices <- species_choices %>%
+      filter(sara_status == input$status)}
+  updateSelectInput(
+    session,"species", choices = sort(unique(species_choices$common_name)))
+  })
+  
   observeEvent(input$explore_species_rows_selected, {
     row <- input$explore_species_rows_selected
     if(length(row) == 0) return()
@@ -337,11 +337,13 @@ output$description <- renderText({
     pull(description)
 })
 
+# habitat
 output$habitat <- renderText({
   selected_profile() %>%
     pull(habitat)
 })
 
+# number of threats
 output$n_threats <- renderText({
   n <- species_threats_app %>%
     filter(record_name == input$record) %>%
@@ -351,11 +353,13 @@ output$n_threats <- renderText({
   
 })
 
+# threats
 output$profile_threats <- renderText({
   selected_profile() %>%
     pull(threats)
 })
 
+# planning summary table
 output$planning_summary <- renderUI({
   med <- median(recovery_coverage$years_since_recovery_planning, na.rm = TRUE)
   old <- sum(recovery_coverage$years_since_recovery_planning > 10, na.rm = TRUE)
@@ -366,6 +370,7 @@ output$planning_summary <- renderUI({
     tags$li(paste(old_word," DUs have not had a recovery planning document published in over 10 years.")))
 })
 
+# recovery strategy coverage table
 output$recovery_coverage <- renderDT({
   recovery_coverage %>%
     mutate(`Recovery Strategy or Progress Report Complete` =
@@ -393,6 +398,7 @@ output$recovery_coverage <- renderDT({
                                                 c("#d4edda","#fff3cd","#f8d7da")))
 })
 
+# threats
 output$threats <- renderDT({
   dat <- species_threats_app %>%
     filter(record_name == input$record) %>%
@@ -402,6 +408,7 @@ output$threats <- renderDT({
   datatable(dat, rownames = FALSE, options = list(pageLength = 10, dom = "t"))
 })
 
+# documents table
 output$documents <- renderDT({
   docs <- species_documents %>%
     filter(record_name == input$record) %>%
@@ -416,6 +423,7 @@ output$documents <- renderDT({
   datatable( docs,escape = FALSE,rownames = FALSE)
 })
 
+# number of documents
 output$n_documents <- renderText({
   n <- species_documents %>%
     filter(record_name == input$record) %>%
@@ -424,16 +432,19 @@ output$n_documents <- renderText({
   paste(n, "Documents")
 })
 
+# biology
 output$biology <- renderText({
   selected_profile() %>%
     pull(biology)
 })
 
+#population
 output$population <- renderText({
   selected_profile() %>%
     pull(population)
 })
 
+# explore species threats table
 output$explore_species <- renderDT({
   dat <- explore_results() %>%
     rename(`Common Name` = common_name,
@@ -446,6 +457,7 @@ output$explore_species <- renderDT({
 output$explore_species_count <- renderText({
   paste(nrow(explore_results()), "Species Records")})
 
+# top spcies threats table
 output$top_threat_species <- renderDT({
   species_threats_app %>%
     distinct(record_name, threat_category) %>%
@@ -456,6 +468,7 @@ output$top_threat_species <- renderDT({
                                                ordering = FALSE))
 })
 
+# common threats table
 output$common_threats <- renderDT({
   species_threats_app %>%
     distinct(record_name, threat_category) %>%
@@ -465,9 +478,7 @@ output$common_threats <- renderDT({
                                                 ordering = FALSE,
                                                 columnDefs = list(
                                                   list(width = "70%", targets = 0),
-                                                  list(width = "30%", targets = 1)
-                                                )
-    ))
+                                                  list(width = "30%", targets = 1))))
 })
 
 
