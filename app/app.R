@@ -33,6 +33,29 @@ species_master_app <- species_master_app %>%
 species_threats_app <- species_threats %>%
   filter(sara_status %in% c("Threatened", "Endangered", "Extirpated"))
 
+# derived recovery data dataset
+recovery_coverage <- species_master_app %>%
+  distinct(record_name) %>%
+  left_join(species_documents %>%
+  group_by(record_name) %>%
+    summarise(has_recovery_strategy = any(grepl(
+      "Recovery Strategy",documentTitle, ignore.case = TRUE)),
+      has_action_plan = any(primary_document_type == "Action Plan") |
+        any(grepl("Action Plan", documentTitle, ignore.case = TRUE)),
+      has_management_plan =any(
+        grepl("Management Plan", documentTitle, ignore.case = TRUE)),
+      latest_recovery_planning_document =suppressWarnings(
+        max(as.Date(documentCreateDate[grepl(
+          "Recovery Strategy|Action Plan",documentTitle,ignore.case = TRUE)]),
+          na.rm = TRUE)), .groups = "drop"),by = "record_name") %>%
+  mutate(latest_recovery_planning_document = as.Date(
+      ifelse(is.infinite(latest_recovery_planning_document), NA,
+             latest_recovery_planning_document), origin = "1970-01-01"),
+    years_since_recovery_planning =
+      round(as.numeric(Sys.Date() -
+            as.Date(latest_recovery_planning_document,
+                    origin = "1970-01-01")) / 365.25,1))
+
 # user interface
 ui <- fluidPage(
   theme = bs_theme(version = 5, bootswatch = "cosmo"),
@@ -93,51 +116,65 @@ ui <- fluidPage(
                            tags$li(paste(n_distinct(species_documents$document_id),
                                "documents")),
                            tags$li(paste(n_distinct(species_threats_app$threat_category),
-                               "threat groups"))))),
-                     hr(),
-                     fluidRow(column(6,h3(
-                       "Designatable Units with the Most Threat Categories",
-                       style = "text-align:center;"),
-                       DTOutput("top_threat_species")),
-                       column(6,h3("Most Common Threat Categories",
-                                   style = "text-align:center;"),
-                              DTOutput("common_threats"))),
-                  tags$p(
-                    style = "font-style: italic; color: #666666;",
-                    "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
-                  )),
+                               "threat groups")))))),
         tabPanel(
-          "Overview",
+          "Species Information",
           br(),
           uiOutput("species_header"),
           h3("Description"),
           textOutput("description"),
+          br(),
           h3("Population"),
           textOutput("population"),
+          br(),
           h3("Habitat"),
           textOutput("habitat"),
+          br(),
           h3("Biology"),
-          textOutput("biology")
-        ),
-        
-        tabPanel(
-          "Threats",
+          textOutput("biology"),
+          br(),
+          h3("Threats"),
+          textOutput("profile_threats"),
           br(),
           h3(textOutput("n_threats")),
           DTOutput("threats"),
           tags$p(style = "font-style: italic; color: #666666;",
-                 "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments."),
-          br(),
-          h3("Threat Information"),
-          textOutput("profile_threats")),
+                 "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments.")
+        ),
         
         tabPanel(
-          "Documents",
+          "Species Documents",
           br(),
           h3(textOutput("n_documents")),
           DTOutput("documents")),
         
-        tabPanel("Explore",
+        tabPanel(
+          "Recovery Planning",
+          br(),
+          h3("Recovery Planning Coverage"),
+          br(),
+          uiOutput("planning_summary"),
+          br(),
+          DTOutput("recovery_coverage", width = "100%"),
+          tags$p(
+            style = "font-style: italic; color: #666666;",
+            "Recovery planning coverage is based on recovery strategies, action plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
+          )),
+        
+        tabPanel(
+          "Threat Summary",
+          br(),
+          fluidRow(column(6,h3("DUs with the Most Threat Categories",
+                               style = "text-align:center;"),
+                          DTOutput("top_threat_species")),
+                   column(6,h3("Most Common Threat Categories",
+                               style = "text-align:center;"),
+                          DTOutput("common_threats"))),
+          tags$p(style = "font-style: italic; color: #666666;",
+                 "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
+          )),
+
+        tabPanel("Explore Threats",
           br(),
           selectInput("explore_status","SARA Status",
                       choices = c("All","Endangered","Threatened","Extirpated"),
@@ -298,6 +335,43 @@ output$n_threats <- renderText({
 output$profile_threats <- renderText({
   selected_profile() %>%
     pull(threats)
+})
+
+output$planning_summary <- renderUI({
+  med <- median(recovery_coverage$years_since_recovery_planning, na.rm = TRUE)
+  old <- sum(recovery_coverage$years_since_recovery_planning > 10, na.rm = TRUE)
+  old_word <- c("Zero", "One", "Two", "Three", "Four",
+                "Five", "Six", "Seven", "Eight", "Nine", "Ten")[old + 1]
+  tags$ul(style = "font-size:16px;",
+    tags$li(paste("Median years since publication of the most recent recovery planning document publications: ", round(med, 1))),
+    tags$li(paste(old_word," DUs have not had a recovery planning document published in over 10 years.")))
+})
+
+output$recovery_coverage <- renderDT({
+  recovery_coverage %>%
+    mutate(`Recovery Strategy or Progress Report Complete` =
+             ifelse(coalesce(has_recovery_strategy, FALSE), "Yes", "No"),
+           
+           `Action Plan Complete` =
+             ifelse(coalesce(has_action_plan, FALSE), "Yes", "No")) %>%
+    
+    arrange(desc(years_since_recovery_planning),
+            is.na(years_since_recovery_planning)) %>%
+    select(record_name,
+           `Recovery Strategy or Progress Report Complete`,
+           `Action Plan Complete`,
+           latest_recovery_planning_document,
+           years_since_recovery_planning) %>%
+    rename(`Designatable Unit` = record_name,
+           `Most Recent Planning Document` =
+             latest_recovery_planning_document,
+           `Years Since Recovery Planning Document` =
+             years_since_recovery_planning) %>%
+    datatable(rownames = FALSE, options = list(pageLength = 10,
+                                               autoWidth = TRUE))%>%
+    formatStyle("Years Since Recovery Planning Document",
+                backgroundColor = styleInterval(c(5, 10),
+                                                c("#d4edda","#fff3cd","#f8d7da")))
 })
 
 output$threats <- renderDT({
