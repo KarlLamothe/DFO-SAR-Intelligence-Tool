@@ -98,7 +98,9 @@ The current application focuses on freshwater fishes listed under Schedule 1 of 
 - Threatened
 - Extirpated
 
-## Requirements
+## Running the App
+
+Go to the run_app.R script, download the required packages if needed, and run:
 
 ```r
 library(shiny)
@@ -106,14 +108,6 @@ library(dplyr)
 library(DT)
 library(shinydashboard)
 library(bslib)
-```
-
-## Running the App
-
-Go to the run_app.R script and run:
-
-```r
-library(shiny)
 runApp("app/app.R")
 ```
 
@@ -163,6 +157,7 @@ DFO-SAR-Intelligence-Tool/
 ├── .gitignore
 ├── DFO-SAR-Intelligence-Tool.Rproj
 ├── README.md
+├── LICENSE
 └── run_app.R
 
 ```
