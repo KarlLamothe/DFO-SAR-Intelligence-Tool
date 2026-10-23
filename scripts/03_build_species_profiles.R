@@ -3,15 +3,6 @@ source("scripts/00_setup.R")
 species_master <- read.csv("data_processed/freshwater_species_master.csv")
 colnames(species_master)
 
-## test for redside dace
-#redside_profile <- extract_profile("110-407")
-#colnames(redside_profile)
-#
-#redside_profile_clean <- redside_profile %>%
-#  mutate(across(c(description, population, habitat, biology, threats, other_protection),
-#                clean_html))
-#redside_profile_clean$threats
-
 # moving to all species
 species_profiles <- purrr::map2_dfr(
   freshwater_species$id,
@@ -20,7 +11,7 @@ species_profiles <- purrr::map2_dfr(
 
 # clean this up
 str(species_profiles)
-
+colnames(species_profiles)
 species_profiles_clean <- species_profiles %>%
   mutate(across(c(description, population, habitat, biology, threats,
                   other_protection, critical_habitat, federal_protection),
@@ -58,6 +49,15 @@ species_full_export <- species_full %>%
 
 names(species_full_export)[sapply(species_full_export, is.list)]
 head(species_full_export)
+
+species_full_export <- species_full_export %>%
+  mutate(
+    range_text = sapply(
+      ranges,
+      function(x) paste(x, collapse = "; ")
+    )
+  ) %>%
+  select(-ranges)
 
 # change to sentence case rather than all caps
 species_full_export <- species_full_export %>%

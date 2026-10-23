@@ -1,12 +1,14 @@
 # Freshwater SAR Species Explorer
 
-An interactive Shiny application for exploring Canadian freshwater fish species listed under the Species at Risk Act (SARA).
+An interactive Shiny application for exploring Canadian freshwater fish species listed under the *Species at Risk Act* (SARA).
 
 The application was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize. The application brings together species profiles, threat information, species documents, recovery planning information, and species imagery in a single interface for Schedule 1 freshwater fishes listed under SARA.
 
 ## Features
 
 ### Dashboard
+
+Provides a high-level overview of the application and its underlying data sources.
 
 - Application overview
 - Data source information
@@ -18,34 +20,67 @@ The application was developed to make information available through the Species 
 
 ### Species Information
 
+Explore detailed species profile information by species, designatable unit (DU), SARA status, and geographic range.
+
+**Includes:**
+
 - Common and scientific names
 - SARA status
 - COSEWIC status
-- Designatable unit information
+- DU information
 - Species photographs
-- Description
+- Geographic range information
+- Species description
 - Population information
 - Habitat information
 - Biology information
 - Species-specific threat summaries
-- Threat categories
+- Threat category listings
+
+**Filters:**
+
+- SARA Status
+- Province/Territory
+- Species
+- DU
 
 ### Species Documents
+
+Access recovery planning and assessment documents associated with each DU.
+
+**Includes:**
 
 - Recovery Strategies
 - Action Plans
 - Management Plans
 - COSEWIC Assessments and Status Reports
-- Additional SARA Registry documents
+- Additional Species at Risk Public Registry documents
 - Direct links to source documents
+
+**Filters:**
+
+- SARA Status
+- Province/Territory
+- Species
+- DU
 
 ### Recovery Planning
 
+Summarizes recovery planning progress across species and DUs.
+
+**Includes:**
+
 - Recovery planning coverage by DU
-- Recovery Strategy and Action Plan tracking
+- Recovery Strategy tracking
+- Action Plan tracking
 - Most recent recovery planning document date
 - Years since publication of the most recent recovery planning document
-- Visual highlighting of older recovery planning documents
+- Visual highlighting of older planning documents
+
+**Filters:**
+
+- SARA Status
+- Province/Territory
 
 ### Threat Summary
 
@@ -53,25 +88,53 @@ The application was developed to make information available through the Species 
 - Frequency of threat categories across species
 - Summary views of threat prevalence
 
+**Filters:**
+
+- Province/Territory
+
 ### Explore Threats
 
-Filter species records by:
+Allows users to identify species affected by specific threat categories.
+
+**Filter by:**
 
 - Threat Group
 - SARA Status
+- Province/Territory
 
-Interactive results table:
+**Includes:**
 
-- Click a species record to automatically load it into the Species Information tab
+- Interactive species results table
+- Direct navigation to Species Information records
 
-## Data Sources
+**Interactive Feature:**
+
+- Selecting a species record automatically loads the corresponding species profile in the **Species Information** tab.
+
+### Province Summary
+
+Provides an overview of species-at-risk information within a selected province or territory.
+
+**Includes:**
+
+- Species record counts
+- SARA status summaries
+- Most common threat categories
+- Provincial species overview metrics
+
+**Filters:**
+
+- Province/Territory
+
+### Data Sources
 
 Data are derived from:
 
 - Species at Risk Public Registry
 - Species profile pages
-- Recovery and planning documents
-- Species images provided through Registry metadata
+- Recovery planning documents
+- COSEWIC assessments and status reports
+- Registry-linked species imagery and metadata
 
 # Threat Group Consolidation
 
@@ -90,6 +153,8 @@ Several Registry threat categories are consolidated into broader groups loosely 
 - Climate Change
 - Other Limiting Factors
 
+Threat categories are intended as **screening-level classifications** and should not be interpreted as formal threat assessments.
+
 # Included Taxa
 
 The current application focuses on freshwater fishes listed under Schedule 1 of SARA with statuses of:
@@ -100,14 +165,14 @@ The current application focuses on freshwater fishes listed under Schedule 1 of 
 
 ## Running the App
 
-Go to the run_app.R script, download the required packages if needed, and run:
+Go to the run_app.R script, install the required packages if needed, and run:
 
 ```r
 library(shiny)
 library(dplyr)
 library(DT)
-library(shinydashboard)
 library(bslib)
+
 runApp("app/app.R")
 ```
 
@@ -162,19 +227,13 @@ DFO-SAR-Intelligence-Tool/
 
 ```
 
-## Potential Future Enhancements
-
-- Supporting additional aquatic taxa beyond freshwater fishes
-- Adding export functionality for selected species information
-- Enhancing search and filtering capabilities
-
 ## Acknowledgements
 
 This application was developed using information obtained from the Species at Risk Public Registry and associated recovery planning resources.
 
 ## License
 
-This project is licensed under the MIT License. See ./LICENSE for the full license terms.
+This project is licensed under the **MIT License**. See `LICENSE` for complete licensing terms.
 
 Copyright (c) 2026 His Majesty the King in Right of Canada, as represented by the Minister of Fisheries and Oceans.
 
@@ -182,5 +241,8 @@ Copyright (c) 2026 His Majesty the King in Right of Canada, as represented by th
 
 For questions, suggestions, or data updates, please contact:
 
-Karl Lamothe; karl.lamothe@dfo-mpo.gc.ca
+**Karl Lamothe**
+Aquatic Science Biologist
 Fisheries and Oceans Canada
+
+📧 karl.lamothe@dfo-mpo.gc.ca

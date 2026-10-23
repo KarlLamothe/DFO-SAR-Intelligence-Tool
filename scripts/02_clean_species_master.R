@@ -19,12 +19,13 @@ species_master <- raw_species %>%
          sara_status = legalStatusId,
          cosewic_status = cosewicStatusId,
          status = coalesce(legalStatusId, cosewicStatusId),
-         schedule = legalScheduleId)
+         schedule = legalScheduleId,
+         range_text = range_text)
 
 # reorder columns
 species_master <- species_master %>%
   relocate(id, common_name, scientific_name, sara_status, cosewic_status, record_name,
-           schedule, taxonomyId)
+           schedule, taxonomyId, range_text)
 unique(species_master$sara_status)
 
 # change to sentence case rather than all caps

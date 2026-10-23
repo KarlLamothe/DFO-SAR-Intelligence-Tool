@@ -35,8 +35,10 @@ freshwater_species <- freshwater_species %>%
 colnames(freshwater_species)
 
 # only include columns that are useful
-head(freshwater_species)
-freshwater_species<-freshwater_species[c(2,3,7,11,12,14:20,22:29,31,33,35,36,40:45)]
+freshwater_species<-freshwater_species[c(2,3,7,11,12,14:20,22:29,31,33,35,36,37,40:45)]
+
+freshwater_species <- freshwater_species %>%
+  mutate(range_text = sapply(ranges,function(x) paste(x, collapse = "; ")))
 
 # clean up html text
 freshwater_species <- freshwater_species %>%
