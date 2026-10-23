@@ -145,6 +145,7 @@ ui <- fluidPage(
         
         tabPanel(
           "Recovery Planning",
+          div(style = "max-width:1200px; margin:auto;",
           br(),
           h3("Recovery Planning Coverage"),
           br(),
@@ -154,10 +155,11 @@ ui <- fluidPage(
           tags$p(
             style = "font-style: italic; color: #666666;",
             "Recovery planning coverage is based on recovery strategies, action plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
-          )),
+          ))),
         
         tabPanel(
           "Threat Summary",
+          div(style = "max-width:1200px; margin:auto;",
           br(),
           fluidRow(column(6,h3("DUs with the Most Threat Categories",
                                style = "text-align:center;"),
@@ -167,9 +169,10 @@ ui <- fluidPage(
                           DTOutput("common_threats"))),
           tags$p(style = "font-style: italic; color: #666666;",
                  "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
-          )),
+          ))),
 
         tabPanel("Explore Threats",
+                 div(style = "max-width:1200px; margin:auto;",
           br(),
           selectInput("explore_status","SARA Status",
                       choices = c("All","Endangered","Threatened","Extirpated"),
@@ -177,7 +180,7 @@ ui <- fluidPage(
           selectInput("explore_threat", "Threat Group",choices = NULL),
           br(),
           h3(textOutput("explore_species_count")),
-          DTOutput("explore_species"))
+          DTOutput("explore_species")))
       ),
   hr(),
   tags$div(
