@@ -1,23 +1,8 @@
-library(dplyr)
-library(shiny)
-library(DT)
-library(shinydashboard)
-library(bslib)
-
 # load data
 species_master <- readRDS("data/species_master.rds")
 species_profiles <- readRDS("data/species_profiles.rds")
 species_threats <- readRDS("data/species_threats.rds")
 species_documents <- readRDS("data/species_documents.rds")
-
-dashboard_theme <- theme_bw() +
-  theme(axis.title   = element_text(size=24, family="sans", colour="black"),
-        axis.text.x  = element_text(size=20, family="sans", colour="black"),
-        axis.text.y  = element_text(size=20, family="sans", colour="black"),
-        strip.text   = element_text(size=20, family="sans", colour="black"),
-        plot.title   = element_text(size=24, family="sans", colour="black"),
-        panel.border = element_rect(colour="black"),
-        legend.position = "none")
 
 # app specific data
 species_master_app <- species_master %>%
