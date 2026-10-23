@@ -39,6 +39,31 @@ recovery_coverage <- species_master_app %>%
             as.Date(latest_recovery_planning_document,
                     origin = "1970-01-01")) / 365.25,1))
 
+# reusable UI
+species_selector_ui <- column(
+  width = 2,
+  wellPanel(style = "
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+  ",
+  selectInput("status","SARA Status",
+              choices = c("All","Endangered","Threatened","Extirpated")),
+  selectInput("species","Species",
+              choices = sort(unique(species_master_app$common_name))),
+  selectInput("record","Population / Designatable Unit", choices = NULL)))
+
+species_documents_selector_ui <- column(
+  width = 2,
+  wellPanel(style = "
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;",
+    selectInput("status_docs", "SARA Status",
+                choices = c( "All","Endangered","Threatened", "Extirpated")),
+    selectInput("species_docs","Species", choices = sort(unique(species_master_app$common_name)) ),
+    selectInput("record_docs", "Population / Designatable Unit",choices = NULL)))
+
 # user interface
 ui <- fluidPage(
   theme = bs_theme(version = 5, bootswatch = "cosmo"),
@@ -56,31 +81,13 @@ ui <- fluidPage(
       }
     "))
   ),
-  titlePanel(
-    div(style = "
-      font-size:36px;
-      font-weight:bold;
-      color:#2c3e50;
-    ",
-      "Freshwater SAR Species Explorer")),
-  sidebarLayout(
-    sidebarPanel(width=3,
-      selectInput("status", "SARA Status", choices = c(
-          "All",
-          "Endangered",
-          "Threatened",
-          #"Special Concern",
-          "Extirpated")),
-      selectInput(
-        "species",
-        "Species",
-        choices = sort(unique(species_master_app$common_name))),
-      selectInput(
-        "record",
-        "Population / Designatable Unit",
-        choices = NULL)),
-    mainPanel(
+  titlePanel(div(style = "font-size:36px;
+                 font-weight:bold;
+                 color:#2c3e50;",
+                 "Freshwater SAR Species Explorer")),
+  
       tabsetPanel(id = "main_tabs",
+                  
                   tabPanel(
                      "Dashboard",
                      br(),
@@ -106,6 +113,7 @@ ui <- fluidPage(
         tabPanel(
           "Species Information",
           br(),
+          fluidRow(species_selector_ui,column(10,
           uiOutput("species_header"),
           h3("Description"),
           textOutput("description"),
@@ -126,13 +134,14 @@ ui <- fluidPage(
           DTOutput("threats"),
           tags$p(style = "font-style: italic; color: #666666;",
                  "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments.")
-        ),
+        ))),
         
         tabPanel(
           "Species Documents",
           br(),
+          fluidRow(species_documents_selector_ui, column(10,
           h3(textOutput("n_documents")),
-          DTOutput("documents")),
+          DTOutput("documents")))),
         
         tabPanel(
           "Recovery Planning",
@@ -169,9 +178,7 @@ ui <- fluidPage(
           br(),
           h3(textOutput("explore_species_count")),
           DTOutput("explore_species"))
-      )
-    )
-  ),
+      ),
   hr(),
   tags$div(
     style = "
@@ -270,6 +277,31 @@ server <- function(input, output, session){
     }
   })
 
+  observeEvent(input$species_docs, {
+    records <- species_master_app %>%
+      filter(common_name == input$species_docs) %>%
+      arrange(record_name) %>%
+      pull(record_name)
+    updateSelectInput(session, "record_docs", choices = records, selected = records[1])
+  })
+  
+  observeEvent(input$species_docs, {
+    updateSelectInput(session, "species",selected = input$species_docs)
+  })
+  
+  observeEvent(input$species, {
+    updateSelectInput(session, "species_docs",selected = input$species)
+  })
+  
+  observeEvent(input$record_docs, {
+    updateSelectInput(session,"record", selected = input$record_docs)
+  })
+  
+  observeEvent(input$record, {
+    updateSelectInput(session,"record_docs", selected = input$record)
+
+  })
+  
   ######################################################
   # outputs
   ######################################################
@@ -396,7 +428,7 @@ output$threats <- renderDT({
 # documents table
 output$documents <- renderDT({
   docs <- species_documents %>%
-    filter(record_name == input$record) %>%
+    filter(record_name == input$record_docs) %>%
     mutate(documentCreateDate = as.Date(documentCreateDate),
            Document = paste0('<a href="',document_url,'" target="_blank">',
                              documentTitle,'</a>')) %>%
@@ -411,7 +443,7 @@ output$documents <- renderDT({
 # number of documents
 output$n_documents <- renderText({
   n <- species_documents %>%
-    filter(record_name == input$record) %>%
+    filter(record_name == input$record_docs) %>%
     distinct(document_id) %>%
     nrow()
   paste(n, "Documents")
