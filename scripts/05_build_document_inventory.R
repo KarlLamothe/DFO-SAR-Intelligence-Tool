@@ -49,35 +49,29 @@ documents_raw <- purrr::map_dfr(
   seq(0, 3800, by = 100),
   get_document_page)
 
-# attachment metadata
 attachment_info <- purrr::map_dfr(
   seq_len(nrow(documents_raw)),
   function(i){
-    attachment <- parse_attachment(documents_raw$attachments[[i]])
-    if(is.null(attachment)){
+    attachments <- parse_attachments(
+      documents_raw$attachments[[i]])
+    if(is.null(attachments)){
       return(
         tibble(
           document_id = documents_raw$id[i],
-          attachment_id = NA_character_,
           attachment_title = NA_character_,
           attachment_date = NA_character_,
           file = NA_character_,
-          html = NA_character_
-        )
-      )
-    }
-    
-    tibble(
-      document_id = documents_raw$id[i],
-      attachment_id = attachment$attachmentId,
-      attachment_title = attachment$attachmentTitle,
-      attachment_date =
-        attachment$attachmentPublicationDate,
-      file = attachment$file,
-      html = attachment$html
-    )
-  }
-)
+          html = NA_character_))}
+    attachments <- attachments %>%
+      mutate(
+        html = if(!"html" %in% names(.)) NA_character_ else html,
+        file = if(!"file" %in% names(.)) NA_character_ else file)
+    attachments %>%
+      transmute(
+        document_id = documents_raw$id[i],
+        attachment_title = attachmentTitle,
+        attachment_date = attachmentPublicationDate,
+        file, html)})
 
 attachment_info <- attachment_info %>%
   mutate(attachment_title = clean_html(attachment_title))
@@ -97,6 +91,15 @@ species_documents <- documents_raw %>%
                      sara_status,cosewic_status), by = c("species_id" = "id")) %>%
   mutate(primary_document_type = 
            purrr::map_chr(documentTypeId, get_primary_document_type))
+
+species_documents %>%
+  filter(grepl("Atlantic Whitefish", documentTitle)) %>%
+  select(
+    documentTitle,
+    attachment_title,
+    attachment_date,
+    document_url
+  )
 
 species_documents <- species_documents %>%
   mutate(across(c(
@@ -138,10 +141,12 @@ species_documents <- species_documents %>%
       ~ paste(.x, collapse = "; ")))
 
 # export
+names(species_documents)
+head(species_documents)
 species_documents_export <- species_documents %>%
   select(species_id,record_name,common_name,scientific_name,sara_status,
          cosewic_status,document_id,documentTypeId,primary_document_type,documentTitle,
-         documentDescription,documentCreateDate,attachment_id,attachment_title,
+         documentDescription,documentCreateDate,attachment_title,
          attachment_date,document_url)
 head(species_documents_export)
 
@@ -154,6 +159,58 @@ species_documents_export <- species_documents_export %>%
       str_to_title()))
 head(species_documents_export)
 head(species_document_summary)
+
+species_documents_export <- species_documents_export %>%
+  mutate(
+    planning_document_type = case_when(
+      
+      grepl(
+        "Report on the Progress|Progress Towards the Implementation|Implementation Report",
+        attachment_title,
+        ignore.case = TRUE
+      ) ~ "Progress Report",
+      
+      primary_document_type == "Cosewic Assessments And Status Reports" ~
+        "COSEWIC Assessment",
+      
+      grepl("Recovery Strategy and Action Plan", attachment_title,
+            ignore.case = TRUE) ~ "Recovery Strategy & Action Plan",
+      
+      grepl("Recovery Strategy", attachment_title,
+            ignore.case = TRUE) ~ "Recovery Strategy",
+      
+      grepl("Action Plan", attachment_title,
+            ignore.case = TRUE) ~ "Action Plan",
+      
+      grepl("Management Plan", attachment_title,
+            ignore.case = TRUE) ~ "Management Plan",
+      
+      TRUE ~ NA_character_
+    ))
+
+# remove proposed docs if there is a final version
+species_documents_export <- species_documents_export %>%
+  mutate(
+    base_title = attachment_title %>%
+      gsub("\\s*\\[Proposed\\]", "", .) %>%
+      gsub("\\s*\\(Proposed\\)", "", .) %>%
+      gsub("\\s*\\[Final Version\\]", "", .)
+  ) %>%
+  group_by(record_name, base_title) %>%
+  filter(
+    !(
+      grepl("\\[Proposed\\]|\\(Proposed\\)",
+            attachment_title,
+            ignore.case = TRUE) &
+        any(
+          !grepl("\\[Proposed\\]|\\(Proposed\\)",
+                 attachment_title,
+                 ignore.case = TRUE)
+        )
+    )
+  ) %>%
+  ungroup() %>%
+  select(-base_title)
 
 write_csv(species_documents_export, "data_processed/species_documents.csv")
 write_csv(species_document_summary, "data_processed/species_document_summary.csv")

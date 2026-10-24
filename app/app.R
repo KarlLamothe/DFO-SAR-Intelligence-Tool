@@ -1,46 +1,127 @@
+################################################################################
+# Freshwater SAR Species Explorer
+#
+# Purpose:
+# Interactive Shiny application for exploring Schedule 1 freshwater fishes
+# listed under the Species at Risk Act (SARA). The application integrates:
+#   • Species profile information
+#   • Threat classifications
+#   • Recovery planning documents
+#   • Registry summaries
+#
+# Primary data source:
+# Species at Risk Public Registry
+################################################################################
+
 library(shiny)
 library(dplyr)
 library(DT)
 library(bslib)
 
-# load data
+################################################################################
+# LOAD DATA
+################################################################################
+# These RDS files are generated during data processing and contain:
+#
+# species_master:
+#   One record per species / designatable unit (DU).
+#   Includes status, taxonomy, range, image metadata, etc.
+#
+# species_profiles:
+#   Species profile text scraped from Registry species pages.
+#   Includes description, habitat, biology, threats, population information.
+#
+# species_threats:
+#   Screening-level threat classifications derived from profile text.
+#   One row per DU-threat combination.
+#
+# species_documents:
+#   Recovery planning and registry documents associated with each DU.
+################################################################################
+
 species_master <- readRDS("data/species_master.rds")
 species_profiles <- readRDS("data/species_profiles.rds")
 species_threats <- readRDS("data/species_threats.rds")
 species_documents <- readRDS("data/species_documents.rds")
+recovery_compliance <- readRDS("data/recovery_compliance.rds")
 
-# app specific data
+################################################################################
+# APPLICATION DATASETS
+# The application focuses on Schedule 1 freshwater fishes listed as:
+# Endangered, Threatened, Extirpated.
+# Species of Special Concern are currently excluded.
+################################################################################
+
 species_master_app <- species_master %>%
   filter(sara_status %in% c("Threatened", "Endangered","Extirpated"))
+
+################################################################################
+# IMAGE FILE REFERENCES
+# Local species images are stored in:
+#   www/images/
+# Image filenames follow the convention:
+#   "Atlantic Whitefish" -> "atlantic_whitefish.jpg"
+################################################################################
 
 species_master_app <- species_master_app %>%
   mutate(image_file = paste0(common_name %>%
                                tolower() %>%
                                gsub(" ", "_", .),".jpg"))
 
+################################################################################
+# THREAT DATA USED BY APP
+# Restrict threat analyses to the same SARA statuses used elsewhere in the app.
+################################################################################
+
 species_threats_app <- species_threats %>%
   filter(sara_status %in% c("Threatened", "Endangered", "Extirpated"))
+
+################################################################################
+# RANGE, SARA STATUS, PANEL STYLE FILTER OPTIONS
+################################################################################
 
 range_choices <- c("All", sort(unique(
   unlist(strsplit(paste(species_master_app$range_text,
                         collapse = "; "),"; ")))))
 
+sara_choices <- c("All","Endangered","Threatened","Extirpated")
+
+panel_style <- "
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+"
+################################################################################
+# RECOVERY PLANNING COVERAGE DATASET
+# Create a DU-level recovery planning summary used in the "Recovery Planning" tab.
+# For each Designatable Unit (DU), determine:
+# Document identification is performed using Registry metadata and document
+# titles.
+################################################################################
+
 # derived recovery data dataset
 recovery_coverage <- species_master_app %>%
+  # ensure one record per DU
   distinct(record_name, sara_status, range_text) %>%
+  # join recovery planning metrics
   left_join(species_documents %>%
   group_by(record_name) %>%
+    # Recovery Strategy present?
     summarise(has_recovery_strategy = any(grepl(
       "Recovery Strategy",documentTitle, ignore.case = TRUE)),
+      # Action Plan present?
       has_action_plan = any(primary_document_type == "Action Plan") |
         any(grepl("Action Plan", documentTitle, ignore.case = TRUE)),
+      # Management Plan present?
       has_management_plan =any(
         grepl("Management Plan", documentTitle, ignore.case = TRUE)),
+      # Latest planning document date
       latest_recovery_planning_document =suppressWarnings(
         max(as.Date(documentCreateDate[grepl(
           "Recovery Strategy|Action Plan",documentTitle,ignore.case = TRUE)]),
           na.rm = TRUE)), .groups = "drop"),by = "record_name") %>%
-  mutate(latest_recovery_planning_document = as.Date(
+  # Calculate document age
+   mutate(latest_recovery_planning_document = as.Date(
       ifelse(is.infinite(latest_recovery_planning_document), NA,
              latest_recovery_planning_document), origin = "1970-01-01"),
     years_since_recovery_planning =
@@ -48,74 +129,88 @@ recovery_coverage <- species_master_app %>%
             as.Date(latest_recovery_planning_document,
                     origin = "1970-01-01")) / 365.25,1))
 
-# reusable UI
+################################################################################
+# REUSABLE UI COMPONENTS
+# Several tabs use similar filtering controls:SARA Status, Range (Province),
+# Species, Designatable Unit (DU)
+# To avoid duplicating UI code throughout the application, filter panels are
+# defined once and inserted into tab layouts as needed.
+# Each object below creates a left-side filter panel used within a specific tab.
+################################################################################
+
+################################################################################
+# SPECIES INFORMATION FILTER PANEL
+################################################################################
 species_selector_ui <- column(
   width = 2,
-  wellPanel(style = "
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-  ",
-  selectInput("status","SARA Status",
-              choices = c("All","Endangered","Threatened","Extirpated")),
-  selectInput("range","Range",
-              choices = range_choices),
+  wellPanel(style = panel_style,
+  selectInput("status","SARA Status", choices = sara_choices),
+  selectInput("range","Range", choices = range_choices),
   selectInput("species","Species",
               choices = sort(unique(species_master_app$common_name))),
   selectInput("record","Population / Designatable Unit", choices = NULL)))
 
+################################################################################
+# SPECIES DOCUMENTS FILTER PANEL
+################################################################################
 species_documents_selector_ui <- column(
   width = 2,
-  wellPanel(style = "
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;",
-    selectInput("status_docs", "SARA Status",
-                choices = c( "All","Endangered","Threatened", "Extirpated")),
+  wellPanel(style = panel_style,
+    selectInput("status_docs", "SARA Status", choices = sara_choices),
     selectInput("range_docs","Range", choices = range_choices),
     selectInput("species_docs","Species", choices = sort(unique(species_master_app$common_name)) ),
     selectInput("record_docs", "Population / Designatable Unit",choices = NULL)))
 
+################################################################################
+# THREAT EXPLORATION FILTER PANEL
+################################################################################
 explore_selector_ui <- column(
   width = 2,
-  wellPanel(style = "
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-    ",
+  wellPanel(style = panel_style,
             selectInput("explore_threat", "Threat Group",choices = NULL),
             selectInput("explore_status", "SARA Status",
-                choices = c("All","Endangered","Threatened","Extirpated"),
-                selected = "All"),
+                choices = sara_choices, selected = "All"),
     selectInput("explore_range","Range",
                 choices = range_choices)))
 
+################################################################################
+# RECOVERY PLANNING FILTER PANEL
+################################################################################
 recovery_planning_selector_ui <- column(
   width = 2,
-  wellPanel(style = "background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;",
-            selectInput("planning_status", "SARA Status",
-                        choices = c("All","Endangered","Threatened","Extirpated"),
+  wellPanel(style = panel_style,
+            selectInput("planning_status", "SARA Status", choices = sara_choices,
                         selected = "All"),
             selectInput("planning_range","Range",
                         choices = range_choices)))
 
+################################################################################
+# PROVINCE SUMMARY FILTER PANEL
+################################################################################
 province_selector_ui <- column(
   width = 2,
-  wellPanel(style = "
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;",
-  selectInput("province_range", "Range",
-              choices = range_choices)))
+  wellPanel(style = panel_style,
+  selectInput("province_range", "Range", choices = range_choices)))
 
 ################################################################################
+# USER INTERFACE (UI)
 ################################################################################
-# user interface
+# The application is organized into six major tabs:
+#
+#   1. Dashboard
+#   2. Species Information
+#   3. Species Documents
+#   4. Recovery Planning
+#   5. Threat Summary
+#   6. Explore Threats
+#   7. Province Summary
+#
+# Reusable selector panels defined above are inserted into tab layouts to
+# provide consistent filtering behaviour across the application.
 ################################################################################
-################################################################################
+
 ui <- fluidPage(
+  #application theme
   theme = bs_theme(version = 5, bootswatch = "cosmo"),
   tags$head(
     tags$style(HTML("
@@ -131,13 +226,17 @@ ui <- fluidPage(
       }
     "))
   ),
+  
+  # Main application title displayed at the top of every page.
   titlePanel(div(style = "font-size:36px;
                  font-weight:bold;
                  color:#2c3e50;",
                  "Freshwater SAR Species Explorer")),
   
+  # Main navigation tabs
       tabsetPanel(id = "main_tabs",
                   
+                  # DASHBOARD
                   tabPanel(
                      "Dashboard",
                      br(),
@@ -160,107 +259,114 @@ ui <- fluidPage(
                                "documents")),
                            tags$li(paste(n_distinct(species_threats_app$threat_category),
                                "threat groups")))))),
-        tabPanel(
-          "Species Information",
-          br(),
-          fluidRow(species_selector_ui,column(10,
-                                              style = "margin-top: -8px;",
-                                              uiOutput("species_header"),
-          h3("Description"),
-          textOutput("description"),
-          br(),
-          h3("Population"),
-          textOutput("population"),
-          br(),
-          h3("Habitat"),
-          textOutput("habitat"),
-          br(),
-          h3("Biology"),
-          textOutput("biology"),
-          br(),
-          h3("Threats"),
-          textOutput("profile_threats"),
-          br(),
-          h3(textOutput("n_threats")),
-          DTOutput("threats"),
-          tags$p(style = "font-style: italic; color: #666666;",
-                 "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments.")
-        ))),
-        
-        tabPanel(
-          "Species Documents",
-          br(),
-          fluidRow(species_documents_selector_ui, column(10,
-          h3(textOutput("n_documents")),
-          DTOutput("documents")))),
-        
-        tabPanel(
-          "Recovery Planning",
-          div(style = "max-width:1200px; margin-left:10px;",
-          br(),
-          fluidRow(recovery_planning_selector_ui, column(10,
-          h3("Recovery Planning Coverage"),
-          br(),
-          uiOutput("planning_summary"),
-          br(),
-          DTOutput("recovery_coverage", width = "100%"),
-          tags$p(
-            style = "font-style: italic; color: #666666;",
-            "Recovery planning coverage is based on recovery strategies, action plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
-          ))))),
-        
-        tabPanel(
-          "Threat Summary",
-          div(style = "max-width:1200px; margin-left:10px;",
-          br(),
-          fluidRow(column(2,wellPanel(style = "
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-          ",
-          selectInput("threat_range", "Range",
-                      choices = range_choices, selected = "All"))),
-          column(10,
-          fluidRow(column(6,h3("DUs with the Most Threat Categories",
-                               style = "text-align:center;"),
-                          DTOutput("top_threat_species")),
-                   column(6,h3("Most Common Threat Categories",
-                               style = "text-align:center;"),
-                          DTOutput("common_threats"))),
-          tags$p(style = "font-style: italic; color: #666666;",
-                 "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
-          ))))),
-
-        tabPanel(
-          "Explore Threats",
-          div(style = "max-width:1200px; margin-left:10px;",
-              br(),
-              fluidRow(explore_selector_ui,
-                       column(10,
-                              h3(textOutput("explore_species_count")),
-                              DTOutput("explore_species"))))),
-        
-        tabPanel(
-          "Province Summary",
-          div(style = "max-width:1200px; margin-left:10px;",
-              br(),
-              fluidRow(province_selector_ui,
-                       column(10,
-                              h3(textOutput("province_title")),
-                              uiOutput("province_overview"),
-                              DTOutput("province_status"))),
-              fluidRow(column(6,
-                              h3("Species Records by SARA Status",
-                                 style="text-align:center;"),
-                              DTOutput("province_status")),
-                       column(6,
-                              h3("Most Common Threat Categories",
-                                 style="text-align:center;"),
-                              DTOutput("province_top_threats"))),
-              br(),
-              h3("Species Records"),
-              DTOutput("province_species_table")))),
-  
+                  
+                  # SPECIES INFORMATION
+                  tabPanel("Species Information",
+                           br(),
+                           fluidRow(species_selector_ui,column(10,
+                                    style = "margin-top: -8px;",
+                                    uiOutput("species_header"),
+                                    h3("Description"),
+                                    textOutput("description"),
+                                    br(),
+                                    h3("Population"),
+                                    textOutput("population"),
+                                    br(),
+                                    h3("Habitat"),
+                                    textOutput("habitat"),
+                                    br(),
+                                    h3("Biology"),
+                                    textOutput("biology"),
+                                    br(),
+                                    h3("Threats"),
+                                    textOutput("profile_threats"),
+                                    br(),
+                                    h3(textOutput("n_threats")),
+                                    DTOutput("threats"),
+                                    tags$p(style = "font-style: italic; color: #666666;",
+                                           "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments.")
+                                    ))),
+                  
+                  # SPECIES DOCUMENTS TAB
+                  tabPanel("Species Documents",
+                           br(),
+                           fluidRow(species_documents_selector_ui, 
+                                    column(10, 
+                                           h4("Recovery Planning Compliance"),
+                                           uiOutput("compliance_summary"),
+                                           br(),
+                                           DTOutput("documents"),
+                                           tags$p(
+                                             style = "font-size:12px; color:gray;",
+                                             "Note: This table includes Recovery Strategies, Action Plans, ",
+                                             "Management Plans, Progress Reports, and COSEWIC Assessments. Historical and amended ",
+                                             "versions are shown where available. Some proposed versions may ",
+                                             "remain when no final version exists."
+                                           )))),
+                 
+                   # RECOVERY PLANNING TAB
+                  tabPanel("Recovery Planning",
+                           div(style = "max-width:1200px; margin-left:10px;",
+                               br(),
+                               fluidRow(recovery_planning_selector_ui, 
+                                        column(10,
+                                               h3("Recovery Planning Coverage"),
+                                               br(),
+                                               uiOutput("planning_summary"),
+                                               br(),
+                                               DTOutput("recovery_coverage", width = "100%"),
+                                               tags$p(
+                                                 style = "font-style: italic; color: #666666;",
+                                                 "Recovery planning coverage is based on recovery strategies, action plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
+                                                 ))))),
+                  # THREAT SUMMARY TAB
+                  tabPanel("Threat Summary",
+                    div(style = "max-width:1200px; margin-left:10px;",
+                        br(),
+                        fluidRow(column(2,wellPanel(style = panel_style,
+                          selectInput("threat_range", "Range",
+                                      choices = range_choices, selected = "All"))),
+                          column(10,
+                                 fluidRow(column(6,h3("DUs with the Most Threat Categories",
+                                                      style = "text-align:center;"),
+                                                 DTOutput("top_threat_species")),
+                                          column(6,h3("Most Common Threat Categories",
+                                                      style = "text-align:center;"),
+                                                 DTOutput("common_threats"))),
+                                 tags$p(style = "font-style: italic; color: #666666;",
+                                        "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
+                                        ))))),
+                  # EXPLORE THREATS TAB
+                  tabPanel("Explore Threats",
+                           div(style = "max-width:1200px; margin-left:10px;",
+                               br(),
+                               fluidRow(explore_selector_ui,
+                                        column(10,
+                                               h3(textOutput("explore_species_count")),
+                                               DTOutput("explore_species"))
+                                        ))),
+                  # PROVINCIAL SUMMARY TAB
+                  tabPanel("Province Summary",
+                           div(style = "max-width:1200px; margin-left:10px;",
+                               br(),
+                               fluidRow(province_selector_ui,
+                                        column(10,
+                                               h3(textOutput("province_title")),
+                                               uiOutput("province_overview"),
+                                               DTOutput("province_status"))),
+                               fluidRow(column(6,
+                                               h3("Species Records by SARA Status",
+                                                  style="text-align:center;"),
+                                               DTOutput("province_status")),
+                                        column(6,
+                                               h3("Most Common Threat Categories",
+                                                  style="text-align:center;"),
+                                               DTOutput("province_top_threats"))
+                                        ),
+                               br(),
+                               h3("Species Records"),
+                               DTOutput("province_species_table")))),
+  # FOOTER INFORMATION
   hr(),
   tags$div(
     style = "
@@ -285,6 +391,10 @@ ui <- fluidPage(
 ################################################################################
 ################################################################################
 server <- function(input, output, session){
+  
+  ##############################################################################
+  # SPECIES SELECTION REACTIVES
+  ##############################################################################
   selected_species <- reactive({
     species_master_app %>%
       filter(record_name == input$record)%>%
@@ -293,21 +403,29 @@ server <- function(input, output, session){
   
   selected_record_from_explore <- reactiveVal(NULL)
   
+  ##############################################################################
+  # COMPLIANCE REACTIVE
+  ##############################################################################
+  selected_compliance <- reactive({
+    recovery_compliance %>%
+      filter(record_name == input$record)
+  })
+  
+  
+  ##############################################################################
+  # THREAT EXPLORATION REACTIVES
+  ##############################################################################
   explore_results <- reactive({
     dat <- species_threats_app %>%
       left_join(species_master_app %>%
                   select(record_name, range_text),by = "record_name") %>%
       filter(threat_category == input$explore_threat)
-    
     if(input$explore_range != "All"){
       dat <- dat %>%
         filter(grepl(input$explore_range, range_text, fixed = TRUE))}
-    
     if(input$explore_status != "All"){
       dat <- dat %>%
-        filter(sara_status == input$explore_status)
-    }
-    
+        filter(sara_status == input$explore_status)}
     dat %>%
       distinct(common_name, record_name, sara_status)
   })
@@ -329,7 +447,10 @@ server <- function(input, output, session){
     }
     prof
   })
-
+  
+  ##############################################################################
+  # PROVINCE SUMMARY REACTIVES
+  ##############################################################################
   province_species <- reactive({
     dat <- species_master_app
     if(input$province_range != "All"){
@@ -338,9 +459,10 @@ server <- function(input, output, session){
     dat
   })
   
-  ######################################################
-  # OBSERVERS
-  ######################################################
+  ##############################################################################
+  # FILTER UPDATE OBSERVERS
+  ##############################################################################
+  #Species selector
   observe({
     species_choices <- species_master_app
     if(input$status != "All"){
@@ -353,6 +475,7 @@ server <- function(input, output, session){
                       choices = sort(unique(species_choices$common_name)))
   })
   
+  # Document selector
   observe({
     species_choices <- species_master_app
     
@@ -368,6 +491,16 @@ server <- function(input, output, session){
                       choices = sort(unique(species_choices$common_name)))
   })
   
+  # Threat selector
+  observe({
+    updateSelectInput(session, "explore_threat",
+                      choices = sort(
+                        unique(species_threats_app$threat_category)))
+  })
+  
+  ##############################################################################
+  # NAVIGATION OBSERVERS
+  ##############################################################################
   observeEvent(input$explore_species_rows_selected, {
     row <- input$explore_species_rows_selected
     if(length(row) == 0) return()
@@ -377,12 +510,9 @@ server <- function(input, output, session){
     updateTabsetPanel(session, "main_tabs", selected = "Species Information")
   })
   
-  observe({
-    updateSelectInput(session, "explore_threat",
-                      choices = sort(
-                        unique(species_threats_app$threat_category)))
-  })
-  
+  ##############################################################################
+  # SPECIES / DU SELECTION OBSERVERS
+  ##############################################################################
   observeEvent(input$species, {
     records <- species_master_app %>%
       filter(common_name == input$species) %>%
@@ -411,6 +541,9 @@ server <- function(input, output, session){
     updateSelectInput(session, "record_docs",choices = records,selected = records[1])
   })
   
+  ##############################################################################
+  # TAB SYNCHRONIZATION OBSERVERS
+  ##############################################################################
   observeEvent(input$species, {
     updateSelectInput(session, "species_docs",selected = input$species)
   })
@@ -435,9 +568,9 @@ server <- function(input, output, session){
     updateSelectInput(session, "range", selected = input$range_docs)
   })
   
-  ######################################################
-  # outputs
-  ######################################################
+  ##############################################################################
+  # SPECIES INFORMATION OUTPUTS
+  ##############################################################################
   output$species_header <- renderUI({
     sp <- selected_species()
     species_url <- paste0(
@@ -488,6 +621,18 @@ output$habitat <- renderText({
     pull(habitat)
 })
 
+# biology
+output$biology <- renderText({
+  selected_profile() %>%
+    pull(biology)
+})
+
+#population
+output$population <- renderText({
+  selected_profile() %>%
+    pull(population)
+})
+
 # number of threats
 output$n_threats <- renderText({
   n <- species_threats_app %>%
@@ -504,7 +649,20 @@ output$profile_threats <- renderText({
     pull(threats)
 })
 
-# planning summary table
+# threats
+output$threats <- renderDT({
+  dat <- species_threats_app %>%
+    filter(record_name == input$record) %>%
+    select(threat_category) %>%
+    distinct()
+  names(dat) <- ""
+  datatable(dat, rownames = FALSE, options = list(pageLength = 10, dom = "t"))
+})
+
+
+##############################################################################
+# RECOVERY PLANNING OUTPUTS
+##############################################################################
 output$planning_summary <- renderUI({
   dat <- recovery_coverage
   
@@ -518,10 +676,14 @@ output$planning_summary <- renderUI({
   
   med <- median(dat$years_since_recovery_planning, na.rm = TRUE)
   old <- sum(dat$years_since_recovery_planning > 10, na.rm = TRUE)
-  old_word <- c("Zero", "One", "Two", "Three", "Four",
-                "Five", "Six", "Seven", "Eight", "Nine", "Ten")[old + 1]
+  old_word <- if(old <= 10){
+    c("Zero","One","Two","Three","Four", "Five",
+      "Six","Seven","Eight","Nine","Ten")[old + 1]
+  } else {
+    as.character(old)
+  }
   tags$ul(style = "font-size:16px;",
-    tags$li(paste("Median years since publication of the most recent recovery planning document publications: ", round(med, 1))),
+    tags$li(paste("Median years since publication of the most recent recovery planning document: ", round(med, 1))),
     tags$li(paste(old_word," DUs have not had a recovery planning document published in over 10 years.")))
 })
 
@@ -563,53 +725,135 @@ output$recovery_coverage <- renderDT({
                                                 c("#d4edda","#fff3cd","#f8d7da")))
 })
 
-# threats
-output$threats <- renderDT({
-  dat <- species_threats_app %>%
-    filter(record_name == input$record) %>%
-    select(threat_category) %>%
-    distinct()
-  names(dat) <- ""
-  datatable(dat, rownames = FALSE, options = list(pageLength = 10, dom = "t"))
-})
-
-# documents table
+##############################################################################
+# SPECIES DOCUMENT OUTPUTS
+##############################################################################
 output$documents <- renderDT({
   docs <- species_documents %>%
     filter(record_name == input$record_docs) %>%
-    mutate(documentCreateDate = as.Date(documentCreateDate),
-           Document = paste0('<a href="',document_url,'" target="_blank">',
-                             documentTitle,'</a>')) %>%
-    arrange(desc(documentCreateDate)) %>%
-    select(primary_document_type,Document,documentCreateDate) %>%
-    rename(
-      `Document Type` = primary_document_type,
-      `Document Date` = documentCreateDate)
-  datatable( docs,escape = FALSE,rownames = FALSE)
+    filter(!is.na(planning_document_type)) %>%
+    mutate(attachment_date = as.Date(attachment_date),
+           Document = paste0('<a href="', document_url,
+                             '" target="_blank">', 
+                             attachment_title, '</a>')) %>%
+    arrange(desc(attachment_date)) %>%
+    select(planning_document_type, Document, attachment_date) %>%
+    rename(`Document Type` = planning_document_type,
+           `Publication Date` = attachment_date)
+  datatable(docs,escape = FALSE,rownames = FALSE)
 })
 
-# number of documents
-output$n_documents <- renderText({
-  n <- species_documents %>%
-    filter(record_name == input$record_docs) %>%
-    distinct(document_id) %>%
-    nrow()
-  paste(n, "Documents")
+# recovery document compliance
+output$compliance_summary <- renderUI({
+  comp <- selected_compliance()
+  status <- comp$compliance_status[1]
+  status_icon <- case_when(
+    status == "On Time" ~ "🟢",
+    status == "Late" ~ "🔴",
+    TRUE ~ "⚪")
+  status_colour <- case_when(
+    status == "On Time" ~ "#198754",
+    status == "Late" ~ "#dc3545",
+    TRUE ~ "#6c757d")
+  
+  if(nrow(comp) == 0){
+    return(tags$p("No compliance information available."))
+  }
+  
+  tags$div(
+    style = "
+      background-color:#f8f9fa;
+      border:1px solid #dee2e6;
+      border-radius:6px;
+      padding:10px;
+      margin-bottom:15px;
+    ",
+    
+    tags$p(
+      tags$b("Status: "),
+      tags$span(
+        style = paste0(
+          "color:", status_colour,
+          "; font-weight:bold;"
+        ),
+        paste(status_icon, status)
+      ),
+      if(
+        !is.na(comp$days_late[1]) &&
+        comp$days_late[1] > 0
+      ){
+        paste0(
+          " (",
+          round(comp$days_late[1] / 365.25, 1),
+          " years late)"
+        )
+      }
+    ),
+    
+    tags$p(
+      tags$b("SARA Listing Date: "),
+      as.character(comp$listing_date[1])
+    ),
+    
+    tags$p(
+      tags$b("Recovery Strategy Due: "),
+      as.character(comp$required_date[1])
+    ),
+    
+    tags$p(
+      tags$b("Published: "),
+      as.character(comp$first_recovery_strategy_date[1])
+    )
+    
+  )
 })
 
-# biology
-output$biology <- renderText({
-  selected_profile() %>%
-    pull(biology)
+##############################################################################
+# THREAT SUMMARY OUTPUTS
+##############################################################################
+output$common_threats <- renderDT({
+  dat <- species_threats_app %>%
+    left_join(species_master_app %>%
+                select(record_name, range_text),by = "record_name")
+  if(input$threat_range != "All"){
+    dat <- dat %>%
+      filter(grepl(input$threat_range, range_text, fixed = TRUE))}
+  dat %>%
+    distinct(record_name, threat_category) %>%
+    count(threat_category,sort = TRUE, name = "Designatable Units") %>%
+    rename(`Threat Category` = threat_category) %>%
+    datatable(rownames = FALSE, 
+              options = list(pageLength = 10, dom = "t",
+                             ordering = FALSE,
+                             columnDefs = list(list(width = "70%", targets = 0),
+                                               list(width = "30%", targets = 1))))
 })
 
-#population
-output$population <- renderText({
-  selected_profile() %>%
-    pull(population)
+# top species threats table
+output$top_threat_species <- renderDT({
+  
+  dat <- species_threats_app %>%
+    left_join(species_master_app %>%
+        select(record_name, range_text), by = "record_name")
+  if(input$threat_range != "All"){
+    dat <- dat %>%
+      filter(grepl(input$threat_range,
+                   range_text,fixed = TRUE))}
+  
+  dat %>%
+    distinct(record_name, threat_category) %>%
+    count(record_name, sort = TRUE,
+          name = "Threat Categories") %>%
+    slice_head(n = 10) %>%
+    rename(`Designatable Units` = record_name) %>%
+    datatable(rownames = FALSE, options = list( pageLength = 10,
+                                                dom = "t",
+                                                ordering = FALSE))
 })
 
-# explore species threats table
+##############################################################################
+# EXPLORE THREATS OUTPUTS
+##############################################################################
 output$explore_species <- renderDT({
   dat <- explore_results() %>%
     rename(`Common Name` = common_name,
@@ -623,70 +867,9 @@ output$explore_species_count <- renderText({
   paste(nrow(explore_results()), "Species Records")})
 
 
-# common threats table
-output$common_threats <- renderDT({
-  
-  dat <- species_threats_app %>%
-    left_join(species_master_app %>%
-                select(record_name, range_text),by = "record_name")
-  
-  if(input$threat_range != "All"){
-    dat <- dat %>%
-      filter(grepl(input$threat_range, range_text, fixed = TRUE))
-  }
-  
-  dat %>%
-    distinct(record_name, threat_category) %>%
-    count(threat_category,sort = TRUE, name = "Designatable Units") %>%
-    rename(`Threat Category` = threat_category) %>%
-    datatable(rownames = FALSE, 
-              options = list(pageLength = 10, dom = "t",
-                             ordering = FALSE,
-                             columnDefs = list(list(width = "70%", targets = 0),
-                                               list(width = "30%", targets = 1))))
-})
-
-# top spcies threats table
-output$top_threat_species <- renderDT({
-  
-  dat <- species_threats_app %>%
-    left_join(
-      species_master_app %>%
-        select(record_name, range_text),
-      by = "record_name"
-    )
-  
-  if(input$threat_range != "All"){
-    dat <- dat %>%
-      filter(
-        grepl(
-          input$threat_range,
-          range_text,
-          fixed = TRUE
-        )
-      )
-  }
-  
-  dat %>%
-    distinct(record_name, threat_category) %>%
-    count(record_name, sort = TRUE,
-          name = "Threat Categories") %>%
-    slice_head(n = 10) %>%
-    rename(`Designatable Units` = record_name) %>%
-    datatable(
-      rownames = FALSE,
-      options = list(
-        pageLength = 10,
-        dom = "t",
-        ordering = FALSE
-      )
-    )
-  
-})
-
-######################
-# provincial summaries
-######################
+##############################################################################
+# PROVINCE SUMMARY OUTPUTS
+##############################################################################
 output$province_title <- renderText({
   if(input$province_range == "All"){
     "National Summary"
