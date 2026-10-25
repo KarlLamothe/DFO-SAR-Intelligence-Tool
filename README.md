@@ -6,6 +6,15 @@ The application was developed to make information available through the Species 
 
 ## Features
 
+- Browse Schedule 1 freshwater fishes listed under SARA.
+- Explore species profile information and identified threats.
+- Access Recovery Strategies, Action Plans, Management Plans, Progress Reports, and COSEWIC Assessments.
+- Review recovery planning compliance metrics, including:
+  - Recovery Strategy publication timelines.
+  - Progress Report publication timelines.
+  - Legislative due dates and compliance status.
+- Summarize recovery planning coverage and threat occurrence across species and jurisdictions.
+
 ### Dashboard
 
 Provides a high-level overview of the application and its underlying data sources.
@@ -63,6 +72,17 @@ Access recovery planning and assessment documents associated with each DU.
 - Province/Territory
 - Species
 - DU
+
+### Recovery Planning Compliance
+
+The application calculates legislative recovery-planning metrics using document publication dates from the Species at Risk Public Registry.
+
+Metrics currently include:
+
+- Recovery Strategy compliance (time between SARA listing and Recovery Strategy publication).
+- Progress Report compliance (time between Recovery Strategy publication and required progress reporting milestones).
+
+These metrics are intended as screening-level indicators and should not be interpreted as formal assessments of regulatory compliance.
 
 ### Recovery Planning
 
@@ -132,9 +152,11 @@ Data are derived from:
 
 - Species at Risk Public Registry
 - Species profile pages
-- Recovery planning documents
-- COSEWIC assessments and status reports
-- Registry-linked species imagery and metadata
+- Recovery Strategies
+- Action Plans
+- Management Plans
+- Progress Reports
+- COSEWIC Assessment and Status Reports
 
 # Threat Group Consolidation
 
