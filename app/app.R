@@ -44,6 +44,7 @@ species_profiles <- readRDS("data/species_profiles.rds")
 species_threats <- readRDS("data/species_threats.rds")
 species_documents <- readRDS("data/species_documents.rds")
 recovery_compliance <- readRDS("data/recovery_compliance.rds")
+progress_compliance <- readRDS("data/progress_report_compliance.rds")
 
 ################################################################################
 # APPLICATION DATASETS
@@ -411,7 +412,10 @@ server <- function(input, output, session){
       filter(record_name == input$record)
   })
   
-  
+  selected_progress_compliance <- reactive({
+    progress_compliance %>%
+      filter(record_name == input$record_docs)
+  })
   ##############################################################################
   # THREAT EXPLORATION REACTIVES
   ##############################################################################
@@ -746,66 +750,89 @@ output$documents <- renderDT({
 # recovery document compliance
 output$compliance_summary <- renderUI({
   comp <- selected_compliance()
+  prog <- selected_progress_compliance()
+  if(nrow(comp) == 0){return(tags$p("No compliance information available."))}
+  
+  # Recovery Strategy Compliance -------------------------------------------
+  
   status <- comp$compliance_status[1]
   status_icon <- case_when(
     status == "On Time" ~ "🟢",
     status == "Late" ~ "🔴",
     TRUE ~ "⚪")
+  
   status_colour <- case_when(
     status == "On Time" ~ "#198754",
     status == "Late" ~ "#dc3545",
     TRUE ~ "#6c757d")
   
-  if(nrow(comp) == 0){
-    return(tags$p("No compliance information available."))
-  }
+  # Progress Report Compliance ---------------------------------------------
   
-  tags$div(
-    style = "
+  prog_status <- if(nrow(prog) > 0)
+    prog$compliance_status[1]
+  else
+    NA_character_
+  
+  prog_status_icon <- case_when(
+    prog_status == "On Time" ~ "🟢",
+    prog_status == "Late" ~ "🔴",
+    prog_status == "Overdue" ~ "🟠",
+    prog_status == "Not Yet Due" ~ "⚪",
+    TRUE ~ "⚪" )
+  
+  prog_status_colour <- case_when(
+    prog_status == "On Time" ~ "#198754",
+    prog_status == "Late" ~ "#dc3545",
+    prog_status == "Overdue" ~ "#fd7e14",
+    prog_status == "Not Yet Due" ~ "#6c757d",
+    TRUE ~ "#6c757d")
+  
+  tags$div(style = "
       background-color:#f8f9fa;
       border:1px solid #dee2e6;
       border-radius:6px;
       padding:10px;
       margin-bottom:15px;
+      max-width:650px;
     ",
     
-    tags$p(
-      tags$b("Status: "),
-      tags$span(
-        style = paste0(
-          "color:", status_colour,
-          "; font-weight:bold;"
-        ),
-        paste(status_icon, status)
-      ),
-      if(
-        !is.na(comp$days_late[1]) &&
-        comp$days_late[1] > 0
-      ){
-        paste0(
-          " (",
-          round(comp$days_late[1] / 365.25, 1),
-          " years late)"
-        )
-      }
-    ),
+    tags$div(tags$b("SARA Listing Date: "), as.character(comp$listing_date[1])),
+    tags$div(tags$b("Recovery Strategy Due: "), as.character(comp$required_date[1])),
+    tags$div(tags$b("First Recovery Strategy Published: "),
+             as.character(comp$first_recovery_strategy_date[1]),
+             " ",
+             tags$span(style = paste0(
+               "color:", status_colour, "; font-weight:bold;"),
+               paste(status_icon, status)),
+      
+      if(!is.na(comp$days_late[1]) && comp$days_late[1] > 0){
+        paste0( " (",round(comp$days_late[1] / 365.25, 1), " years late)") }),
     
-    tags$p(
-      tags$b("SARA Listing Date: "),
-      as.character(comp$listing_date[1])
-    ),
+    tags$div(tags$b("Current Recovery Strategy: "),
+             as.character(prog$recovery_strategy_date[1])),
+    tags$div(style = "margin-top:8px;"),
+    tags$div(tags$b("Progress Report Due: "),
+             ifelse(is.na(prog$progress_report_due_date[1]),
+                    "Not Available",
+                    as.character(prog$progress_report_due_date[1]))),
     
-    tags$p(
-      tags$b("Recovery Strategy Due: "),
-      as.character(comp$required_date[1])
-    ),
+    tags$div(tags$b("Most Recent Progress Report: "),
+             ifelse(is.na(prog$latest_progress_report_date[1]),
+                    "Not Available",
+                    as.character(prog$latest_progress_report_date[1])), " ",
+             tags$span(style = paste0("color:", prog_status_colour,
+                                      "; font-weight:bold;"),
+                       paste(prog_status_icon, prog_status)),
+             
+             if(!is.na(prog$days_late[1]) &&
+                prog$days_late[1] > 0 &&
+                prog_status %in% c("Late", "Overdue")){
+               paste0(" (",round(prog$days_late[1] / 365.25, 1)," years late)")}),
     
-    tags$p(
-      tags$b("Published: "),
-      as.character(comp$first_recovery_strategy_date[1])
-    )
-    
-  )
+    tags$div(tags$b("Next Progress Report Due: "),
+             ifelse(is.na(prog$next_progress_report_due_date[1]),
+                    "Not Available",
+                    as.character(prog$next_progress_report_due_date[1]))))
 })
 
 ##############################################################################
@@ -941,7 +968,6 @@ output$province_species_table <- renderDT({
     arrange(`Common Name`) %>%
     datatable(rownames = FALSE,options = list( pageLength = 10))
 })
-
 
 }
 

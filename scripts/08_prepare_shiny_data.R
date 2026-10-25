@@ -35,9 +35,12 @@ species_profiles <- read.csv("data_processed/species_profiles.csv")
 species_threats <- read.csv("data_processed/species_threats.csv")
 species_documents <- read.csv("data_processed/species_documents.csv")
 recovery_compliance <- read.csv("data_processed/recovery_compliance.csv")
+progress_compliance <- read.csv("data_processed/progress_report_compliance.csv")
+
 saveRDS(species_master, "app/data/species_master.rds")
 saveRDS(species_profiles, "app/data/species_profiles.rds")
 saveRDS(species_threats, "app/data/species_threats.rds")
 saveRDS(species_documents, "app/data/species_documents.rds")
 saveRDS(recovery_compliance, "app/data/recovery_compliance.rds")
+saveRDS(progress_compliance, "app/data/progress_report_compliance.rds")
 
