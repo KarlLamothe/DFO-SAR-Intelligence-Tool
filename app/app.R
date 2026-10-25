@@ -92,6 +92,23 @@ panel_style <- "
   border: 1px solid #dee2e6;
   border-radius: 6px;
 "
+summary_card <- function(value, label, bg, border){
+  div(style = paste0(
+      "background:", bg, ";
+       border:1px solid ", border, ";
+       border-radius:10px;
+       padding:15px;
+       text-align:center;
+       min-height:120px;
+       height:120px;
+       box-shadow:0 1px 3px rgba(0,0,0,0.08);"),
+    h1(style = "margin:0;", value),
+    p(style = "margin-top:5px;
+               margin-bottom:0;
+               font-size:16px;",
+      label))
+}
+
 ################################################################################
 # RECOVERY PLANNING COVERAGE DATASET
 # Create a DU-level recovery planning summary used in the "Recovery Planning" tab.
@@ -225,6 +242,12 @@ ui <- fluidPage(
       .small-box p {
         font-size: 18px;
       }
+      table.dataTable a:hover {
+      text-decoration: underline;
+      color: #0a58ca;
+      background-color: #f8f9fa;
+      font-weight: 500;
+      }
     "))
   ),
   
@@ -293,16 +316,15 @@ ui <- fluidPage(
                            br(),
                            fluidRow(species_documents_selector_ui, 
                                     column(10, 
-                                           h4("Recovery Planning Compliance"),
+                                           h4("Species Recovery Documents Compliance"),
                                            uiOutput("compliance_summary"),
                                            br(),
+                                           h4("Legislated Recovery Documents"),
                                            DTOutput("documents"),
                                            tags$p(
                                              style = "font-size:12px; color:gray;",
-                                             "Note: This table includes Recovery Strategies, Action Plans, ",
-                                             "Management Plans, Progress Reports, and COSEWIC Assessments. Historical and amended ",
-                                             "versions are shown where available. Some proposed versions may ",
-                                             "remain when no final version exists."
+                                             tags$b("Document Notes: "),
+                                             "This table includes Recovery Strategies, Action Plans, Management Plans, Progress Reports, and COSEWIC Assessments..."
                                            )))),
                  
                    # RECOVERY PLANNING TAB
@@ -353,8 +375,8 @@ ui <- fluidPage(
                                fluidRow(province_selector_ui,
                                         column(10,
                                                h3(textOutput("province_title")),
-                                               uiOutput("province_overview"),
-                                               DTOutput("province_status"))),
+                                               fluidRow(uiOutput("province_cards")))),
+                               br(),
                                fluidRow(column(6,
                                                h3("Species Records by SARA Status",
                                                   style="text-align:center;"),
@@ -737,15 +759,34 @@ output$documents <- renderDT({
     filter(record_name == input$record_docs) %>%
     filter(!is.na(planning_document_type)) %>%
     mutate(attachment_date = as.Date(attachment_date),
-           Document = paste0('<a href="', document_url,
-                             '" target="_blank">', 
-                             attachment_title, '</a>')) %>%
+      Document = paste0('<a href="',document_url,'" target="_blank">',
+        attachment_title, '</a>'),
+      planning_document_type = case_when(
+        planning_document_type == "Recovery Strategy" ~
+          "<span class='badge bg-primary'>Recovery Strategy</span>",
+        planning_document_type == "Action Plan" ~
+          "<span class='badge bg-success'>Action Plan</span>",
+        planning_document_type == "Recovery Strategy & Action Plan" ~
+          "<span class='badge bg-info text-dark'>Recovery Strategy & Action Plan</span>",
+        planning_document_type == "Progress Report" ~
+          "<span class='badge bg-warning text-dark'>Progress Report</span>",
+        planning_document_type == "COSEWIC Assessment" ~
+          "<span class='badge bg-secondary'>COSEWIC Assessment</span>",
+        planning_document_type == "Management Plan" ~
+          "<span class='badge bg-dark'>Management Plan</span>",
+        TRUE ~ planning_document_type)) %>%
     arrange(desc(attachment_date)) %>%
+    mutate(attachment_date = format( attachment_date,"%d %b %Y")) %>%
     select(planning_document_type, Document, attachment_date) %>%
     rename(`Document Type` = planning_document_type,
            `Publication Date` = attachment_date)
-  datatable(docs,escape = FALSE,rownames = FALSE)
+  datatable( docs,escape = FALSE,rownames = FALSE, options = list(
+    columnDefs = list(
+      list(width = "10%", targets = 0),
+      list(width = "70%", targets = 1),
+      list(width = "20%", targets = 2))))
 })
+
 
 # recovery document compliance
 output$compliance_summary <- renderUI({
@@ -790,16 +831,17 @@ output$compliance_summary <- renderUI({
   tags$div(style = "
       background-color:#f8f9fa;
       border:1px solid #dee2e6;
-      border-radius:6px;
-      padding:10px;
-      margin-bottom:15px;
+      border-radius:10px;
+      padding:15px;
+      margin-bottom:20px;
       max-width:650px;
+      box-shadow:0 1px 3px rgba(0,0,0,0.08);
     ",
     
-    tags$div(tags$b("SARA Listing Date: "), as.character(comp$listing_date[1])),
-    tags$div(tags$b("Recovery Strategy Due: "), as.character(comp$required_date[1])),
+    tags$div(tags$b("SARA Listing Date: "), format(as.Date(comp$listing_date[1]), "%d %b %Y")),
+    tags$div(tags$b("Recovery Strategy Due: "), format(as.Date(comp$required_date[1]), "%d %b %Y")),
     tags$div(tags$b("First Recovery Strategy Published: "),
-             as.character(comp$first_recovery_strategy_date[1]),
+             format(as.Date(comp$first_recovery_strategy_date[1]), "%d %b %Y"),
              " ",
              tags$span(style = paste0(
                "color:", status_colour, "; font-weight:bold;"),
@@ -808,18 +850,20 @@ output$compliance_summary <- renderUI({
       if(!is.na(comp$days_late[1]) && comp$days_late[1] > 0){
         paste0( " (",round(comp$days_late[1] / 365.25, 1), " years late)") }),
     
-    tags$div(tags$b("Current Recovery Strategy: "),
-             as.character(prog$recovery_strategy_date[1])),
+    if(prog$recovery_strategy_date[1] !=comp$first_recovery_strategy_date[1]){
+      tags$div(tags$b("Current Recovery Strategy: "),
+        format(as.Date(prog$recovery_strategy_date[1]), "%d %b %Y"))
+    },
     tags$div(style = "margin-top:8px;"),
     tags$div(tags$b("Progress Report Due: "),
              ifelse(is.na(prog$progress_report_due_date[1]),
                     "Not Available",
-                    as.character(prog$progress_report_due_date[1]))),
+                    format(as.Date(prog$progress_report_due_date[1]), "%d %b %Y"))),
     
     tags$div(tags$b("Most Recent Progress Report: "),
              ifelse(is.na(prog$latest_progress_report_date[1]),
                     "Not Available",
-                    as.character(prog$latest_progress_report_date[1])), " ",
+                    format(as.Date(prog$latest_progress_report_date[1]), "%d %b %Y")), " ",
              tags$span(style = paste0("color:", prog_status_colour,
                                       "; font-weight:bold;"),
                        paste(prog_status_icon, prog_status)),
@@ -832,7 +876,7 @@ output$compliance_summary <- renderUI({
     tags$div(tags$b("Next Progress Report Due: "),
              ifelse(is.na(prog$next_progress_report_due_date[1]),
                     "Not Available",
-                    as.character(prog$next_progress_report_due_date[1]))))
+                    format(as.Date(prog$next_progress_report_due_date[1]), "%d %b %Y"))))
 })
 
 ##############################################################################
@@ -967,6 +1011,24 @@ output$province_species_table <- renderDT({
            `SARA Status` = sara_status) %>%
     arrange(`Common Name`) %>%
     datatable(rownames = FALSE,options = list( pageLength = 10))
+})
+
+output$province_cards <- renderUI({
+  dat <- province_species()
+  n_records <- n_distinct(dat$record_name)
+  n_endangered <- dat %>%
+    filter(sara_status == "Endangered") %>%
+    nrow()
+  n_threatened <- dat %>%
+    filter(sara_status == "Threatened") %>%
+    nrow()
+  n_extirpated <- dat %>%
+    filter(sara_status == "Extirpated") %>%
+    nrow()
+  fluidRow(column(3,summary_card(n_records, "DUs","white", "#dee2e6")),
+           column(3,summary_card(n_endangered, "Endangered","#f8d7da", "#f5c2c7")),
+           column(3,summary_card(n_threatened, "Threatened","#fff3cd", "#ffecb5")),
+           column(3,summary_card(n_extirpated, "Extirpated","#e2d9f3", "#d1c4e9")))
 })
 
 }

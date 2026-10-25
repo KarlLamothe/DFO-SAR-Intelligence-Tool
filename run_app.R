@@ -10,7 +10,7 @@
 library(shiny)
 library(dplyr)
 library(DT)
-library(shinydashboard)
+library(shinyDashboard)
 library(bslib)
 
 runApp("app/app.R")
