@@ -102,7 +102,7 @@ summary_card <- function(value, label, bg, border){
        min-height:120px;
        height:120px;
        box-shadow:0 1px 3px rgba(0,0,0,0.08);"),
-    h1(style = "margin:0;", value),
+    h2(style = "margin:0;", value),
     p(style = "margin-top:5px;
                margin-bottom:0;
                font-size:16px;",
@@ -270,7 +270,7 @@ province_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
       h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
-      tags$p(style = "color:#6c757d; font-size:13px;",
+      tags$p(style = "color:#6c757d; font-size:12px;",
              "Filter species records by range."),
   selectInput("province_range", "Range", choices = range_choices)))
 
@@ -366,6 +366,20 @@ ui <- fluidPage(
       font-size: 12px;
       font-weight: 600;
       }
+      .recovery-card {
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      min-height: 120px;
+      }
+      .recovery-card h3 {
+       margin-top: 5px;
+       margin-bottom: 5px;
+      }
+      .recovery-card p {
+       margin-bottom: 0;
+       font-weight: 500;
+      }
     "))
   ),
   
@@ -434,10 +448,10 @@ ui <- fluidPage(
                            br(),
                            fluidRow(species_documents_selector_ui, 
                                     column(9, 
-                                           h4("Species Recovery Documents Compliance"),
+                                           h3("Species Recovery Documents Compliance"),
                                            uiOutput("compliance_summary"),
                                            br(),
-                                           h4("Legislated Recovery Documents"),
+                                           h3("Legislated Recovery Documents"),
                                            DTOutput("documents"),
                                            tags$p(
                                              style = "font-size:12px; color:gray;",
@@ -452,7 +466,7 @@ ui <- fluidPage(
                                fluidRow(recovery_planning_selector_ui, 
                                         column(9,
                                                tagList(
-                                                 h2("Recovery Planning Coverage"),
+                                                 h3("Recovery Planning Coverage"),
                                                  p(class = "text-muted",
                                                    "Track recovery strategies, action plans, and progress reporting obligations across DUs.")),
                                                uiOutput("planning_summary"),
@@ -478,7 +492,7 @@ ui <- fluidPage(
                           selectInput("threat_range", "Range",
                                       choices = range_choices, selected = "All"))),
                           column(10, tagList(
-                            h2("Threats to Species Recovery"),
+                            h3("Threats to Species Recovery"),
                             p(class = "text-muted",
                               "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information.")),
                             fluidRow(column(6,
@@ -494,7 +508,7 @@ ui <- fluidPage(
                   tabPanel("Explore Threats",
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
-                               h2("Explore Threats"),
+                               h3("Explore Threats"),
                                tags$p(class = "text-muted",
                                       "Explore DUs associated with a selected threat category and filter results by SARA status or range."),
                                fluidRow(explore_selector_ui,
@@ -514,7 +528,11 @@ ui <- fluidPage(
                                fluidRow(column(6,
                                                h3("Species Records by SARA Status",
                                                   style="text-align:center;"),
-                                               DTOutput("province_status")),
+                                               DTOutput("province_status"),
+                                               br(),
+                                               h3("Recovery Planning Status",
+                                                  style = "text-align:center"),
+                                               uiOutput("province_recovery_summary")),
                                         column(6,
                                                h3("Most Common Threat Categories",
                                                   style="text-align:center;"),
@@ -617,6 +635,14 @@ server <- function(input, output, session){
       dat <- dat %>%
         filter(grepl(input$province_range, range_text,fixed = TRUE))}
     dat
+  })
+  
+  province_recovery_summary <- reactive({
+    dat <- recovery_coverage
+    if(input$province_range != "All"){
+      dat <- dat %>%
+        filter(grepl(input$province_range, range_text, fixed = TRUE))}
+    dat %>% count(compliance_status)
   })
   
   ##############################################################################
@@ -740,34 +766,44 @@ server <- function(input, output, session){
       "www","images",img_file))){
       img_file <- "no_image_available.jpg"
     }
-    tagList(fluidRow(column(3, tags$img(src = paste0("images/", img_file),
-            style = "
-            width:100%;
-            max-height:200px;
-            object-fit:contain;
-            background-color:white;
-            border-radius:8px;
-            border:1px solid #d9d9d9;
-          "),
-          if (
-            !is.na(sp$photoCopyright[1]) &&
-            sp$photoCopyright[1] != "") {
-            tags$p(style = 
-            "font-size:11px;
-             color:grey; 
-            margin-top:5px;",
-                   sp$photoCopyright[1])
-          }
+    
+    tagList(fluidRow(column(3, 
+                            h3(sp$common_name, style = "margin-top:0; margin-bottom:5px;"),
+                            tags$h4(tags$em(sp$scientific_name),
+                            style = "margin-top:0;margin-bottom:10px;color:#495057;"),
+                            tags$img(src = paste0("images/", img_file),
+                            style = "width:100%;max-height:200px;
+                            object-fit:contain;background-color:white;
+                            border-radius:8px;border:1px solid #d9d9d9;"),
           
-        ),
-        column(9, h2(sp$common_name),
-               tags$h4(tags$em(sp$scientific_name)),
-               tags$p(tags$a("View Species Profile on the SAR Registry",
-                   href = species_url, target = "_blank")),
-               tags$p(strong("Designatable Unit: "),sp$record_name),
-               tags$p(strong("SARA Status: "),sp$sara_status),
-               tags$p(strong("COSEWIC Status: "),sp$cosewic_status),
-               tags$p(strong("Range: "), sp$range_text))))})
+                            if (!is.na(sp$photoCopyright[1]) &&
+                                sp$photoCopyright[1] != "") {
+                              tags$p(style =  "font-size:11px;
+                                     color:grey; margin-top:5px;",
+                                     sp$photoCopyright[1])}),
+                     
+                     column(9,
+                            tags$div(style = "margin-top:15px;line-height:1.8;",
+                        tags$div(
+                          style = "
+                          background-color:#f8f9fa;
+                          border:1px solid #dee2e6;
+                          border-radius:10px;
+                          padding:12px;
+                          margin-top:10px;
+                          margin-top:80px;
+                          max-width:500px;
+                          ",
+                          tags$p(style = "margin-bottom:10px;",
+                                 tags$a("View Species Profile on the SAR Registry",
+                                        href = species_url, 
+                                        target = "_blank")),
+                          tags$div(tags$b("Designatable Unit: "),sp$record_name),
+                          tags$div(tags$b("SARA Status: "), sp$sara_status,
+                                   style = "margin-top:4px;"),
+                          tags$div(tags$b("COSEWIC Status: "), sp$cosewic_status,
+                                   style = "margin-top:4px;" ),
+                          tags$div(tags$b("Range: "), sp$range_text,style = "margin-top:4px;" ))))))})
   
 # description
 output$description <- renderText({
@@ -1233,6 +1269,28 @@ output$province_cards <- renderUI({
            column(3,summary_card(n_threatened, "Threatened","#fff3cd", "#ffecb5")),
            column(3,summary_card(n_extirpated, "Extirpated","#e2d9f3", "#d1c4e9")))
 })
+
+output$province_recovery_summary <- renderUI({
+  dat <- province_recovery_summary()
+  up_to_date <- sum(dat$n[dat$compliance_status == "Up to Date"],na.rm = TRUE)
+  not_yet_due <- sum(dat$n[dat$compliance_status == "Not Yet Due"], na.rm = TRUE)
+  overdue <- sum(dat$n[dat$compliance_status == "Overdue"], na.rm = TRUE)
+  div(
+    class = "threat-card",
+    fluidRow(column(4,div(class = "recovery-card",
+                          style = "background:#d4edda;",
+                          h2(up_to_date),
+                          p("Up to Date"))),
+             column(4,div(class = "recovery-card",
+                          style = "background:#fff3cd;",
+                          h2(not_yet_due),
+                          p("Not Yet Required"))),
+             column(4,div(class = "recovery-card",
+                          style = "background:#f8d7da;",
+                          h2(overdue),
+                          p("Overdue")))))
+})
+
 
 }
 
