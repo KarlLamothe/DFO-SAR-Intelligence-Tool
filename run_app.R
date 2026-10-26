@@ -4,13 +4,11 @@
 #install.packages('shiny')
 #install.packages('dplyr')
 #install.packages('DT')
-#install.packages('shinydashboard')
 #install.packages('bslib')
 
 library(shiny)
 library(dplyr)
 library(DT)
-library(shinyDashboard)
 library(bslib)
 
 runApp("app/app.R")

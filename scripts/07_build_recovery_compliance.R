@@ -136,12 +136,32 @@ progress_compliance <- progress_compliance %>%
         round(365.25 * 5), TRUE ~ progress_report_due_date),
     
     compliance_status = case_when(
-      is.na(latest_progress_report_date) & progress_report_due_date > Sys.Date() ~
-        "Not Yet Due", is.na(latest_progress_report_date) &
-        progress_report_due_date <= Sys.Date() ~"Overdue",
-
+      
+      # No report yet
+      is.na(latest_progress_report_date) &
+        progress_report_due_date > Sys.Date() ~
+        "Not Yet Due",
+      
+      is.na(latest_progress_report_date) &
+        progress_report_due_date <= Sys.Date() ~
+        "Overdue",
+      
+      # Report exists and next report not yet due
+      !is.na(latest_progress_report_date) &
+        next_progress_report_due_date > Sys.Date() ~
+        "Up to Date",
+      
+      # Report exists but next one is overdue
+      !is.na(latest_progress_report_date) &
+        next_progress_report_due_date <= Sys.Date() ~
+        "Overdue"
+    ),
+    
+    last_report_performance = case_when(
+      is.na(latest_progress_report_date) ~ NA_character_,
       days_late <= 0 ~ "On Time",
-      days_late > 0 ~ "Late"))
+      days_late > 0 ~ "Submitted Late"
+    ))
 
 progress_compliance <- progress_compliance %>%
   mutate(years_late = round(days_late / 365.25, 1))

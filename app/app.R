@@ -119,33 +119,78 @@ summary_card <- function(value, label, bg, border){
 
 # derived recovery data dataset
 recovery_coverage <- species_master_app %>%
+  
   # ensure one record per DU
   distinct(record_name, sara_status, range_text) %>%
+  
   # join recovery planning metrics
-  left_join(species_documents %>%
-  group_by(record_name) %>%
-    # Recovery Strategy present?
-    summarise(has_recovery_strategy = any(grepl(
-      "Recovery Strategy",documentTitle, ignore.case = TRUE)),
-      # Action Plan present?
-      has_action_plan = any(primary_document_type == "Action Plan") |
-        any(grepl("Action Plan", documentTitle, ignore.case = TRUE)),
-      # Management Plan present?
-      has_management_plan =any(
-        grepl("Management Plan", documentTitle, ignore.case = TRUE)),
-      # Latest planning document date
-      latest_recovery_planning_document =suppressWarnings(
-        max(as.Date(documentCreateDate[grepl(
-          "Recovery Strategy|Action Plan",documentTitle,ignore.case = TRUE)]),
-          na.rm = TRUE)), .groups = "drop"),by = "record_name") %>%
+  left_join(
+    species_documents %>%
+      group_by(record_name) %>%
+      summarise(
+        
+        # Recovery Strategy present?
+        has_recovery_strategy = any(grepl("Recovery Strategy",
+                documentTitle,ignore.case = TRUE)),
+        
+        # Action Plan present?
+        has_action_plan =
+          any(primary_document_type == "Action Plan") |
+          any(grepl("Action Plan", documentTitle,ignore.case = TRUE)),
+        
+        # Management Plan present?
+        has_management_plan = any(
+          grepl("Management Plan", documentTitle, ignore.case = TRUE)),
+        
+        # Latest planning document date
+        latest_recovery_planning_document = {
+          planning_idx <- grepl(
+            "Recovery Strategy|Action Plan|Progress",
+            documentTitle, ignore.case = TRUE)
+          
+          dates <- as.Date(documentCreateDate[planning_idx])
+          
+          if(length(dates) == 0 || all(is.na(dates))) {
+            as.Date(NA)
+          } else {
+            max(dates, na.rm = TRUE)
+          }
+        },
+        
+        # Latest planning document type
+        latest_document_type = {
+          planning_idx <- grepl(
+            "Recovery Strategy|Action Plan|Progress",
+            documentTitle,ignore.case = TRUE)
+          
+          titles <- documentTitle[planning_idx]
+          dates <- as.Date(documentCreateDate[planning_idx])
+          
+          if(length(dates) == 0 || all(is.na(dates))) {
+            NA_character_
+          } else {
+            latest_title <- titles[which.max(dates)]
+            case_when(
+              grepl("Progress",latest_title,ignore.case = TRUE) ~"Progress Report",
+              grepl("Recovery Strategy",latest_title, ignore.case = TRUE) &
+                grepl("Action Plan",latest_title, ignore.case = TRUE) ~
+                "Recovery Strategy & Action Plan",
+              grepl("Action Plan", latest_title,ignore.case = TRUE) ~ "Action Plan",
+              TRUE ~"Recovery Strategy")}}, .groups = "drop"), by = "record_name") %>%
+  
   # Calculate document age
-   mutate(latest_recovery_planning_document = as.Date(
+  mutate(
+    latest_recovery_planning_document = as.Date(
       ifelse(is.infinite(latest_recovery_planning_document), NA,
-             latest_recovery_planning_document), origin = "1970-01-01"),
+        latest_recovery_planning_document),origin = "1970-01-01"),
+    
     years_since_recovery_planning =
-      round(as.numeric(Sys.Date() -
-            as.Date(latest_recovery_planning_document,
-                    origin = "1970-01-01")) / 365.25,1))
+      round( as.numeric(Sys.Date() - latest_recovery_planning_document) / 365.25,
+        1))
+  
+recovery_coverage <- recovery_coverage %>%
+  left_join(progress_compliance %>%
+              select(record_name,compliance_status), by = "record_name")
 
 ################################################################################
 # REUSABLE UI COMPONENTS
@@ -708,9 +753,20 @@ output$planning_summary <- renderUI({
   } else {
     as.character(old)
   }
-  tags$ul(style = "font-size:16px;",
-    tags$li(paste("Median years since publication of the most recent recovery planning document: ", round(med, 1))),
-    tags$li(paste(old_word," DUs have not had a recovery planning document published in over 10 years.")))
+  tags$div(
+    style = "
+    background-color:#f8f9fa;
+    border-left:5px solid #0d6efd;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:4px;",
+    
+    tags$p(style="margin-bottom:8px;",
+           paste0( "The median age of the most recent recovery planning document is ",
+                   round(med,1)," years.")),
+    
+    tags$p(style="margin-bottom:0;", paste0(old_word,
+        " designatable units have not had a recovery planning document published in over 10 years.")))
 })
 
 # recovery strategy coverage table
@@ -726,29 +782,62 @@ output$recovery_coverage <- renderDT({
       filter(grepl(input$planning_range, range_text, fixed = TRUE))}
   
   dat %>%
-    mutate(`Recovery Strategy or Progress Report Complete` =
-             ifelse(coalesce(has_recovery_strategy, FALSE), "Yes", "No"),
+    mutate(`Recovery Strategy` =
+             ifelse(coalesce(has_recovery_strategy, FALSE), "✅","❌"),
            
-           `Action Plan Complete` =
-             ifelse(coalesce(has_action_plan, FALSE), "Yes", "No")) %>%
+           `Action Plan` =
+             ifelse(coalesce(has_action_plan, FALSE), "✅","❌") ,
+           
+           latest_recovery_planning_document =
+             format(latest_recovery_planning_document, "%b %d, %Y"),
+           
+           compliance_status = case_when(
+             compliance_status == "Up to Date" ~ "✅ Up to Date",
+             compliance_status == "Overdue" ~ "🔴 Report Overdue",
+             compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required")) %>%
     
     arrange(desc(years_since_recovery_planning),
             is.na(years_since_recovery_planning)) %>%
     select(record_name,
-           `Recovery Strategy or Progress Report Complete`,
-           `Action Plan Complete`,
+           `Recovery Strategy`,
+           `Action Plan`,
+           compliance_status,
+           latest_document_type,
            latest_recovery_planning_document,
            years_since_recovery_planning) %>%
-    rename(`Designatable Unit` = record_name,
-           `Most Recent Planning Document` =
-             latest_recovery_planning_document,
-           `Years Since Recovery Planning Document` =
-             years_since_recovery_planning) %>%
-    datatable(rownames = FALSE, options = list(pageLength = 10,
-                                               autoWidth = TRUE))%>%
-    formatStyle("Years Since Recovery Planning Document",
+  
+    rename(
+      `Designatable Unit` = record_name,
+      `Progress Report Status` = compliance_status,
+      `Latest Document Type` = latest_document_type,
+      `Latest Document Date` = latest_recovery_planning_document,
+      `Years Since Recovery Document` = years_since_recovery_planning) %>%
+    
+    datatable(rownames = FALSE, width = "100%",
+              options = list(pageLength = 10,
+                             columnDefs = list(
+                               list(className = "dt-center", targets = c(1, 2)),
+                               list(width = "220px", targets = 0),  # DU
+                               list(width = "150px", targets = 1),  
+                               list(width = "150px", targets = 2),   
+                               list(width = "180px", targets = 3), 
+                               list(width = "190px", targets = 4),  
+                               list(width = "180px", targets = 5),
+                               list(width = "250px", targets = 6))
+                               )) %>%
+    
+    formatStyle("Years Since Recovery Document",
                 backgroundColor = styleInterval(c(5, 10),
-                                                c("#d4edda","#fff3cd","#f8d7da")))
+                                                c("#d4edda","#fff3cd","#f8d7da")))%>%
+    formatStyle(c("Recovery Strategy",
+                  "Action Plan"), textAlign = "center")%>%
+    
+    formatStyle("Progress Report Status", target = "cell",
+                backgroundColor = styleEqual(c("✅Up to date","🔴 Report Overdue",
+                                               "🟡 Not Yet Required"),
+                                             c("#d4edda",  
+                                               "#f8d7da",  
+                                               "#fff3cd")))
 })
 
 ##############################################################################
