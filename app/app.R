@@ -176,60 +176,27 @@ recovery_coverage <- species_master_app %>%
             types[which.max(dates)]}},.groups="drop"), by="record_name")%>%
   
   # Calculate document age
-  mutate(
-    latest_recovery_planning_document = as.Date(
-      ifelse(is.infinite(latest_recovery_planning_document), NA,
-        latest_recovery_planning_document),origin = "1970-01-01"),
+  mutate(latest_recovery_planning_document = as.Date(
+    ifelse(is.infinite(latest_recovery_planning_document), NA,
+           latest_recovery_planning_document),origin = "1970-01-01"),
     
-    years_since_recovery_planning =
-      round( as.numeric(Sys.Date() - latest_recovery_planning_document) / 365.25,
-        1))
+    years_since_recovery_planning = round( 
+      as.numeric(Sys.Date() - latest_recovery_planning_document) / 365.25, 1))
 
 recovery_coverage <- recovery_coverage %>%
-  left_join(
-    progress_compliance %>%
-      select(
-        record_name,
-        compliance_status,
-        latest_progress_report_date
-      ),
-    by = "record_name"
-  ) %>%
-  mutate(
-    
-    latest_document_date = pmax(
-      latest_recovery_planning_document,
-      latest_progress_report_date,
-      na.rm = TRUE
-    ),
+  left_join(progress_compliance %>%
+      select( record_name, compliance_status, latest_progress_report_date),
+      by = "record_name") %>%
+  mutate(latest_document_date = pmax(
+    latest_recovery_planning_document,latest_progress_report_date,na.rm = TRUE),
     
     latest_document_type = case_when(
       !is.na(latest_progress_report_date) &
-        latest_progress_report_date == latest_document_date ~
-        "Progress Report",
-      
-      TRUE ~ latest_document_type
-    ),
+        latest_progress_report_date == latest_document_date ~"Progress Report",
+      TRUE ~ latest_document_type),
     
     years_since_recovery_planning =
-      round(
-        as.numeric(
-          Sys.Date() - latest_document_date
-        ) / 365.25,
-        1
-      )
-  )
-
-recovery_coverage %>%
-  filter(grepl("Eastern Sand Darter", record_name)) %>%
-  select(
-    record_name,
-    latest_recovery_planning_document,
-    latest_progress_report_date,
-    latest_document_date,
-    latest_document_type
-  )
-
+      round( as.numeric(Sys.Date() - latest_document_date) / 365.25, 1))
 
 ################################################################################
 # REUSABLE UI COMPONENTS
@@ -331,6 +298,28 @@ ui <- fluidPage(
       color: #0a58ca;
       background-color: #f8f9fa;
       font-weight: 500;
+      }
+      table.dataTable tbody tr:hover {
+      background-color: #f5f9ff !important;
+      }
+      table.dataTable.stripe tbody tr.odd {
+      background-color: #fafafa;
+      }
+      .badge-yes {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      }
+      .badge-no {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
       }
     "))
   ),
@@ -821,11 +810,13 @@ output$recovery_coverage <- renderDT({
       filter(grepl(input$planning_range, range_text, fixed = TRUE))}
   
   dat %>%
-    mutate(`Recovery Strategy` =
-             ifelse(coalesce(has_recovery_strategy, FALSE), "✅","❌"),
-           
-           `Action Plan` =
-             ifelse(coalesce(has_action_plan, FALSE), "✅","❌") ,
+    mutate(`Recovery Strategy` =ifelse( coalesce(has_recovery_strategy, FALSE),
+          '<span class="badge-yes">Available</span>',
+          '<span class="badge-no">Missing</span>'),
+          
+          `Action Plan` =ifelse(coalesce(has_action_plan, FALSE),
+          '<span class="badge-yes">Available</span>',
+          '<span class="badge-no">Missing</span>'),
            
            latest_document_date =
              format(latest_document_date, "%b %d, %Y"),
@@ -852,10 +843,11 @@ output$recovery_coverage <- renderDT({
       `Latest Document Date` = latest_document_date,
       `Latest Document Age` = years_since_recovery_planning) %>%
     
-    datatable(rownames = FALSE, width = "100%",
+    datatable(rownames = FALSE, width = "100%", escape=FALSE,
               options = list(pageLength = 10,
                              columnDefs = list(
-                               list(width = "220px", targets = 0),  # DU
+                               list(className = "dt-center", targets = c(1, 2)),
+                               list(width = "220px", targets = 0),
                                list(width = "150px", targets = 1),  
                                list(width = "150px", targets = 2),   
                                list(width = "250px", targets = 3), 
