@@ -235,12 +235,32 @@ species_documents_selector_ui <- column(
 ################################################################################
 explore_selector_ui <- column(
   width = 2,
-  wellPanel(style = panel_style,
-            selectInput("explore_threat", "Threat Group",choices = NULL),
-            selectInput("explore_status", "SARA Status",
-                choices = sara_choices, selected = "All"),
-    selectInput("explore_range","Range",
-                choices = range_choices)))
+  div(class = "threat-card",
+      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      tags$p(style = "color:#6c757d; font-size:13px;",
+      "Filter species records by threat category, status, and range."
+    ),
+    
+    selectInput(
+      "explore_threat",
+      "Threat Group",
+      choices = NULL
+    ),
+    
+    selectInput(
+      "explore_status",
+      "SARA Status",
+      choices = sara_choices,
+      selected = "All"
+    ),
+    
+    selectInput(
+      "explore_range",
+      "Range",
+      choices = range_choices
+    )
+  )
+)
 
 ################################################################################
 # RECOVERY PLANNING FILTER PANEL
@@ -328,6 +348,30 @@ ui <- fluidPage(
       padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       margin-bottom: 20px;
+      }
+      .status-endangered {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      }
+      .status-threatened {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      }
+      .status-special {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
       }
     "))
   ),
@@ -447,6 +491,9 @@ ui <- fluidPage(
                   tabPanel("Explore Threats",
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
+                               h2("Explore Threats"),
+                               tags$p(class = "text-muted",
+                                      "Explore DUs associated with a selected threat category and filter results by SARA status or range."),
                                fluidRow(explore_selector_ui,
                                         column(10,
                                                h3(textOutput("explore_species_count")),
@@ -1069,14 +1116,27 @@ output$explore_species <- renderDT({
   dat <- explore_results() %>%
     rename(`Common Name` = common_name,
            `Designatable Unit` = record_name,
-           `SARA Status` = sara_status)
-  datatable(dat, rownames = FALSE, 
+           `SARA Status` = sara_status) %>%
+  mutate(
+    `SARA Status` = case_when(
+      `SARA Status` == "Endangered" ~
+        '<span class="status-endangered">Endangered</span>',
+      
+      `SARA Status` == "Threatened" ~
+        '<span class="status-threatened">Threatened</span>',
+      
+      `SARA Status` == "Special Concern" ~
+        '<span class="status-special">Special Concern</span>',
+      
+      TRUE ~ `SARA Status`
+    )
+  )
+  datatable(dat, rownames = FALSE, escape = FALSE,
             selection = list(mode = "single",target = "row"),
             options = list(pageLength = 10))}, server = FALSE)
 
 output$explore_species_count <- renderText({
   paste(nrow(explore_results()), "Species Records")})
-
 
 ##############################################################################
 # PROVINCE SUMMARY OUTPUTS
