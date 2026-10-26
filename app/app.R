@@ -144,9 +144,12 @@ recovery_coverage <- species_master_app %>%
         
         # Latest planning document date
         latest_recovery_planning_document = {
-          planning_idx <- grepl(
-            "Recovery Strategy|Action Plan|Progress",
-            documentTitle, ignore.case = TRUE)
+          planning_idx <- planning_document_type %in% c(
+            "Recovery Strategy",
+            "Action Plan",
+            "Progress Report",
+            "Recovery Strategy & Action Plan"
+          )
           
           dates <- as.Date(documentCreateDate[planning_idx])
           
@@ -159,24 +162,18 @@ recovery_coverage <- species_master_app %>%
         
         # Latest planning document type
         latest_document_type = {
-          planning_idx <- grepl(
-            "Recovery Strategy|Action Plan|Progress",
-            documentTitle,ignore.case = TRUE)
           
-          titles <- documentTitle[planning_idx]
+          planning_idx <- planning_document_type %in% c(
+            "Recovery Strategy", "Action Plan",
+            "Progress Report", "Recovery Strategy & Action Plan")
+          
           dates <- as.Date(documentCreateDate[planning_idx])
+          types <- planning_document_type[planning_idx]
           
           if(length(dates) == 0 || all(is.na(dates))) {
             NA_character_
           } else {
-            latest_title <- titles[which.max(dates)]
-            case_when(
-              grepl("Progress",latest_title,ignore.case = TRUE) ~"Progress Report",
-              grepl("Recovery Strategy",latest_title, ignore.case = TRUE) &
-                grepl("Action Plan",latest_title, ignore.case = TRUE) ~
-                "Recovery Strategy & Action Plan",
-              grepl("Action Plan", latest_title,ignore.case = TRUE) ~ "Action Plan",
-              TRUE ~"Recovery Strategy")}}, .groups = "drop"), by = "record_name") %>%
+            types[which.max(dates)]}},.groups="drop"), by="record_name")%>%
   
   # Calculate document age
   mutate(
@@ -187,10 +184,52 @@ recovery_coverage <- species_master_app %>%
     years_since_recovery_planning =
       round( as.numeric(Sys.Date() - latest_recovery_planning_document) / 365.25,
         1))
-  
+
 recovery_coverage <- recovery_coverage %>%
-  left_join(progress_compliance %>%
-              select(record_name,compliance_status), by = "record_name")
+  left_join(
+    progress_compliance %>%
+      select(
+        record_name,
+        compliance_status,
+        latest_progress_report_date
+      ),
+    by = "record_name"
+  ) %>%
+  mutate(
+    
+    latest_document_date = pmax(
+      latest_recovery_planning_document,
+      latest_progress_report_date,
+      na.rm = TRUE
+    ),
+    
+    latest_document_type = case_when(
+      !is.na(latest_progress_report_date) &
+        latest_progress_report_date == latest_document_date ~
+        "Progress Report",
+      
+      TRUE ~ latest_document_type
+    ),
+    
+    years_since_recovery_planning =
+      round(
+        as.numeric(
+          Sys.Date() - latest_document_date
+        ) / 365.25,
+        1
+      )
+  )
+
+recovery_coverage %>%
+  filter(grepl("Eastern Sand Darter", record_name)) %>%
+  select(
+    record_name,
+    latest_recovery_planning_document,
+    latest_progress_report_date,
+    latest_document_date,
+    latest_document_type
+  )
+
 
 ################################################################################
 # REUSABLE UI COMPONENTS
@@ -788,11 +827,11 @@ output$recovery_coverage <- renderDT({
            `Action Plan` =
              ifelse(coalesce(has_action_plan, FALSE), "✅","❌") ,
            
-           latest_recovery_planning_document =
-             format(latest_recovery_planning_document, "%b %d, %Y"),
+           latest_document_date =
+             format(latest_document_date, "%b %d, %Y"),
            
            compliance_status = case_when(
-             compliance_status == "Up to Date" ~ "✅ Up to Date",
+             compliance_status == "Up to Date" ~ "✅Up to Date",
              compliance_status == "Overdue" ~ "🔴 Report Overdue",
              compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required")) %>%
     
@@ -803,14 +842,14 @@ output$recovery_coverage <- renderDT({
            `Action Plan`,
            compliance_status,
            latest_document_type,
-           latest_recovery_planning_document,
+           latest_document_date,
            years_since_recovery_planning) %>%
   
     rename(
       `Designatable Unit` = record_name,
       `Progress Report Status` = compliance_status,
       `Latest Document Type` = latest_document_type,
-      `Latest Document Date` = latest_recovery_planning_document,
+      `Latest Document Date` = latest_document_date,
       `Years Since Recovery Document` = years_since_recovery_planning) %>%
     
     datatable(rownames = FALSE, width = "100%",
@@ -820,7 +859,7 @@ output$recovery_coverage <- renderDT({
                                list(width = "220px", targets = 0),  # DU
                                list(width = "150px", targets = 1),  
                                list(width = "150px", targets = 2),   
-                               list(width = "180px", targets = 3), 
+                               list(width = "250px", targets = 3), 
                                list(width = "190px", targets = 4),  
                                list(width = "180px", targets = 5),
                                list(width = "250px", targets = 6))
