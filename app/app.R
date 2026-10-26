@@ -321,6 +321,14 @@ ui <- fluidPage(
       font-size: 12px;
       font-weight: 700;
       }
+      .threat-card {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      }
     "))
   ),
   
@@ -406,13 +414,13 @@ ui <- fluidPage(
                                br(),
                                fluidRow(recovery_planning_selector_ui, 
                                         column(10,
-                                               h3("Recovery Planning Coverage"),
-                                               br(),
+                                               tagList(
+                                                 h2("Recovery Planning Coverage"),
+                                                 p(class = "text-muted",
+                                                   "Track recovery strategies, action plans, and progress reporting obligations across DUs.")),
                                                uiOutput("planning_summary"),
-                                               br(),
                                                DTOutput("recovery_coverage", width = "100%"),
-                                               tags$p(
-                                                 style = "font-style: italic; color: #666666;",
+                                               tags$p(style = "font-style: italic; color: #666666;",
                                                  "Recovery planning coverage is based on recovery strategies, action plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
                                                  ))))),
                   # THREAT SUMMARY TAB
@@ -422,16 +430,19 @@ ui <- fluidPage(
                         fluidRow(column(2,wellPanel(style = panel_style,
                           selectInput("threat_range", "Range",
                                       choices = range_choices, selected = "All"))),
-                          column(10,
-                                 fluidRow(column(6,h3("DUs with the Most Threat Categories",
-                                                      style = "text-align:center;"),
-                                                 DTOutput("top_threat_species")),
-                                          column(6,h3("Most Common Threat Categories",
-                                                      style = "text-align:center;"),
-                                                 DTOutput("common_threats"))),
-                                 tags$p(style = "font-style: italic; color: #666666;",
-                                        "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."
-                                        ))))),
+                          column(10, tagList(
+                            h2("Threats to Species Recovery"),
+                            p(class = "text-muted",
+                              "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information.")),
+                            fluidRow(column(6,
+                                            div(class = "threat-card",
+                                                h3("DUs with the Most Threat Categories",
+                                                   style = "text-align:center; margin-top:0;"),
+                                                DTOutput("top_threat_species"))),
+                                     column(6, div(class = "threat-card",
+                                                   h3("Most Common Threat Categories",
+                                                     style = "text-align:center; margin-top:0;"),
+                                                   DTOutput("common_threats")))))))),
                   # EXPLORE THREATS TAB
                   tabPanel("Explore Threats",
                            div(style = "max-width:1200px; margin-left:10px;",
@@ -1016,7 +1027,14 @@ output$common_threats <- renderDT({
               options = list(pageLength = 10, dom = "t",
                              ordering = FALSE,
                              columnDefs = list(list(width = "70%", targets = 0),
-                                               list(width = "30%", targets = 1))))
+                                               list(width = "30%", targets = 1))))%>%
+    formatStyle(
+      "Designatable Units",
+      backgroundColor = styleInterval(
+        c(10, 20, 30),
+        c("#d4edda", "#fff3cd", "#ffe5b4", "#f8d7da")
+      )
+    )
 })
 
 # top species threats table
@@ -1038,7 +1056,10 @@ output$top_threat_species <- renderDT({
     rename(`Designatable Units` = record_name) %>%
     datatable(rownames = FALSE, options = list( pageLength = 10,
                                                 dom = "t",
-                                                ordering = FALSE))
+                                                ordering = FALSE))%>%
+    formatStyle("Threat Categories",
+                backgroundColor = styleInterval(c(7, 9),
+                                                c("#d4edda", "#fff3cd", "#f8d7da")))
 })
 
 ##############################################################################
