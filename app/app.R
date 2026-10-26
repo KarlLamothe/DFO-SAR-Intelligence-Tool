@@ -212,7 +212,10 @@ recovery_coverage <- recovery_coverage %>%
 ################################################################################
 species_selector_ui <- column(
   width = 2,
-  wellPanel(style = panel_style,
+  div(class = "threat-card",
+      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      tags$p(style = "color:#6c757d; font-size:13px;",
+      "Filter species records by status, range, species, and DU."),
   selectInput("status","SARA Status", choices = sara_choices),
   selectInput("range","Range", choices = range_choices),
   selectInput("species","Species",
@@ -224,7 +227,10 @@ species_selector_ui <- column(
 ################################################################################
 species_documents_selector_ui <- column(
   width = 2,
-  wellPanel(style = panel_style,
+  div(class = "threat-card",
+      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      tags$p(style = "color:#6c757d; font-size:13px;",
+             "Filter species records by status, range, species, and DU."),
     selectInput("status_docs", "SARA Status", choices = sara_choices),
     selectInput("range_docs","Range", choices = range_choices),
     selectInput("species_docs","Species", choices = sort(unique(species_master_app$common_name)) ),
@@ -234,40 +240,24 @@ species_documents_selector_ui <- column(
 # THREAT EXPLORATION FILTER PANEL
 ################################################################################
 explore_selector_ui <- column(
-  width = 2,
+  width = 3,
   div(class = "threat-card",
       h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:13px;",
-      "Filter species records by threat category, status, and range."
-    ),
-    
-    selectInput(
-      "explore_threat",
-      "Threat Group",
-      choices = NULL
-    ),
-    
-    selectInput(
-      "explore_status",
-      "SARA Status",
-      choices = sara_choices,
-      selected = "All"
-    ),
-    
-    selectInput(
-      "explore_range",
-      "Range",
-      choices = range_choices
-    )
-  )
-)
+      "Filter species records by threat category, status, and range."),
+    selectInput("explore_threat", "Threat Group",choices = NULL),
+    selectInput("explore_status", "SARA Status",choices = sara_choices,selected = "All"),
+    selectInput("explore_range","Range",choices = range_choices)))
 
 ################################################################################
 # RECOVERY PLANNING FILTER PANEL
 ################################################################################
 recovery_planning_selector_ui <- column(
-  width = 2,
-  wellPanel(style = panel_style,
+  width = 3,
+  div(class = "threat-card",
+      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      tags$p(style = "color:#6c757d; font-size:13px;",
+             "Filter species records by status and range."),
             selectInput("planning_status", "SARA Status", choices = sara_choices,
                         selected = "All"),
             selectInput("planning_range","Range",
@@ -278,7 +268,10 @@ recovery_planning_selector_ui <- column(
 ################################################################################
 province_selector_ui <- column(
   width = 2,
-  wellPanel(style = panel_style,
+  div(class = "threat-card",
+      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      tags$p(style = "color:#6c757d; font-size:13px;",
+             "Filter species records by range."),
   selectInput("province_range", "Range", choices = range_choices)))
 
 ################################################################################
@@ -412,7 +405,7 @@ ui <- fluidPage(
                   # SPECIES INFORMATION
                   tabPanel("Species Information",
                            br(),
-                           fluidRow(species_selector_ui,column(10,
+                           fluidRow(species_selector_ui,column(9,
                                     style = "margin-top: -8px;",
                                     uiOutput("species_header"),
                                     h3("Description"),
@@ -440,7 +433,7 @@ ui <- fluidPage(
                   tabPanel("Species Documents",
                            br(),
                            fluidRow(species_documents_selector_ui, 
-                                    column(10, 
+                                    column(9, 
                                            h4("Species Recovery Documents Compliance"),
                                            uiOutput("compliance_summary"),
                                            br(),
@@ -457,7 +450,7 @@ ui <- fluidPage(
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                fluidRow(recovery_planning_selector_ui, 
-                                        column(10,
+                                        column(9,
                                                tagList(
                                                  h2("Recovery Planning Coverage"),
                                                  p(class = "text-muted",
@@ -471,7 +464,17 @@ ui <- fluidPage(
                   tabPanel("Threat Summary",
                     div(style = "max-width:1200px; margin-left:10px;",
                         br(),
-                        fluidRow(column(2,wellPanel(style = panel_style,
+                        fluidRow(column(2,
+                                        div(
+                                          class = "threat-card",
+                                          
+                                          h4("Filters",
+                                             style = "margin-top:0; color:#2c5aa0;"),
+                                          
+                                          tags$p(
+                                            style="color:#6c757d; font-size:13px;",
+                                            "Select a range to update threat summaries."
+                                          ),
                           selectInput("threat_range", "Range",
                                       choices = range_choices, selected = "All"))),
                           column(10, tagList(
@@ -495,7 +498,7 @@ ui <- fluidPage(
                                tags$p(class = "text-muted",
                                       "Explore DUs associated with a selected threat category and filter results by SARA status or range."),
                                fluidRow(explore_selector_ui,
-                                        column(10,
+                                        column(9,
                                                h3(textOutput("explore_species_count")),
                                                DTOutput("explore_species"))
                                         ))),
@@ -504,7 +507,7 @@ ui <- fluidPage(
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                fluidRow(province_selector_ui,
-                                        column(10,
+                                        column(9,
                                                h3(textOutput("province_title")),
                                                fluidRow(uiOutput("province_cards")))),
                                br(),
