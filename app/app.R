@@ -850,22 +850,21 @@ output$recovery_coverage <- renderDT({
       `Progress Report Status` = compliance_status,
       `Latest Document Type` = latest_document_type,
       `Latest Document Date` = latest_document_date,
-      `Years Since Recovery Document` = years_since_recovery_planning) %>%
+      `Latest Document Age` = years_since_recovery_planning) %>%
     
     datatable(rownames = FALSE, width = "100%",
               options = list(pageLength = 10,
                              columnDefs = list(
-                               list(className = "dt-center", targets = c(1, 2)),
                                list(width = "220px", targets = 0),  # DU
                                list(width = "150px", targets = 1),  
                                list(width = "150px", targets = 2),   
                                list(width = "250px", targets = 3), 
-                               list(width = "190px", targets = 4),  
-                               list(width = "180px", targets = 5),
-                               list(width = "250px", targets = 6))
+                               list(width = "200px", targets = 4),  
+                               list(width = "190px", targets = 5),
+                               list(width = "180px", targets = 6))
                                )) %>%
     
-    formatStyle("Years Since Recovery Document",
+    formatStyle("Latest Document Age",
                 backgroundColor = styleInterval(c(5, 10),
                                                 c("#d4edda","#fff3cd","#f8d7da")))%>%
     formatStyle(c("Recovery Strategy",
