@@ -21,6 +21,10 @@ species_master <- species_master %>%
       common_name == "Misty Lake Lotic Stickleback" ~ "© A. Hendry",
       common_name == "Eastern Sand Darter" ~ "© Alan Dextrase",
       common_name == "Silver Shiner" ~ "© Jacob Burbank",
+      common_name == "Speckled Dace" ~ "© USFWS",
+      common_name == "Spotted Gar" ~ "© Brian Gratwicke",
+      common_name == "Vancouver Lamprey" ~ "© Les Harris",
+      common_name == "Carmine Shiner" ~ "© Mathew Zappa",
       TRUE ~ photoCopyright
     )
   )
