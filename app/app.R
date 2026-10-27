@@ -646,40 +646,35 @@ server <- function(input, output, session){
   ##############################################################################
   # FILTER UPDATE OBSERVERS
   ##############################################################################
-  #Species selector
-  observe({
-    species_choices <- species_master_app
-    if(input$status != "All"){
-      species_choices <- species_choices %>%
-        filter(sara_status == input$status)}
-    if(input$range != "All"){
-      species_choices <- species_choices %>%
-        filter(grepl(input$range,range_text, fixed = TRUE))}
-    updateSelectInput(session, "species",
-                      choices = sort(unique(species_choices$common_name)))
-  })
-  
   # Document selector
   observe({
     species_choices <- species_master_app
-    
     if(input$status_docs != "All"){
       species_choices <- species_choices %>%
         filter(sara_status == input$status_docs)}
-    
     if(input$range_docs != "All"){
       species_choices <- species_choices %>%
         filter(grepl(input$range_docs, range_text, fixed = TRUE))}
-    
     updateSelectInput(session, "species_docs",
                       choices = sort(unique(species_choices$common_name)))
   })
-  
-  # Threat selector
+
+    # Threat selector
   observe({
     updateSelectInput(session, "explore_threat",
-                      choices = sort(
-                        unique(species_threats_app$threat_category)))
+                      choices = sort(unique(species_threats_app$threat_category)))
+  })
+  observe({species_choices <- species_master_app
+    if(input$status != "All"){
+      species_choices <- species_choices %>%
+        filter(sara_status == input$status)
+    }
+    if(input$range != "All"){
+      species_choices <- species_choices %>%
+        filter(grepl(input$range, range_text, fixed = TRUE))
+    }
+    updateSelectInput(session,"species",
+                      choices = sort(unique(species_choices$common_name)))
   })
   
   ##############################################################################
@@ -697,33 +692,45 @@ server <- function(input, output, session){
   ##############################################################################
   # SPECIES / DU SELECTION OBSERVERS
   ##############################################################################
-  observeEvent(input$species, {
-    records <- species_master_app %>%
-      filter(common_name == input$species) %>%
-      arrange(record_name) %>%
-      pull(record_name)
-    target_record <- selected_record_from_explore()
-    if(!is.null(target_record) && target_record %in% records){
-      updateSelectInput(session,"record",choices = records,
-                        selected = target_record)
-      selected_record_from_explore(NULL)
-    } else {
-      updateSelectInput(session, "record", choices = records,
-                        selected = records[1])
-    }
-  })
-
-  observeEvent(input$species_docs, {
-    records <- species_master_app %>%
-      filter(common_name == input$species_docs)
-    if(input$range_docs != "All"){
+  observe(
+    {req(input$species)
+      records <- species_master_app %>%
+        filter(common_name == input$species)
+      if(input$status != "All"){
+        records <- records %>%
+          filter(sara_status == input$status)
+      }
+      if(input$range != "All"){
+        records <- records %>%
+          filter(grepl(input$range, range_text,fixed = TRUE))
+      }
       records <- records %>%
-        filter(grepl(input$range_docs, range_text, fixed = TRUE))}
-    records <- records %>%
-      arrange(record_name) %>%
-      pull(record_name)
-    updateSelectInput(session, "record_docs",choices = records,selected = records[1])
-  })
+        arrange(record_name) %>%
+        pull(record_name)
+      updateSelectInput(session, "record",choices = records,selected = records[1])
+    })
+
+  observeEvent(
+    c(input$species_docs, input$status_docs, input$range_docs),
+    {records <- species_master_app %>%
+        filter(common_name == input$species_docs)
+      if(input$status_docs != "All"){
+        records <- records %>%
+          filter(sara_status == input$status_docs)
+      }
+      if(input$range_docs != "All"){
+        records <- records %>%
+          filter(grepl(input$range_docs,range_text,fixed = TRUE))
+      }
+      
+      records <- records %>%
+        arrange(record_name) %>%
+        pull(record_name)
+      
+      updateSelectInput(session, "record_docs", choices = records,selected = records[1]
+      )
+    }
+  )
   
   ##############################################################################
   # TAB SYNCHRONIZATION OBSERVERS

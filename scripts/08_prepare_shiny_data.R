@@ -25,6 +25,15 @@ species_master <- species_master %>%
       common_name == "Spotted Gar" ~ "© Brian Gratwicke",
       common_name == "Vancouver Lamprey" ~ "© Les Harris",
       common_name == "Carmine Shiner" ~ "© Mathew Zappa",
+      common_name == "Banded Killifish" ~ "© Smithsonian Environmental Research Center",
+      common_name == "Columbia Sculpin" ~ "© Vince Golder",
+      common_name == "Cutlip Minnow" ~ "© Smithsonian Environmental Research Center",
+      common_name == "Dolly Varden" ~ "© Fisheries and Oceans Canada",
+      common_name == "Lake Sturgeon" ~ "© Ellen Edmonson and Hugh Chrisp",
+      common_name == "Northern Sunfish" ~ "© qfc79",
+      common_name == "Shortnose Sturgeon" ~ "© Joel Sartore",
+      common_name == "Silver Lamprey" ~ "© Ellen Edmonson and Hugh Chrisp",
+      common_name == "Upper Great Lakes Kiyi" ~ "© Joseph R. Tomelleri",
       TRUE ~ photoCopyright
     )
   )
