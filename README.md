@@ -180,7 +180,7 @@ The current application focuses on freshwater fishes listed under Schedule 1 of 
 
 ## Running the App
 
-Go to the run_app.R script, install the required packages if needed, and run:
+Download the Tool as a Zip file to your local machine. Extract the files. Open the run_app.R script. Install the required packages if needed and run:
 
 ```r
 library(shiny)
