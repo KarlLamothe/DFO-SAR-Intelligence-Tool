@@ -176,7 +176,7 @@ recovery_coverage <- recovery_coverage %>%
       select( record_name, compliance_status, latest_progress_report_date),by = "record_name") %>%
   mutate(
     compliance_status = case_when(
-    sara_status == "Special Concern" ~ "Not Applicable",TRUE ~ compliance_status),
+    sara_status == "Special Concern" ~ "Not Required",TRUE ~ compliance_status),
     latest_document_date = pmax(
       latest_recovery_planning_document,latest_progress_report_date,na.rm = TRUE),
     
@@ -864,125 +864,76 @@ output$threats <- renderDT({
 ##############################################################################
 # RECOVERY PLANNING OUTPUTS
 ##############################################################################
-output$planning_summary <- renderUI({
-  dat <- recovery_coverage
-  
-  if(input$planning_status != "All"){
-    dat <- dat %>%
-      filter(sara_status == input$planning_status)}
-  
-  if(input$planning_range != "All"){
-    dat <- dat %>%
-      filter(grepl(input$planning_range, range_text, fixed = TRUE))}
-  
-  med <- median(dat$years_since_recovery_planning, na.rm = TRUE)
-  old <- sum(dat$years_since_recovery_planning > 10, na.rm = TRUE)
-  old_word <- if(old <= 10){
-    c("Zero","One","Two","Three","Four", "Five",
-      "Six","Seven","Eight","Nine","Ten")[old + 1]
-  } else {
-    as.character(old)
-  }
-  tags$div(
-    style = "
-    background-color:#f8f9fa;
-    border-left:5px solid #0d6efd;
-    padding:15px;
-    margin-bottom:15px;
-    border-radius:4px;",
-    
-    tags$p(style="margin-bottom:8px;",
-           paste0( "The median age of the most recent recovery planning document is ",
-                   round(med,1)," years.")),
-    
-    tags$p(style="margin-bottom:0;", paste0(old_word,
-        " designatable units have not had a recovery planning document published in over 10 years.")))
-})
-
-# recovery strategy coverage table
 output$recovery_coverage <- renderDT({
   dat <- recovery_coverage
   
   if(input$planning_status != "All"){
     dat <- dat %>%
-      filter(sara_status == input$planning_status)}
+      filter(sara_status == input$planning_status)
+  }
   
   if(input$planning_range != "All"){
     dat <- dat %>%
-      filter(grepl(input$planning_range, range_text, fixed = TRUE))}
+      filter(grepl(input$planning_range, range_text, fixed = TRUE))
+  }
   
   dat %>%
     mutate(`Recovery Strategy` = case_when(
       sara_status == "Special Concern" ~
-        '<span class="badge-na">Not Applicable</span>',
-      coalesce(has_recovery_strategy,FALSE) ~
-        '<span class="badge-yes">Available</span>', TRUE ~
-        '<span class="badge-no">Missing</span>'),
-          
-          `Action Plan` = case_when(
-            sara_status == "Special Concern" ~
-              '<span class="badge-na">Not Applicable</span>',
-            coalesce(has_action_plan, FALSE) ~
-              '<span class="badge-yes">Available</span>', TRUE ~
-              '<span class="badge-no">Missing</span>'),
-          
-          `Management Plan` = ifelse(
-            coalesce(has_management_plan, FALSE),
-            '<span class="badge-yes">Available</span>',
-            '<span class="badge-no">Not Available</span>'),
-           
-           #latest_document_date =
-            # format(latest_document_date, "%b %d, %Y"),
-           
-           compliance_status = case_when(
-             compliance_status == "Up to Date" ~ "✅Up to Date",
-             compliance_status == "Overdue" ~ "🔴 Report Overdue",
-             compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required",
-             compliance_status == "Not Applicable" ~ "⚪ Not Applicable")) %>%
+        '<span class="badge-na">Not Required</span>',
+      coalesce(has_recovery_strategy, FALSE) ~
+        '<span class="badge-yes">Available</span>',
+        TRUE ~ '<span class="badge-no">Missing</span>'),
+      
+      `Action Plan` = case_when(
+        sara_status == "Special Concern" ~
+          '<span class="badge-na">Not Required</span>',
+        coalesce(has_action_plan, FALSE) ~
+          '<span class="badge-yes">Available</span>',
+        TRUE ~'<span class="badge-no">Not Available</span>'),
+      
+      `Management Plan` = case_when(
+        coalesce(has_management_plan, FALSE) ~
+          '<span class="badge-yes">Available</span>',
+        sara_status %in% c("Endangered", "Threatened", "Extirpated") ~
+          '<span class="badge-na">Not Required</span>',
+        TRUE ~ '<span class="badge-no">Not Available</span>'),
+      
+      compliance_status = case_when(
+        compliance_status == "Up to Date" ~ "✅Up to Date",
+        compliance_status == "Overdue" ~ "🔴 Report Overdue",
+        compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required",
+        compliance_status %in% c("Not Applicable", "Not Required") ~
+          "⚪ Not Required", TRUE ~ compliance_status)) %>%
     
-    arrange(desc(years_since_recovery_planning),
-            is.na(years_since_recovery_planning)) %>%
-    select(record_name,
-           `Recovery Strategy`,
-           `Action Plan`,
-           `Management Plan`,
-           compliance_status,
-           #latest_document_type,
-           #latest_document_date,
-           years_since_recovery_planning) %>%
-  
-    rename(
-      `Designatable Unit` = record_name,
-      `Progress Report Status` = compliance_status,
-      #`Latest Document Type` = latest_document_type,
-      #`Latest Document Date` = latest_document_date,
-      `Latest Document Age` = years_since_recovery_planning) %>%
+    arrange(factor(compliance_status,
+                   levels = c("🔴 Report Overdue","🟡 Not Yet Required",
+                              "✅Up to Date", "⚪ Not Required")),
+            record_name) %>%
+    select(record_name, `Recovery Strategy`, `Action Plan`,
+           `Management Plan`, compliance_status) %>%
     
-    datatable(rownames = FALSE, width = "100%", escape=FALSE,
+    rename(`Designatable Unit` = record_name,
+           `Progress Report Status` = compliance_status) %>%
+    
+    datatable(rownames = FALSE, width = "100%", escape = FALSE,
               options = list(pageLength = 10,
                              columnDefs = list(
-                               list(className = "dt-center", targets = c(1, 2)),
+                               list(className = "dt-center", targets = c(1, 2, 3, 4)),
                                list(width = "200px", targets = 0),
-                               list(width = "110px", targets = 1),  
-                               list(width = "110px", targets = 2),   
-                               list(width = "110px", targets = 3), 
-                               list(width = "120px", targets = 4),  
-                               list(width = "120px", targets = 5))
-                               )) %>%
+                               list(width = "110px", targets = 1),
+                               list(width = "110px", targets = 2),
+                               list(width = "110px", targets = 3),
+                               list(width = "120px", targets = 4)))) %>%
     
-    formatStyle("Latest Document Age",
-                backgroundColor = styleInterval(c(5, 10),
-                                                c("#d4edda","#fff3cd","#f8d7da")))%>%
-    formatStyle(c("Recovery Strategy",
-                  "Action Plan"), textAlign = "center")%>%
+    formatStyle(c("Recovery Strategy", "Action Plan", "Management Plan"),
+                textAlign = "center") %>%
     
     formatStyle("Progress Report Status", target = "cell",
-                backgroundColor = styleEqual(c("✅Up to date","🔴 Report Overdue",
-                                               "🟡 Not Yet Required","⚪ Not Applicable"),
-                                             c("#d4edda",  
-                                               "#f8d7da",  
-                                               "#fff3cd",
-                                               "#e9ecef")))
+                backgroundColor = styleEqual(c(
+                  "✅Up to Date", "🔴 Report Overdue", 
+                  "🟡 Not Yet Required", "⚪ Not Required"),
+                  c("#d4edda","#f8d7da", "#fff3cd", "#e9ecef")))
 })
 
 ##############################################################################
