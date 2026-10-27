@@ -2,7 +2,7 @@
 
 An interactive Shiny application for exploring Canadian freshwater fish species listed under the *Species at Risk Act* (SARA).
 
-The application was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize. The application brings together species profiles, threat information, species documents, recovery planning information, and species imagery in a single interface for Schedule 1 freshwater fishes listed under SARA.
+The application brings together species profiles, threat information, species documents, recovery-planning information, management-planning information, and species imagery in a single interface for Schedule 1 freshwater fishes listed under SARA.
 
 ## Features
 
@@ -75,6 +75,8 @@ Metrics currently include:
 - Recovery Strategy compliance (time between SARA listing and Recovery Strategy publication).
 - Progress Report compliance (time between Recovery Strategy publication and required progress reporting milestones).
 
+For species listed as Special Concern, Management Plans are tracked where available. Recovery Strategy and Progress Report requirements may not apply.
+
 These metrics are intended as screening-level indicators and should not be interpreted as formal assessments of regulatory compliance.
 
 ### Recovery Planning
@@ -86,6 +88,7 @@ Summarizes recovery planning progress across species and DUs.
 - Recovery planning coverage by DU
 - Recovery Strategy tracking
 - Action Plan tracking
+- Management Plan tracking
 - Most recent recovery planning document date
 - Years since publication of the most recent recovery planning document
 - Visual highlighting of older planning documents
@@ -169,14 +172,6 @@ Several Registry threat categories are consolidated into broader groups loosely 
 - Other Limiting Factors
 
 Threat categories are intended as **screening-level classifications** and should not be interpreted as formal threat assessments.
-
-# Included Taxa
-
-The current application focuses on freshwater fishes listed under Schedule 1 of SARA with statuses of:
-
-- Endangered
-- Threatened
-- Extirpated
 
 ## Running the App
 

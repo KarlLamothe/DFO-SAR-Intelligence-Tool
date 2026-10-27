@@ -48,13 +48,10 @@ progress_compliance <- readRDS("data/progress_report_compliance.rds")
 
 ################################################################################
 # APPLICATION DATASETS
-# The application focuses on Schedule 1 freshwater fishes listed as:
-# Endangered, Threatened, Extirpated.
-# Species of Special Concern are currently excluded.
 ################################################################################
 
 species_master_app <- species_master %>%
-  filter(sara_status %in% c("Threatened", "Endangered","Extirpated"))
+  filter(sara_status %in% c("Threatened", "Endangered","Extirpated","Special Concern"))
 
 ################################################################################
 # IMAGE FILE REFERENCES
@@ -75,7 +72,7 @@ species_master_app <- species_master_app %>%
 ################################################################################
 
 species_threats_app <- species_threats %>%
-  filter(sara_status %in% c("Threatened", "Endangered", "Extirpated"))
+  filter(sara_status %in% c("Threatened", "Endangered", "Extirpated","Special Concern"))
 
 ################################################################################
 # RANGE, SARA STATUS, PANEL STYLE FILTER OPTIONS
@@ -85,7 +82,7 @@ range_choices <- c("All", sort(unique(
   unlist(strsplit(paste(species_master_app$range_text,
                         collapse = "; "),"; ")))))
 
-sara_choices <- c("All","Endangered","Threatened","Extirpated")
+sara_choices <- c("All","Endangered","Threatened","Extirpated","Special Concern")
 
 panel_style <- "
   background-color: #f8f9fa;
@@ -119,16 +116,12 @@ summary_card <- function(value, label, bg, border){
 
 # derived recovery data dataset
 recovery_coverage <- species_master_app %>%
-  
   # ensure one record per DU
   distinct(record_name, sara_status, range_text) %>%
-  
   # join recovery planning metrics
-  left_join(
-    species_documents %>%
+  left_join(species_documents %>%
       group_by(record_name) %>%
       summarise(
-        
         # Recovery Strategy present?
         has_recovery_strategy = any(grepl("Recovery Strategy",
                 documentTitle,ignore.case = TRUE)),
@@ -145,20 +138,14 @@ recovery_coverage <- species_master_app %>%
         # Latest planning document date
         latest_recovery_planning_document = {
           planning_idx <- planning_document_type %in% c(
-            "Recovery Strategy",
-            "Action Plan",
-            "Progress Report",
-            "Recovery Strategy & Action Plan"
-          )
+            "Recovery Strategy","Action Plan", "Progress Report",
+            "Recovery Strategy & Action Plan")
           
           dates <- as.Date(documentCreateDate[planning_idx])
-          
           if(length(dates) == 0 || all(is.na(dates))) {
             as.Date(NA)
           } else {
-            max(dates, na.rm = TRUE)
-          }
-        },
+            max(dates, na.rm = TRUE)}},
         
         # Latest planning document type
         latest_document_type = {
@@ -185,18 +172,21 @@ recovery_coverage <- species_master_app %>%
 
 recovery_coverage <- recovery_coverage %>%
   left_join(progress_compliance %>%
-      select( record_name, compliance_status, latest_progress_report_date),
-      by = "record_name") %>%
-  mutate(latest_document_date = pmax(
-    latest_recovery_planning_document,latest_progress_report_date,na.rm = TRUE),
+      mutate(latest_progress_report_date = as.Date(latest_progress_report_date)) %>%
+      select( record_name, compliance_status, latest_progress_report_date),by = "record_name") %>%
+  mutate(
+    compliance_status = case_when(
+    sara_status == "Special Concern" ~ "Not Applicable",TRUE ~ compliance_status),
+    latest_document_date = pmax(
+      latest_recovery_planning_document,latest_progress_report_date,na.rm = TRUE),
     
     latest_document_type = case_when(
       !is.na(latest_progress_report_date) &
-        latest_progress_report_date == latest_document_date ~"Progress Report",
-      TRUE ~ latest_document_type),
+        latest_progress_report_date == latest_document_date ~
+        "Progress Report", TRUE ~ latest_document_type),
     
-    years_since_recovery_planning =
-      round( as.numeric(Sys.Date() - latest_document_date) / 365.25, 1))
+    years_since_recovery_planning = round(
+        as.numeric(Sys.Date() - latest_document_date) / 365.25, 1))
 
 ################################################################################
 # REUSABLE UI COMPONENTS
@@ -253,7 +243,7 @@ explore_selector_ui <- column(
 # RECOVERY PLANNING FILTER PANEL
 ################################################################################
 recovery_planning_selector_ui <- column(
-  width = 3,
+  width = 2,
   div(class = "threat-card",
       h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:13px;",
@@ -380,6 +370,14 @@ ui <- fluidPage(
        margin-bottom: 0;
        font-weight: 500;
       }
+      .badge-na {
+      background-color: #e9ecef;
+      color: #495057;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      }
     "))
   ),
   
@@ -447,7 +445,7 @@ ui <- fluidPage(
                   tabPanel("Species Documents",
                            br(),
                            fluidRow(species_documents_selector_ui, 
-                                    column(9, 
+                                    column(10, 
                                            h3("Species Recovery Documents Compliance"),
                                            uiOutput("compliance_summary"),
                                            br(),
@@ -456,7 +454,7 @@ ui <- fluidPage(
                                            tags$p(
                                              style = "font-size:12px; color:gray;",
                                              tags$b("Document Notes: "),
-                                             "This table includes Recovery Strategies, Action Plans, Management Plans, Progress Reports, and COSEWIC Assessments..."
+                                             "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations across freshwater fishes listed under SARA."
                                            )))),
                  
                    # RECOVERY PLANNING TAB
@@ -464,15 +462,15 @@ ui <- fluidPage(
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                fluidRow(recovery_planning_selector_ui, 
-                                        column(9,
+                                        column(10,
                                                tagList(
                                                  h3("Recovery Planning Coverage"),
                                                  p(class = "text-muted",
-                                                   "Track recovery strategies, action plans, and progress reporting obligations across DUs.")),
+                                                   "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations across freshwater fish species listed under SARA.")),
                                                uiOutput("planning_summary"),
                                                DTOutput("recovery_coverage", width = "100%"),
                                                tags$p(style = "font-style: italic; color: #666666;",
-                                                 "Recovery planning coverage is based on recovery strategies, action plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
+                                                 "Recovery planning coverage is based on recovery strategies, action plans, management plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
                                                  ))))),
                   # THREAT SUMMARY TAB
                   tabPanel("Threat Summary",
@@ -907,50 +905,62 @@ output$recovery_coverage <- renderDT({
       filter(grepl(input$planning_range, range_text, fixed = TRUE))}
   
   dat %>%
-    mutate(`Recovery Strategy` =ifelse( coalesce(has_recovery_strategy, FALSE),
-          '<span class="badge-yes">Available</span>',
-          '<span class="badge-no">Missing</span>'),
+    mutate(`Recovery Strategy` = case_when(
+      sara_status == "Special Concern" ~
+        '<span class="badge-na">Not Applicable</span>',
+      coalesce(has_recovery_strategy,FALSE) ~
+        '<span class="badge-yes">Available</span>', TRUE ~
+        '<span class="badge-no">Missing</span>'),
           
-          `Action Plan` =ifelse(coalesce(has_action_plan, FALSE),
-          '<span class="badge-yes">Available</span>',
-          '<span class="badge-no">Missing</span>'),
+          `Action Plan` = case_when(
+            sara_status == "Special Concern" ~
+              '<span class="badge-na">Not Applicable</span>',
+            coalesce(has_action_plan, FALSE) ~
+              '<span class="badge-yes">Available</span>', TRUE ~
+              '<span class="badge-no">Missing</span>'),
+          
+          `Management Plan` = ifelse(
+            coalesce(has_management_plan, FALSE),
+            '<span class="badge-yes">Available</span>',
+            '<span class="badge-no">Not Available</span>'),
            
-           latest_document_date =
-             format(latest_document_date, "%b %d, %Y"),
+           #latest_document_date =
+            # format(latest_document_date, "%b %d, %Y"),
            
            compliance_status = case_when(
              compliance_status == "Up to Date" ~ "✅Up to Date",
              compliance_status == "Overdue" ~ "🔴 Report Overdue",
-             compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required")) %>%
+             compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required",
+             compliance_status == "Not Applicable" ~ "⚪ Not Applicable")) %>%
     
     arrange(desc(years_since_recovery_planning),
             is.na(years_since_recovery_planning)) %>%
     select(record_name,
            `Recovery Strategy`,
            `Action Plan`,
+           `Management Plan`,
            compliance_status,
-           latest_document_type,
-           latest_document_date,
+           #latest_document_type,
+           #latest_document_date,
            years_since_recovery_planning) %>%
   
     rename(
       `Designatable Unit` = record_name,
       `Progress Report Status` = compliance_status,
-      `Latest Document Type` = latest_document_type,
-      `Latest Document Date` = latest_document_date,
+      #`Latest Document Type` = latest_document_type,
+      #`Latest Document Date` = latest_document_date,
       `Latest Document Age` = years_since_recovery_planning) %>%
     
     datatable(rownames = FALSE, width = "100%", escape=FALSE,
               options = list(pageLength = 10,
                              columnDefs = list(
                                list(className = "dt-center", targets = c(1, 2)),
-                               list(width = "220px", targets = 0),
-                               list(width = "150px", targets = 1),  
-                               list(width = "150px", targets = 2),   
-                               list(width = "250px", targets = 3), 
-                               list(width = "200px", targets = 4),  
-                               list(width = "190px", targets = 5),
-                               list(width = "180px", targets = 6))
+                               list(width = "200px", targets = 0),
+                               list(width = "110px", targets = 1),  
+                               list(width = "110px", targets = 2),   
+                               list(width = "110px", targets = 3), 
+                               list(width = "120px", targets = 4),  
+                               list(width = "120px", targets = 5))
                                )) %>%
     
     formatStyle("Latest Document Age",
@@ -961,10 +971,11 @@ output$recovery_coverage <- renderDT({
     
     formatStyle("Progress Report Status", target = "cell",
                 backgroundColor = styleEqual(c("✅Up to date","🔴 Report Overdue",
-                                               "🟡 Not Yet Required"),
+                                               "🟡 Not Yet Required","⚪ Not Applicable"),
                                              c("#d4edda",  
                                                "#f8d7da",  
-                                               "#fff3cd")))
+                                               "#fff3cd",
+                                               "#e9ecef")))
 })
 
 ##############################################################################
@@ -1009,6 +1020,16 @@ output$compliance_summary <- renderUI({
   comp <- selected_compliance()
   prog <- selected_progress_compliance()
   if(nrow(comp) == 0){return(tags$p("No compliance information available."))}
+  
+  if(selected_species()$sara_status[1] == "Special Concern") {
+    
+    return(tags$div(style = "
+                    background-color:#f8f9fa;
+                    border:1px solid #dee2e6;
+                    border-radius:10px;
+                    padding:15px; ",
+        tags$p( tags$b("Special Concern Species")),
+        tags$p("Recovery Strategy and Progress Report requirements do not apply. Management planning requirements may apply under SARA.")))}
   
   # Recovery Strategy Compliance -------------------------------------------
   
@@ -1254,7 +1275,6 @@ output$province_species_table <- renderDT({
 
 output$province_cards <- renderUI({
   dat <- province_species()
-  n_records <- n_distinct(dat$record_name)
   n_endangered <- dat %>%
     filter(sara_status == "Endangered") %>%
     nrow()
@@ -1264,9 +1284,12 @@ output$province_cards <- renderUI({
   n_extirpated <- dat %>%
     filter(sara_status == "Extirpated") %>%
     nrow()
-  fluidRow(column(3,summary_card(n_records, "DUs","white", "#dee2e6")),
-           column(3,summary_card(n_endangered, "Endangered","#f8d7da", "#f5c2c7")),
+  n_special_concern <- dat %>%
+    filter(sara_status == "Special Concern") %>%
+    nrow()
+  fluidRow(column(3,summary_card(n_endangered, "Endangered","#f8d7da", "#f5c2c7")),
            column(3,summary_card(n_threatened, "Threatened","#fff3cd", "#ffecb5")),
+           column(3, summary_card(n_special_concern,"Special Concern", "#d1ecf1","#bee5eb")),
            column(3,summary_card(n_extirpated, "Extirpated","#e2d9f3", "#d1c4e9")))
 })
 
@@ -1275,20 +1298,26 @@ output$province_recovery_summary <- renderUI({
   up_to_date <- sum(dat$n[dat$compliance_status == "Up to Date"],na.rm = TRUE)
   not_yet_due <- sum(dat$n[dat$compliance_status == "Not Yet Due"], na.rm = TRUE)
   overdue <- sum(dat$n[dat$compliance_status == "Overdue"], na.rm = TRUE)
+  not_applicable <- sum(dat$n[dat$compliance_status == "Not Applicable"], na.rm = TRUE)
   div(
     class = "threat-card",
-    fluidRow(column(4,div(class = "recovery-card",
+    fluidRow(column(3,div(class = "recovery-card",
                           style = "background:#d4edda;",
                           h2(up_to_date),
                           p("Up to Date"))),
-             column(4,div(class = "recovery-card",
+             column(3,div(class = "recovery-card",
                           style = "background:#fff3cd;",
                           h2(not_yet_due),
                           p("Not Yet Required"))),
-             column(4,div(class = "recovery-card",
+             column(3,div(class = "recovery-card",
                           style = "background:#f8d7da;",
                           h2(overdue),
-                          p("Overdue")))))
+                          p("Overdue"))),
+             column(3, div(class = "recovery-card",
+                           style = "background:#e9ecef;",
+                           h2(not_applicable),
+                           p("Not Applicable")))
+    ))
 })
 
 
