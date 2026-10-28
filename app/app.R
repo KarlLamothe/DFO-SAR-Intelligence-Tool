@@ -683,10 +683,41 @@ server <- function(input, output, session){
       count(compliance_status)
   })
   
-  
   ##############################################################################
   # FILTER UPDATE OBSERVERS
   ##############################################################################
+  # dynamic range selector
+  observe({
+    req(input$taxa)
+    dat <- species_master_app
+    if(input$taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomyId == input$taxa)
+    }
+    if(!is.null(input$status) && input$status != "All"){
+      dat <- dat %>%
+        filter(sara_status == input$status)
+    }
+    ranges <- c("All", sort(unique(
+      unlist(strsplit( paste(dat$range_text, collapse = "; "), "; ")))))
+    updateSelectInput(session,"range", choices = ranges,
+                      selected = if(!is.null(input$range) &&
+                                    input$range %in% ranges) 
+                        input$range else "All")
+  })
+  
+  # dynamic status
+  observe({
+    req(input$taxa)
+    dat <- species_master_app
+    if(input$taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomyId == input$taxa)
+    }
+    updateSelectInput(session, "status",
+                      choices = c("All", sort(unique(dat$sara_status))))
+  })
+  
   # species selector
   observe({
     species_choices <- species_master_app
@@ -702,10 +733,53 @@ server <- function(input, output, session){
       species_choices <- species_choices %>%
         filter(taxonomyId == input$taxa)
     }
-    updateSelectInput(session, "species",
-      choices = sort(unique(species_choices$common_name)))
+    choices <- sort(unique(species_choices$common_name))
+    selected_species <- if(
+      !is.null(input$species) &&
+      input$species %in% choices) {
+      input$species} else if(length(choices) > 0) {
+        choices[1]
+    } else {
+      character(0)
+    }
+    updateSelectInput(session, "species", choices = choices, selected = selected_species)
   })
 
+  # dynamic document range selector
+  observe({
+    req(input$taxa_docs)
+    dat <- species_master_app
+    if(input$taxa_docs != "All"){
+      dat <- dat %>%
+        filter(taxonomyId == input$taxa_docs)
+    }
+    if(!is.null(input$status_docs) &&
+       input$status_docs != "All"){
+      dat <- dat %>%
+        filter(sara_status == input$status_docs)
+    }
+    ranges <- c("All", sort(unique(unlist(
+      strsplit(paste(dat$range_text, collapse = "; "), "; ")))))
+    updateSelectInput(session, "range_docs", choices = ranges)
+  })
+  
+  # dynamic document status selector
+  observe({
+    req(input$taxa_docs)
+    dat <- species_master_app
+    if(input$taxa_docs != "All"){
+      dat <- dat %>%
+        filter(taxonomyId == input$taxa_docs)
+    }
+    statuses <- c("All", sort(unique(dat$sara_status)))
+    updateSelectInput(session, "status_docs",
+                      choices = statuses,
+                      selected = if(
+        !is.null(input$status_docs) &&
+        input$status_docs %in% statuses) input$status_docs else "All")
+    
+  })
+  
   # Document selector
   observe({
     species_choices <- species_master_app
@@ -715,14 +789,25 @@ server <- function(input, output, session){
     }
     if(input$range_docs != "All"){
       species_choices <- species_choices %>%
-        filter(grepl(input$range_docs, range_text, fixed = TRUE))
+        filter(grepl(input$range_docs,range_text, fixed = TRUE))
     }
     if(input$taxa_docs != "All"){
       species_choices <- species_choices %>%
         filter(taxonomyId == input$taxa_docs)
     }
-    updateSelectInput(session, "species_docs",
-                      choices = sort(unique(species_choices$common_name)))
+    choices <- sort(unique(species_choices$common_name))
+
+    selected_species <- if(
+      !is.null(input$species_docs) &&
+      input$species_docs %in% choices
+    ) {
+      input$species_docs
+    } else if(length(choices) > 0) {
+      choices[1]
+    } else {
+      character(0)
+    }
+    updateSelectInput(session, "species_docs",choices = choices, selected = selected_species)
   })
   
   ##############################################################################
@@ -795,33 +880,6 @@ server <- function(input, output, session){
       )
     }
   )
-  
-  ##############################################################################
-  # TAB SYNCHRONIZATION OBSERVERS
-  ##############################################################################
-  observeEvent(input$species, {
-    updateSelectInput(session, "species_docs",selected = input$species)
-  })
-  
-  observeEvent(input$species_docs, {
-    updateSelectInput(session, "species", selected = input$species_docs)
-  })
-  
-  observeEvent(input$record_docs, {
-    updateSelectInput(session,"record", selected = input$record_docs)
-  })
-  
-  observeEvent(input$record, {
-    updateSelectInput(session,"record_docs", selected = input$record)
-  })
-  
-  observeEvent(input$range, {
-    updateSelectInput(session, "range_docs",selected = input$range)
-  })
-  
-  observeEvent(input$range_docs, {
-    updateSelectInput(session, "range", selected = input$range_docs)
-  })
   
   ##############################################################################
   # SPECIES INFORMATION OUTPUTS
