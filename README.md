@@ -1,13 +1,14 @@
-# Freshwater SAR Species Explorer
+# Canadian Species at Risk Explorer
 
-An interactive Shiny application for exploring Canadian freshwater fish species listed under the *Species at Risk Act* (SARA).
+An interactive Shiny application for exploring Canadian species listed under Schedule 1 of the *Species at Risk Act* (SARA).
 
-The application brings together species profiles, threat information, species documents, recovery-planning information, management-planning information, and species imagery in a single interface for Schedule 1 freshwater fishes listed under SARA.
+The application brings together species profiles, threat information, recovery-planning documents, management-planning information, compliance metrics, and species imagery in a single interface. The tool is designed to support exploration and summarization of publicly available information from the Species at Risk Public Registry across multiple taxonomic groups.
 
 ## Features
 
-- Browse Schedule 1 freshwater fishes listed under SARA.
+- Browse Schedule 1 species listed under SARA.
 - Explore species profile information and identified threats.
+- Filter results by taxonomic group, SARA status, and geographic range.
 - Access Recovery Strategies, Action Plans, Management Plans, Progress Reports, and COSEWIC Assessments.
 - Review recovery planning compliance metrics, including:
   - Recovery Strategy publication timelines.
@@ -42,6 +43,7 @@ Explore detailed species profile information by species, designatable unit (DU),
 
 **Filters:**
 
+- Taxonomic Group
 - SARA Status
 - Province/Territory
 - Species
@@ -61,6 +63,7 @@ Access recovery planning and assessment documents associated with each DU.
 
 **Filters:**
 
+- Taxonomic Group
 - SARA Status
 - Province/Territory
 - Species
@@ -72,8 +75,11 @@ The application calculates legislative recovery-planning metrics using document 
 
 Metrics currently include:
 
-- Recovery Strategy compliance (time between SARA listing and Recovery Strategy publication).
-- Progress Report compliance (time between Recovery Strategy publication and required progress reporting milestones).
+- Recovery Strategy tracking
+- Action Plan tracking
+- Management Plan tracking
+- Progress Report status tracking
+- Recovery planning coverage summaries
 
 For species listed as Special Concern, Management Plans are tracked where available. Recovery Strategy and Progress Report requirements may not apply.
 
@@ -95,17 +101,23 @@ Summarizes recovery planning progress across species and DUs.
 
 **Filters:**
 
+- Taxonomic Group
 - SARA Status
 - Province/Territory
 
 ### Threat Summary
 
-- DUs with the greatest number of threat categories
-- Frequency of threat categories across species
-- Summary views of threat prevalence
+- Provides summary information on threats identified within Species at Risk Public Registry profile information.
+
+**Includes:**
+
+- DUs with the greatest number of identified threat categories
+- Most common threat categories across species
+- Threat summaries by taxonomic group and geographic range
 
 **Filters:**
 
+- Taxonomic Group
 - Province/Territory
 
 ### Explore Threats
@@ -114,6 +126,7 @@ Allows users to identify species affected by specific threat categories.
 
 **Filter by:**
 
+- Taxonomic Group
 - Threat Group
 - SARA Status
 - Province/Territory
@@ -123,13 +136,9 @@ Allows users to identify species affected by specific threat categories.
 - Interactive species results table
 - Direct navigation to Species Information records
 
-**Interactive Feature:**
-
-- Selecting a species record automatically loads the corresponding species profile in the **Species Information** tab.
-
 ### Province Summary
 
-Provides an overview of species-at-risk information within a selected province or territory.
+Provides an overview of species-at-risk information within a selected province, territory, or region.
 
 **Includes:**
 
@@ -140,6 +149,7 @@ Provides an overview of species-at-risk information within a selected province o
 
 **Filters:**
 
+- Taxonomic Group
 - Province/Territory
 
 ### Data Sources
@@ -156,7 +166,7 @@ Data are derived from:
 
 # Threat Group Consolidation
 
-Several Registry threat categories are consolidated into broader groups loosely following the IUCN Threat Classification Scheme, including:
+Threat categories identified within species profile information are consolidated into broader threat groups loosely following the IUCN Threat Classification Scheme.
 
 - Residential and Commercial Development
 - Agriculture and Aquaculture
@@ -221,23 +231,23 @@ DFO-SAR-Intelligence-Tool/
 |   |
 │   └── www/
 |       └── images/
-|           ├── alaskan_brook_lamprey.jpg
-|           ├── atlantic_whitefish.jpg
+|           ├── acadian_flycatcher.jpg
+|           ├── acuteleaf_small_limestone_moss.jpg
 |           ├── ...
-|           └── white_sturgeon.jpg
+|           └── yukon_wild_buckwheat.jpg
 │
 ├── data_processed/
-│   ├── freshwater_species_master.csv
-│   ├── freshwater_species_master_raw.csv
-│   ├── progress_report_compliance.csv
-│   ├── recovery_compliance.csv
-│   ├── species_document_summary.csv
-│   ├── species_documents.csv
-│   ├── species_full.csv
-│   ├── species_profiles.csv
-│   ├── species_threats.csv
-│   ├── species_threats_summary.csv
-│   └── threat_category_frequency.csv
+│   ├── all_progress_report_compliance.csv
+│   ├── all_recovery_compliance.csv
+│   ├── all_species_document_summary.csv
+│   ├── all_species_documents.csv
+│   ├── all_species_full.csv
+│   ├── all_species_master.csv
+│   ├── all_species_master_raw.csv
+│   ├── all_species_profiles.csv
+│   ├── all_species_threats.csv
+│   ├── all_species_threats_summary.csv
+│   └── all_threat_category_frequency.csv
 |
 ├── scripts/
 |   ├── 00_setup.R
@@ -247,8 +257,9 @@ DFO-SAR-Intelligence-Tool/
 |   ├── 04_build_threat_dictionary.R
 |   ├── 05_build_document_inventory.R
 |   ├── 06_exploratory_analysis.R
-|   ├── 07_prepare_shiny_data.R
-|   └── 08_download_images.R
+|   ├── 07_build_recovery_compliance.R
+|   ├── 08_prepare_shiny_data.R
+|   └── 09_download_images.R
 |
 ├── .gitignore
 ├── DFO-SAR-Intelligence-Tool.Rproj
@@ -264,7 +275,6 @@ DFO-SAR-Intelligence-Tool/
 - Threat categories should not be interpreted as formal threat assessments.
 - Recovery planning metrics are derived from identified Registry documents and are intended for exploratory and summary purposes.
 - Species imagery availability varies among species.
-- The application currently focuses on freshwater fishes listed as Endangered, Threatened, or Extirpated under Schedule 1 of SARA.
 
 ## Acknowledgements
 
@@ -284,4 +294,4 @@ For questions, suggestions, or data updates, please contact:
 Aquatic Science Biologist
 Fisheries and Oceans Canada
 
-📧 karl.lamothe@dfo-mpo.gc.ca
+karl.lamothe@dfo-mpo.gc.ca
