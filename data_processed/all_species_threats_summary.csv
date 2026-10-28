@@ -164,7 +164,7 @@ id,record_name,common_name,n_threat_categories,threat_categories
 126-423,Oldgrowth Specklebelly Lichen,Oldgrowth Specklebelly Lichen,6,Biological Resource Use; Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development
 1260-917,Wandering Salamander,Wandering Salamander,4,Biological Resource Use; Climate Change; Geological Events; Residential and Commercial Development
 127-424,Seaside Bone Lichen,Seaside Bone Lichen,4,Climate Change; Natural Systems Modification; Pollution; Residential and Commercial Development
-1271-926,Griscom’s Arnica,Griscom’s Arnica,3,Climate Change; Energy Production and Gas; Other Limiting Factors
+1271-926,Griscom's Arnica,Griscom's Arnica,3,Climate Change; Energy Production and Gas; Other Limiting Factors
 1276-936,Tall Beakrush,Tall Beakrush,7,"Agriculture and Aquaculture; Climate Change; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development"
 1277-935,Fascicled Ironweed,Fascicled Ironweed,1,Transportation and Service Corridors
 1278-929,Red-necked Phalarope,Red-necked Phalarope,5,Climate Change; Energy Production and Gas; Pollution; Residential and Commercial Development; Transportation and Service Corridors
@@ -218,7 +218,7 @@ id,record_name,common_name,n_threat_categories,threat_categories
 1362-985,Lake Sturgeon - Saskatchewan - Nelson River populations,Lake Sturgeon,4,"Biological Resource Use; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Pollution"
 1364-1029,American Bumble Bee,American Bumble Bee,2,"Invasive Species and other Problematic Species, Genes, and Diseases; Pollution"
 1365-988,Lumpfish,Lumpfish,7,"Agriculture and Aquaculture; Biological Resource Use; Climate Change; Energy Production and Gas; Invasive Species and other Problematic Species, Genes, and Diseases; Pollution; Residential and Commercial Development"
-1367-1012,Smoker’s Lung Lichen,Smoker’s Lung Lichen,4,Biological Resource Use; Climate Change; Human Intrusions and Disturbance; Natural Systems Modification
+1367-1012,Smoker's Lung Lichen,Smoker's Lung Lichen,4,Biological Resource Use; Climate Change; Human Intrusions and Disturbance; Natural Systems Modification
 1370-1013,Red-tailed Leafhopper - Prairie population,Red-tailed Leafhopper,5,"Agriculture and Aquaculture; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Residential and Commercial Development"
 1372-0,Grey Whale - Northern Pacific Migratory population,Grey Whale,2,Biological Resource Use; Residential and Commercial Development
 1373-1008,Grey Whale - Pacific Coast Feeding Group population,Grey Whale,2,Biological Resource Use; Residential and Commercial Development
@@ -256,7 +256,7 @@ id,record_name,common_name,n_threat_categories,threat_categories
 143-103,Wood Bison,Wood Bison,8,"Agriculture and Aquaculture; Biological Resource Use; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Other Limiting Factors; Residential and Commercial Development; Transportation and Service Corridors"
 144-127,Caribou - Atlantic-Gaspésie population,Caribou,6,Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Residential and Commercial Development
 1443-1030,Hairy Valerian,Hairy Valerian,6,"Agriculture and Aquaculture; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Other Limiting Factors; Pollution; Residential and Commercial Development"
-1444-1031,Ute Ladies’–tresses,Ute Ladies’–tresses,6,"Agriculture and Aquaculture; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Pollution"
+1444-1031,Ute Ladies'–tresses,Ute Ladies'–tresses,6,"Agriculture and Aquaculture; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Pollution"
 1446-1033,Yellow Scarab Hunter Wasp,Yellow Scarab Hunter Wasp,4,Energy Production and Gas; Natural Systems Modification; Other Limiting Factors; Pollution
 1447-1049,White-rimmed Shingle Lichen,White-rimmed Shingle Lichen,7,"Agriculture and Aquaculture; Biological Resource Use; Climate Change; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Pollution"
 1448-1050,Lake Chub - Liard Hot Springs populations,Lake Chub,7,"Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Other Limiting Factors; Pollution; Residential and Commercial Development"
@@ -280,8 +280,8 @@ id,record_name,common_name,n_threat_categories,threat_categories
 147-130,Harbour Porpoise - Northwest Atlantic population,Harbour Porpoise,8,"Agriculture and Aquaculture; Biological Resource Use; Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Pollution; Residential and Commercial Development"
 1470-1054,Hairy Paintbrush,Hairy Paintbrush,2,"Climate Change; Invasive Species and other Problematic Species, Genes, and Diseases"
 1471-1055,Drooping-leaved Beard-moss,Drooping-leaved Beard-moss,5,"Biological Resource Use; Climate Change; Geological Events; Invasive Species and other Problematic Species, Genes, and Diseases; Residential and Commercial Development"
-1472-1056,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,5,Climate Change; Energy Production and Gas; Geological Events; Human Intrusions and Disturbance; Natural Systems Modification
-1473-1057,Dalton’s Moss,Dalton’s Moss,4,Biological Resource Use; Climate Change; Geological Events; Natural Systems Modification
+1472-1056,Carey's Small Limestone Moss,Carey's Small Limestone Moss,5,Climate Change; Energy Production and Gas; Geological Events; Human Intrusions and Disturbance; Natural Systems Modification
+1473-1057,Dalton's Moss,Dalton's Moss,4,Biological Resource Use; Climate Change; Geological Events; Natural Systems Modification
 1474-1058,Hudsonian Godwit,Hudsonian Godwit,8,Agriculture and Aquaculture; Biological Resource Use; Climate Change; Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development
 1479-1060,Manitoba Oakworm Moth,Manitoba Oakworm Moth,7,Biological Resource Use; Energy Production and Gas; Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Residential and Commercial Development; Transportation and Service Corridors
 148-131,Humpback Whale - North Pacific population,Humpback Whale,2,Biological Resource Use; Residential and Commercial Development
@@ -721,7 +721,7 @@ id,record_name,common_name,n_threat_categories,threat_categories
 81-59,Shorthead Sculpin,Shorthead Sculpin,9,"Agriculture and Aquaculture; Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development"
 810-368,Porbeagle,Porbeagle,2,Biological Resource Use; Residential and Commercial Development
 812-358,Flooded Jellyskin,Flooded Jellyskin,6,"Climate Change; Energy Production and Gas; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Pollution; Residential and Commercial Development"
-813-347,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,6,"Biological Resource Use; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Other Limiting Factors; Residential and Commercial Development"
+813-347,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,6,"Biological Resource Use; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Other Limiting Factors; Residential and Commercial Development"
 814-349,Red Crossbill percna subspecies,Red Crossbill percna subspecies,7,"Agriculture and Aquaculture; Biological Resource Use; Energy Production and Gas; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Other Limiting Factors; Transportation and Service Corridors"
 815-352,Dwarf Sandwort,Dwarf Sandwort,3,"Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Residential and Commercial Development"
 816-354,Rosy Owl-clover,Rosy Owl-clover,5,Energy Production and Gas; Other Limiting Factors; Pollution; Residential and Commercial Development; Transportation and Service Corridors

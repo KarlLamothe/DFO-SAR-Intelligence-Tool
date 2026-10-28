@@ -425,12 +425,12 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1311-954,Transportation and Service Corridors,road,Unisexual Ambystoma - Jefferson Salamander dependent population,Unisexual Ambystoma,Ambystoma laterale - (2) jeffersonianum,Endangered
 1311-954,Natural Systems Modification,barrier,Unisexual Ambystoma - Jefferson Salamander dependent population,Unisexual Ambystoma,Ambystoma laterale - (2) jeffersonianum,Endangered
 1311-954,Pollution,silt,Unisexual Ambystoma - Jefferson Salamander dependent population,Unisexual Ambystoma,Ambystoma laterale - (2) jeffersonianum,Endangered
-1367-1012,Biological Resource Use,harvest,Smoker’s Lung Lichen,Smoker’s Lung Lichen,Lobaria retigera,Threatened
-1367-1012,Human Intrusions and Disturbance,war,Smoker’s Lung Lichen,Smoker’s Lung Lichen,Lobaria retigera,Threatened
-1367-1012,Natural Systems Modification,fire,Smoker’s Lung Lichen,Smoker’s Lung Lichen,Lobaria retigera,Threatened
-1367-1012,Climate Change,climate,Smoker’s Lung Lichen,Smoker’s Lung Lichen,Lobaria retigera,Threatened
-1367-1012,Climate Change,warming,Smoker’s Lung Lichen,Smoker’s Lung Lichen,Lobaria retigera,Threatened
-1367-1012,Climate Change,temperature,Smoker’s Lung Lichen,Smoker’s Lung Lichen,Lobaria retigera,Threatened
+1367-1012,Biological Resource Use,harvest,Smoker's Lung Lichen,Smoker's Lung Lichen,Lobaria retigera,Threatened
+1367-1012,Human Intrusions and Disturbance,war,Smoker's Lung Lichen,Smoker's Lung Lichen,Lobaria retigera,Threatened
+1367-1012,Natural Systems Modification,fire,Smoker's Lung Lichen,Smoker's Lung Lichen,Lobaria retigera,Threatened
+1367-1012,Climate Change,climate,Smoker's Lung Lichen,Smoker's Lung Lichen,Lobaria retigera,Threatened
+1367-1012,Climate Change,warming,Smoker's Lung Lichen,Smoker's Lung Lichen,Lobaria retigera,Threatened
+1367-1012,Climate Change,temperature,Smoker's Lung Lichen,Smoker's Lung Lichen,Lobaria retigera,Threatened
 1405-1018,Residential and Commercial Development,development,Smooth Yellow False Foxglove,Smooth Yellow False Foxglove,Aureolaria flava,Threatened
 1405-1018,Residential and Commercial Development,residential,Smooth Yellow False Foxglove,Smooth Yellow False Foxglove,Aureolaria flava,Threatened
 1405-1018,Agriculture and Aquaculture,agricultural,Smooth Yellow False Foxglove,Smooth Yellow False Foxglove,Aureolaria flava,Threatened
@@ -441,14 +441,14 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1405-1018,Natural Systems Modification,fire suppression,Smooth Yellow False Foxglove,Smooth Yellow False Foxglove,Aureolaria flava,Threatened
 1405-1018,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Smooth Yellow False Foxglove,Smooth Yellow False Foxglove,Aureolaria flava,Threatened
 1405-1018,Other Limiting Factors,competition,Smooth Yellow False Foxglove,Smooth Yellow False Foxglove,Aureolaria flava,Threatened
-1444-1031,Agriculture and Aquaculture,livestock,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,Agriculture and Aquaculture,grazing,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,Energy Production and Gas,oil,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,Human Intrusions and Disturbance,recreation,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,Natural Systems Modification,hydrolog,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,Pollution,oil spill,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
-1444-1031,Pollution,herbicide,Ute Ladies’–tresses,Ute Ladies’–tresses,Spiranthes diluvialis,No Status
+1444-1031,Agriculture and Aquaculture,livestock,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,Agriculture and Aquaculture,grazing,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,Energy Production and Gas,oil,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,Human Intrusions and Disturbance,recreation,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,Natural Systems Modification,hydrolog,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,Pollution,oil spill,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
+1444-1031,Pollution,herbicide,Ute Ladies'–tresses,Ute Ladies'–tresses,Spiranthes diluvialis,No Status
 1448-1050,Residential and Commercial Development,development,Lake Chub - Liard Hot Springs populations,Lake Chub,Couesius plumbeus,No Status
 1448-1050,Energy Production and Gas,oil,Lake Chub - Liard Hot Springs populations,Lake Chub,Couesius plumbeus,No Status
 1448-1050,Energy Production and Gas,gas,Lake Chub - Liard Hot Springs populations,Lake Chub,Couesius plumbeus,No Status
@@ -2475,14 +2475,14 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1407-1020,Natural Systems Modification,fire suppression,Downy Yellow False Foxglove,Downy Yellow False Foxglove,Aureolaria virginica,Endangered
 1407-1020,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Downy Yellow False Foxglove,Downy Yellow False Foxglove,Aureolaria virginica,Endangered
 1407-1020,Other Limiting Factors,competition,Downy Yellow False Foxglove,Downy Yellow False Foxglove,Aureolaria virginica,Endangered
-1472-1056,Energy Production and Gas,quarrying,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Human Intrusions and Disturbance,war,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Human Intrusions and Disturbance,work,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Natural Systems Modification,hydrolog,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Geological Events,tsunami,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Climate Change,climate,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Climate Change,temperature,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
-1472-1056,Climate Change,storm,Carey’s Small Limestone Moss,Carey’s Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Energy Production and Gas,quarrying,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Human Intrusions and Disturbance,war,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Human Intrusions and Disturbance,work,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Natural Systems Modification,hydrolog,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Geological Events,tsunami,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Climate Change,climate,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Climate Change,temperature,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
+1472-1056,Climate Change,storm,Carey's Small Limestone Moss,Carey's Small Limestone Moss,Seligeria careyana,Endangered
 1523-1096,Biological Resource Use,fishing,Sockeye Salmon - Momich-ES population (original),Sockeye Salmon,Oncorhynchus nerka,No Status
 1523-1096,Climate Change,climate,Sockeye Salmon - Momich-ES population (original),Sockeye Salmon,Oncorhynchus nerka,No Status
 1523-1096,Climate Change,temperature,Sockeye Salmon - Momich-ES population (original),Sockeye Salmon,Oncorhynchus nerka,No Status
@@ -3878,18 +3878,18 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 773-326,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Dwarf Woolly-heads - Southern Mountain population,Dwarf Woolly-heads,Psilocarphus brevissimus,Endangered
 773-326,Climate Change,climate,Dwarf Woolly-heads - Southern Mountain population,Dwarf Woolly-heads,Psilocarphus brevissimus,Endangered
 773-326,Climate Change,flooding,Dwarf Woolly-heads - Southern Mountain population,Dwarf Woolly-heads,Psilocarphus brevissimus,Endangered
-813-347,Residential and Commercial Development,habitat loss,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Residential and Commercial Development,habitat destruction,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Energy Production and Gas,oil,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Biological Resource Use,logging,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Human Intrusions and Disturbance,recreation,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Human Intrusions and Disturbance,recreational,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Human Intrusions and Disturbance,habitat loss,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Human Intrusions and Disturbance,habitat destruction,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Human Intrusions and Disturbance,habitat degradation,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Other Limiting Factors,competition,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
-813-347,Other Limiting Factors,habitat loss,Bog Bird’s-foot Trefoil,Bog Bird’s-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Residential and Commercial Development,habitat loss,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Residential and Commercial Development,habitat destruction,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Energy Production and Gas,oil,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Biological Resource Use,logging,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Human Intrusions and Disturbance,recreation,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Human Intrusions and Disturbance,recreational,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Human Intrusions and Disturbance,habitat loss,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Human Intrusions and Disturbance,habitat destruction,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Human Intrusions and Disturbance,habitat degradation,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Other Limiting Factors,competition,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
+813-347,Other Limiting Factors,habitat loss,Bog Bird's-foot Trefoil,Bog Bird's-foot Trefoil,Lotus pinnatus,Endangered
 820-360,Biological Resource Use,harvest,Twisted Oak Moss,Twisted Oak Moss,Syntrichia laevipila,Special Concern
 820-360,Human Intrusions and Disturbance,war,Twisted Oak Moss,Twisted Oak Moss,Syntrichia laevipila,Special Concern
 820-360,Pollution,pollution,Twisted Oak Moss,Twisted Oak Moss,Syntrichia laevipila,Special Concern
@@ -4728,11 +4728,11 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1460-1042,Climate Change,temperature,"Chinook Salmon - Upper Fraser, Stream, Spring population",Chinook Salmon,Oncorhynchus tshawytscha,No Status
 1460-1042,Other Limiting Factors,predation,"Chinook Salmon - Upper Fraser, Stream, Spring population",Chinook Salmon,Oncorhynchus tshawytscha,No Status
 1460-1042,Other Limiting Factors,competition,"Chinook Salmon - Upper Fraser, Stream, Spring population",Chinook Salmon,Oncorhynchus tshawytscha,No Status
-1473-1057,Biological Resource Use,logging,Dalton’s Moss,Dalton’s Moss,Daltonia splachnoides,Endangered
-1473-1057,Natural Systems Modification,dams,Dalton’s Moss,Dalton’s Moss,Daltonia splachnoides,Endangered
-1473-1057,Natural Systems Modification,water level,Dalton’s Moss,Dalton’s Moss,Daltonia splachnoides,Endangered
-1473-1057,Geological Events,landslide,Dalton’s Moss,Dalton’s Moss,Daltonia splachnoides,Endangered
-1473-1057,Climate Change,climate,Dalton’s Moss,Dalton’s Moss,Daltonia splachnoides,Endangered
+1473-1057,Biological Resource Use,logging,Dalton's Moss,Dalton's Moss,Daltonia splachnoides,Endangered
+1473-1057,Natural Systems Modification,dams,Dalton's Moss,Dalton's Moss,Daltonia splachnoides,Endangered
+1473-1057,Natural Systems Modification,water level,Dalton's Moss,Dalton's Moss,Daltonia splachnoides,Endangered
+1473-1057,Geological Events,landslide,Dalton's Moss,Dalton's Moss,Daltonia splachnoides,Endangered
+1473-1057,Climate Change,climate,Dalton's Moss,Dalton's Moss,Daltonia splachnoides,Endangered
 1544-1112,Residential and Commercial Development,development,Northern Oak Hairstreak,Northern Oak Hairstreak,Satyrium favonius ontario,No Status
 1544-1112,Residential and Commercial Development,residential,Northern Oak Hairstreak,Northern Oak Hairstreak,Satyrium favonius ontario,No Status
 1544-1112,Transportation and Service Corridors,road,Northern Oak Hairstreak,Northern Oak Hairstreak,Satyrium favonius ontario,No Status
@@ -5632,9 +5632,9 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1233-894,Natural Systems Modification,dams,Bank Swallow,Bank Swallow,Riparia riparia,Threatened
 1233-894,Pollution,erosion,Bank Swallow,Bank Swallow,Riparia riparia,Threatened
 1233-894,Pollution,pesticide,Bank Swallow,Bank Swallow,Riparia riparia,Threatened
-1271-926,Energy Production and Gas,oil,Griscom’s Arnica,Griscom’s Arnica,Arnica griscomii ssp. griscomii,Threatened
-1271-926,Climate Change,climate,Griscom’s Arnica,Griscom’s Arnica,Arnica griscomii ssp. griscomii,Threatened
-1271-926,Other Limiting Factors,competition,Griscom’s Arnica,Griscom’s Arnica,Arnica griscomii ssp. griscomii,Threatened
+1271-926,Energy Production and Gas,oil,Griscom's Arnica,Griscom's Arnica,Arnica griscomii ssp. griscomii,Threatened
+1271-926,Climate Change,climate,Griscom's Arnica,Griscom's Arnica,Arnica griscomii ssp. griscomii,Threatened
+1271-926,Other Limiting Factors,competition,Griscom's Arnica,Griscom's Arnica,Arnica griscomii ssp. griscomii,Threatened
 1297-947,Residential and Commercial Development,development,Lake Huron Grasshopper,Lake Huron Grasshopper,Trimerotropis huroniana,Threatened
 1297-947,Residential and Commercial Development,residential,Lake Huron Grasshopper,Lake Huron Grasshopper,Trimerotropis huroniana,Threatened
 1297-947,Residential and Commercial Development,commercial,Lake Huron Grasshopper,Lake Huron Grasshopper,Trimerotropis huroniana,Threatened

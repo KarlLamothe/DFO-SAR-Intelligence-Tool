@@ -66,6 +66,10 @@ species_master_app <- species_master_app %>%
                                tolower() %>%
                                gsub(" ", "_", .),".jpg"))
 
+species_master_app %>%
+  filter(grepl("Smoker", common_name)) %>%
+  select(common_name, local_image_file, imageFileName)
+
 ################################################################################
 # THREAT DATA USED BY APP
 # Restrict threat analyses to the same SARA statuses used elsewhere in the app.
@@ -831,6 +835,42 @@ server <- function(input, output, session){
     updateTabsetPanel(session, "main_tabs", selected = "Species Information")
   })
   
+  observeEvent(input$main_tabs, {
+    
+    if(input$main_tabs == "Species Documents") {
+      
+      updateSelectInput(
+        session,
+        "taxa_docs",
+        selected = input$taxa
+      )
+      
+      updateSelectInput(
+        session,
+        "status_docs",
+        selected = input$status
+      )
+      
+      updateSelectInput(
+        session,
+        "range_docs",
+        selected = input$range
+      )
+      
+      updateSelectInput(
+        session,
+        "species_docs",
+        selected = input$species
+      )
+      
+      updateSelectInput(
+        session,
+        "record_docs",
+        selected = input$record
+      )
+    }
+  })
+  
   ##############################################################################
   # SPECIES / DU SELECTION OBSERVERS
   ##############################################################################
@@ -853,7 +893,15 @@ server <- function(input, output, session){
       records <- records %>%
         arrange(record_name) %>%
         pull(record_name)
-      updateSelectInput(session, "record",choices = records,selected = records[1])
+      updateSelectInput(
+        session,
+        "record",
+        choices = records,
+        selected = if(length(records) > 0)
+          records[1]
+        else
+          character(0)
+      )
     })
 
   observeEvent(
@@ -876,7 +924,14 @@ server <- function(input, output, session){
         arrange(record_name) %>%
         pull(record_name)
       
-      updateSelectInput(session, "record_docs", choices = records,selected = records[1]
+      updateSelectInput(
+        session,
+        "record_docs",
+        choices = records,
+        selected = if(length(records) > 0)
+          records[1]
+        else
+          character(0)
       )
     }
   )
@@ -1105,7 +1160,11 @@ output$compliance_summary <- renderUI({
   prog <- selected_progress_compliance()
   if(nrow(comp) == 0){return(tags$p("No compliance information available."))}
   
-  if(selected_species()$sara_status[1] == "Special Concern") {
+  if(
+    nrow(selected_species()) > 0 &&
+    !is.na(selected_species()$sara_status[1]) &&
+    selected_species()$sara_status[1] == "Special Concern"
+  ) {
     
     return(tags$div(style = "
                     background-color:#f8f9fa;
@@ -1171,7 +1230,12 @@ output$compliance_summary <- renderUI({
       if(!is.na(comp$days_late[1]) && comp$days_late[1] > 0){
         paste0( " (",round(comp$days_late[1] / 365.25, 1), " years late)") }),
     
-    if(prog$recovery_strategy_date[1] !=comp$first_recovery_strategy_date[1]){
+    if(
+      !is.na(prog$recovery_strategy_date[1]) &&
+      !is.na(comp$first_recovery_strategy_date[1]) &&
+      prog$recovery_strategy_date[1] !=
+      comp$first_recovery_strategy_date[1]
+    ){
       tags$div(tags$b("Current Recovery Strategy: "),
         format(as.Date(prog$recovery_strategy_date[1]), "%d %b %Y"))
     },

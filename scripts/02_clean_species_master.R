@@ -7,20 +7,30 @@ glimpse(raw_species)
 
 # reduce
 species_master <- raw_species %>%
-  mutate(legalScientificName = legalScientificName,
-         cosewicScientificName = cosewicScientificName,
-         common_name = coalesce(legalCommonName, cosewicCommonName),
-         scientific_name = coalesce(legalScientificName, cosewicScientificName),
-         record_name = case_when(
-           !is.na(cosewicPopulation) &
-             cosewicPopulation != "" ~
-             paste(common_name, "-", cosewicPopulation),
-           TRUE ~ common_name),
-         sara_status = legalStatusId,
-         cosewic_status = cosewicStatusId,
-         status = coalesce(legalStatusId, cosewicStatusId),
-         schedule = legalScheduleId,
-         range_text = range_text)
+  mutate(
+    legalScientificName = legalScientificName,
+    cosewicScientificName = cosewicScientificName,
+    
+    common_name = coalesce(legalCommonName, cosewicCommonName),
+    scientific_name = coalesce(legalScientificName, cosewicScientificName)
+  ) %>%
+  mutate(
+    common_name = gsub("\u2019", "'", common_name),
+    scientific_name = gsub("\u2019", "'", scientific_name)
+  ) %>%
+  mutate(
+    record_name = case_when(
+      !is.na(cosewicPopulation) &
+        cosewicPopulation != "" ~
+        paste(common_name, "-", cosewicPopulation),
+      TRUE ~ common_name
+    ),
+    sara_status = legalStatusId,
+    cosewic_status = cosewicStatusId,
+    status = coalesce(legalStatusId, cosewicStatusId),
+    schedule = legalScheduleId,
+    range_text = range_text
+  )
 
 # reorder columns
 species_master <- species_master %>%
