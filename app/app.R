@@ -362,6 +362,7 @@ ui <- fluidPage(
       border-radius: 12px;
       font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
       }
       .status-threatened {
       background-color: #fff3cd;
@@ -370,6 +371,7 @@ ui <- fluidPage(
       border-radius: 12px;
       font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
       }
       .status-extirpated {
       background-color: #e2d9f3;
@@ -378,6 +380,7 @@ ui <- fluidPage(
       border-radius: 12px;
       font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
       }
       .status-special {
       background-color: #d1ecf1;
@@ -386,6 +389,7 @@ ui <- fluidPage(
       border-radius: 12px;
       font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
       }
       .recovery-card {
       border-radius: 8px;
@@ -606,7 +610,7 @@ server <- function(input, output, session){
   selected_record_from_explore <- reactiveVal(NULL)
   
   ##############################################################################
-  # COMPLIANCE REACTIVE
+  # COMPLIANCE REACTIVES
   ##############################################################################
   selected_compliance <- reactive({
     recovery_compliance %>%
@@ -688,8 +692,11 @@ server <- function(input, output, session){
   })
   
   ##############################################################################
-  # FILTER UPDATE OBSERVERS
+  # CASCADING FILTER OBSERVERS
   ##############################################################################
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # SPECIES FILTER OBSERVERS
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # dynamic range selector
   observe({
     req(input$taxa)
@@ -749,6 +756,9 @@ server <- function(input, output, session){
     updateSelectInput(session, "species", choices = choices, selected = selected_species)
   })
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # DOCUMENT FILTER OBSERVERS
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # dynamic document range selector
   observe({
     req(input$taxa_docs)
@@ -781,7 +791,6 @@ server <- function(input, output, session){
                       selected = if(
         !is.null(input$status_docs) &&
         input$status_docs %in% statuses) input$status_docs else "All")
-    
   })
   
   # Document selector
@@ -817,14 +826,13 @@ server <- function(input, output, session){
   ##############################################################################
   # THREAT SELECTOR
   ##############################################################################
-  
   observe({
     updateSelectInput(session, "explore_threat",
       choices = sort(unique(species_threats_app$threat_category)))
   })
   
   ##############################################################################
-  # NAVIGATION OBSERVERS
+  # TAB NAVIGATION & SYNCHRONIZATION
   ##############################################################################
   observeEvent(input$explore_species_rows_selected, {
     row <- input$explore_species_rows_selected
@@ -835,39 +843,15 @@ server <- function(input, output, session){
     updateTabsetPanel(session, "main_tabs", selected = "Species Information")
   })
   
+  # cARRY CURRENT SPEICES INFORMATION SELECTIONS INTO SPECIES DOCUMENTS WHEN
+  # TAB IS OPEN
   observeEvent(input$main_tabs, {
-    
     if(input$main_tabs == "Species Documents") {
-      
-      updateSelectInput(
-        session,
-        "taxa_docs",
-        selected = input$taxa
-      )
-      
-      updateSelectInput(
-        session,
-        "status_docs",
-        selected = input$status
-      )
-      
-      updateSelectInput(
-        session,
-        "range_docs",
-        selected = input$range
-      )
-      
-      updateSelectInput(
-        session,
-        "species_docs",
-        selected = input$species
-      )
-      
-      updateSelectInput(
-        session,
-        "record_docs",
-        selected = input$record
-      )
+      updateSelectInput(session, "taxa_docs", selected = input$taxa)
+      updateSelectInput(session, "status_docs", selected = input$status)
+      updateSelectInput(session, "range_docs", selected = input$range)
+      updateSelectInput(session, "species_docs", selected = input$species)
+      updateSelectInput(session, "record_docs", selected = input$record)
     }
   })
   
@@ -893,16 +877,9 @@ server <- function(input, output, session){
       records <- records %>%
         arrange(record_name) %>%
         pull(record_name)
-      updateSelectInput(
-        session,
-        "record",
-        choices = records,
-        selected = if(length(records) > 0)
-          records[1]
-        else
-          character(0)
-      )
-    })
+      updateSelectInput(session, "record", choices = records,
+                        selected = if(length(records) > 0)
+                          records[1] else character(0))})
 
   observeEvent(
     c(input$species_docs, input$status_docs, input$range_docs, input$taxa_docs),
@@ -923,18 +900,9 @@ server <- function(input, output, session){
       records <- records %>%
         arrange(record_name) %>%
         pull(record_name)
-      
-      updateSelectInput(
-        session,
-        "record_docs",
-        choices = records,
-        selected = if(length(records) > 0)
-          records[1]
-        else
-          character(0)
-      )
-    }
-  )
+      updateSelectInput(session, "record_docs", choices = records,
+                        selected = if(length(records) > 0)
+                          records[1] else character(0))})
   
   ##############################################################################
   # SPECIES INFORMATION OUTPUTS
@@ -1037,26 +1005,20 @@ output$threats <- renderDT({
   datatable(dat, rownames = FALSE, options = list(pageLength = 10, dom = "t"))
 })
 
-
 ##############################################################################
 # RECOVERY PLANNING OUTPUTS
 ##############################################################################
 output$recovery_coverage <- renderDT({
   dat <- recovery_coverage
-  
   if(input$planning_status != "All"){
     dat <- dat %>%
-      filter(sara_status == input$planning_status)
-  }
-  
+      filter(sara_status == input$planning_status)}
   if(input$planning_range != "All"){
     dat <- dat %>%
-      filter(grepl(input$planning_range, range_text, fixed = TRUE))
-  }
+      filter(grepl(input$planning_range, range_text, fixed = TRUE))}
   if(input$planning_taxa != "All"){
     dat <- dat %>%
-      filter(taxonomyId == input$planning_taxa)
-  }
+      filter(taxonomyId == input$planning_taxa)}
   dat %>%
     mutate(`Recovery Strategy` = case_when(
       sara_status == "Special Concern" ~
@@ -1088,8 +1050,8 @@ output$recovery_coverage <- renderDT({
     
     arrange(factor(compliance_status,
                    levels = c("🔴 Report Overdue","🟡 Not Yet Required",
-                              "✅Up to Date", "⚪ Not Required")),
-            record_name) %>%
+                              "✅Up to Date", "⚪ Not Required")), record_name) %>%
+    
     select(record_name, sara_status, `Recovery Strategy`, `Action Plan`,
            `Management Plan`, compliance_status) %>%
     
@@ -1159,13 +1121,9 @@ output$compliance_summary <- renderUI({
   comp <- selected_compliance()
   prog <- selected_progress_compliance()
   if(nrow(comp) == 0){return(tags$p("No compliance information available."))}
-  
-  if(
-    nrow(selected_species()) > 0 &&
+  if(nrow(selected_species()) > 0 &&
     !is.na(selected_species()$sara_status[1]) &&
-    selected_species()$sara_status[1] == "Special Concern"
-  ) {
-    
+    selected_species()$sara_status[1] == "Special Concern") {
     return(tags$div(style = "
                     background-color:#f8f9fa;
                     border:1px solid #dee2e6;
@@ -1234,8 +1192,7 @@ output$compliance_summary <- renderUI({
       !is.na(prog$recovery_strategy_date[1]) &&
       !is.na(comp$first_recovery_strategy_date[1]) &&
       prog$recovery_strategy_date[1] !=
-      comp$first_recovery_strategy_date[1]
-    ){
+      comp$first_recovery_strategy_date[1]){
       tags$div(tags$b("Current Recovery Strategy: "),
         format(as.Date(prog$recovery_strategy_date[1]), "%d %b %Y"))
     },
@@ -1276,8 +1233,7 @@ output$common_threats <- renderDT({
       filter(grepl(input$threat_range, range_text, fixed = TRUE))}
   if(input$threat_taxa != "All"){
     dat <- dat %>%
-      filter(taxonomyId == input$threat_taxa)
-  }
+      filter(taxonomyId == input$threat_taxa)}
   dat %>%
     distinct(record_name, threat_category) %>%
     count(threat_category,sort = TRUE, name = "Designatable Units") %>%
@@ -1291,7 +1247,6 @@ output$common_threats <- renderDT({
 
 # top species threats table
 output$top_threat_species <- renderDT({
-  
   dat <- species_threats_app %>%
     left_join(species_master_app %>%
         select(record_name, range_text, taxonomyId), by = "record_name")
@@ -1301,9 +1256,7 @@ output$top_threat_species <- renderDT({
                    range_text,fixed = TRUE))}
   if(input$threat_taxa != "All"){
     dat <- dat %>%
-      filter(taxonomyId == input$threat_taxa)
-  }
-  
+      filter(taxonomyId == input$threat_taxa)}
   dat %>%
     distinct(record_name, threat_category) %>%
     count(record_name, sort = TRUE,
@@ -1337,12 +1290,16 @@ output$explore_species <- renderDT({
       `SARA Status` == "Extirpated" ~
         '<span class="status-extirpated">Extirpated</span>',
       
-      TRUE ~ `SARA Status`
-    )
-  )
+      TRUE ~ `SARA Status`))
   datatable(dat, rownames = FALSE, escape = FALSE,
             selection = list(mode = "single",target = "row"),
-            options = list(pageLength = 10))}, server = FALSE)
+            options = list(pageLength = 10,
+                           autowidth = TRUE,
+                           columnDefs = list(
+                             list(width = "35%", targets=0),
+                             list(width = "40%", targets=1),
+                             list(width = "15%", targets=2)
+                           )))}, server = FALSE)
 
 output$explore_species_count <- renderText({
   paste(nrow(explore_results()), "Species Records")})
@@ -1404,8 +1361,7 @@ output$province_top_threats <- renderDT({
   
   if(input$province_taxa != "All"){
     dat <- dat %>%
-      filter(taxonomyId == input$province_taxa)
-  }
+      filter(taxonomyId == input$province_taxa)}
   
   dat %>%
     distinct(record_name, threat_category) %>%
@@ -1449,29 +1405,13 @@ output$province_cards <- renderUI({
 
 output$province_recovery_summary <- renderUI({
   dat <- province_recovery_summary()
-  up_to_date <- sum(
-    dat$n[dat$compliance_status == "Up to Date"],
-    na.rm = TRUE
-  )
-  
-  not_yet_due <- sum(
-    dat$n[dat$compliance_status == "Not Yet Due"],
-    na.rm = TRUE
-  )
-  
-  overdue <- sum(
-    dat$n[dat$compliance_status == "Overdue"],
-    na.rm = TRUE
-  )
-  
-  not_required <- sum(
-    dat$n[dat$compliance_status %in%
-            c("Not Required", "Not Applicable")],
-    na.rm = TRUE
-  )
-  div(
-    class = "threat-card",
-    fluidRow(column(3,div(class = "recovery-card",
+  up_to_date <- sum(dat$n[dat$compliance_status == "Up to Date"], na.rm = TRUE)
+  not_yet_due <- sum(dat$n[dat$compliance_status == "Not Yet Due"], na.rm = TRUE)
+  overdue <- sum(dat$n[dat$compliance_status == "Overdue"], na.rm = TRUE)
+  not_required <- sum(dat$n[dat$compliance_status %in%
+                              c("Not Required", "Not Applicable")], na.rm = TRUE)
+  div(class = "threat-card",
+      fluidRow(column(3,div(class = "recovery-card",
                           style = "background:#d4edda;",
                           h2(up_to_date),
                           p("Up to Date"))),
@@ -1486,9 +1426,7 @@ output$province_recovery_summary <- renderUI({
              column(3, div(class = "recovery-card",
                            style = "background:#e9ecef;",
                            h2(not_required),
-                           p("Not Required")))
-    ))
-})
+                           p("Not Required")))))})
 
 
 }
