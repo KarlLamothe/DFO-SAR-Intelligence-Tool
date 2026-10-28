@@ -1,5 +1,9 @@
-# if you do not have these packages installed on your computer, you need to remove
-# the hashtags and install them first, the load them using library()
+################################################################################
+# Canadian Species at Risk Explorer
+# Launch Application
+# Purpose:
+# Starts the Shiny application.
+################################################################################
 
 #install.packages('shiny')
 #install.packages('dplyr')
