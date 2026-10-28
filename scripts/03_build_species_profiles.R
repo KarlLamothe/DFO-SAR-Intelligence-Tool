@@ -1,12 +1,12 @@
 source("scripts/00_setup.R")
 
-species_master <- read.csv("data_processed/freshwater_species_master.csv")
+species_master <- read.csv("data_processed/all_species_master.csv")
 colnames(species_master)
 
 # moving to all species
 species_profiles <- purrr::map2_dfr(
-  freshwater_species$id,
-  freshwater_species$profiles,
+  all_species$id,
+  all_species$profiles,
   extract_profile)
 
 # clean this up
@@ -34,7 +34,7 @@ species_profiles_clean <- species_profiles_clean %>%
   relocate(id, record_name, common_name, scientific_name, sara_status, cosewic_status)
 
 # combine data
-species_full <- freshwater_species %>%
+species_full <- all_species %>%
   left_join(species_profiles_clean, by = "id")
 sapply(species_full, class)
 
@@ -70,8 +70,8 @@ head(species_full_export)
 head(species_profiles_clean)
 
 # save data
-write.csv(species_profiles_clean, "data_processed/species_profiles.csv")
-write.csv(species_full_export, "data_processed/species_full.csv")
+write.csv(species_profiles_clean, "data_processed/all_species_profiles.csv")
+write.csv(species_full_export, "data_processed/all_species_full.csv")
 
 # quick checks
 species_full_export %>%

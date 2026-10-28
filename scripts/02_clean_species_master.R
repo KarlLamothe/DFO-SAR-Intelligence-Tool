@@ -1,7 +1,7 @@
 source("scripts/00_setup.R")
 
 # read in raw data
-raw_species <- read.csv("data_processed/freshwater_species_master_raw.csv")
+raw_species <- read.csv("data_processed/all_species_raw.csv")
 names(raw_species)
 glimpse(raw_species)
 
@@ -58,4 +58,4 @@ species_master <- species_master %>%
   )
 
 # save
-write_csv(species_master, "data_processed/freshwater_species_master.csv")
+write_csv(species_master, "data_processed/all_species_master.csv")

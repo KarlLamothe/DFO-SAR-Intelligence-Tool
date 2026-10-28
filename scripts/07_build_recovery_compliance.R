@@ -19,8 +19,8 @@
 
 source("scripts/00_setup.R")
 
-species_documents <- read.csv("data_processed/species_documents.csv")
-species_master <- read.csv("data_processed/freshwater_species_master.csv")
+species_documents <- read.csv("data_processed/all_species_documents.csv")
+species_master <- read.csv("data_processed/all_species_master.csv")
 
 ################################################################################
 # RECOVERY STRATEGY COMPLIANCE
@@ -90,7 +90,7 @@ compliance %>%
   select(record_name, sara_status, listing_date, first_recovery_strategy_date, days_late)
 
 # EXPORT
-write.csv(compliance,"data_processed/recovery_compliance.csv")
+write.csv(compliance,"data_processed/all_recovery_compliance.csv")
 
 ################################################################################
 # PROGRESS REPORT COMPLIANCE
@@ -174,4 +174,4 @@ progress_compliance %>%
   arrange(desc(days_late))
 
 # EXPORT
-write.csv(progress_compliance, "data_processed/progress_report_compliance.csv",)
+write.csv(progress_compliance, "data_processed/all_progress_report_compliance.csv",)

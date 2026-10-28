@@ -1,8 +1,8 @@
 source("scripts/00_setup.R")
 
 # load data
-species_profiles <- read.csv("data_processed/species_profiles.csv")
-species_master <- read.csv("data_processed/freshwater_species_master.csv")
+species_profiles <- read.csv("data_processed/all_species_profiles.csv")
+species_master <- read.csv("data_processed/all_species_master.csv")
 
 # create a list of relevant threat
 threat_dictionary <- list(
@@ -98,7 +98,7 @@ species_threats <- species_threats %>%
 head(species_threats)
 
 # export
-write_csv(species_threats,"data_processed/species_threats.csv")
+write_csv(species_threats,"data_processed/all_species_threats.csv")
 
 # checks
 species_threats %>%
@@ -121,7 +121,7 @@ species_threat_summary <- species_threats %>%
   summarise(n_threat_categories = n(),
             threat_categories = paste(sort(threat_category),collapse = "; "),
             .groups = "drop")
-write_csv(species_threat_summary,"data_processed/species_threats_summary.csv")
+write_csv(species_threat_summary,"data_processed/all_species_threats_summary.csv")
 
 # look for species with unusually high threat counts
 species_threats %>%
@@ -143,4 +143,4 @@ threat_category_frequency <- species_threats %>%
   distinct(id, record_name, threat_category) %>%
   count( threat_category, sort = TRUE)
 
-write_csv(threat_category_frequency,"data_processed/threat_category_frequency.csv")
+write_csv(threat_category_frequency,"data_processed/all_threat_category_frequency.csv")

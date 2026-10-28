@@ -1,7 +1,7 @@
 source("scripts/00_setup.R")
 
 # load data
-species_master <- read.csv("data_processed/freshwater_species_master.csv")
+species_master <- read.csv("data_processed/all_species_master.csv")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -212,5 +212,5 @@ species_documents_export <- species_documents_export %>%
   ungroup() %>%
   select(-base_title)
 
-write_csv(species_documents_export, "data_processed/species_documents.csv")
-write_csv(species_document_summary, "data_processed/species_document_summary.csv")
+write_csv(species_documents_export, "data_processed/all_species_documents.csv")
+write_csv(species_document_summary, "data_processed/all_species_document_summary.csv")
