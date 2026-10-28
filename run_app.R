@@ -1,8 +1,11 @@
 ################################################################################
 # Canadian Species at Risk Explorer
 # Launch Application
-# Purpose:
-# Starts the Shiny application.
+# if you don't have the shiny, dplyr, DT, and bslib packages already on your 
+# computer, you'll need to remove the hashtags and install those packages for
+# the first time using the app. Then, you run the four codes starting with 
+# 'library' to load those packages. After that, you run the runApp function to 
+# open the application.
 ################################################################################
 
 #install.packages('shiny')
