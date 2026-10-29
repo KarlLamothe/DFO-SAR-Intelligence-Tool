@@ -912,8 +912,10 @@ server <- function(input, output, session){
       "www","images",img_file))){
       img_file <- "no_image_available.jpg"
     }
-    
-    tagList(fluidRow(column(3, 
+    # widen the left panel for long species names
+    left_width <- if(nchar(sp$common_name[1]) > 25) 5 else 4
+    right_width <- 12 - left_width
+    tagList(fluidRow(column(left_width, 
                             h3(sp$common_name, style = "margin-top:0; margin-bottom:5px;"),
                             tags$h4(tags$em(sp$scientific_name),
                             style = "margin-top:0;margin-bottom:10px;color:#495057;"),
@@ -928,7 +930,7 @@ server <- function(input, output, session){
                                      color:grey; margin-top:5px;",
                                      sp$photoCopyright[1])}),
                      
-                     column(9,
+                     column(right_width,
                             tags$div(style = "margin-top:15px;line-height:1.8;",
                         tags$div(
                           style = "
@@ -938,7 +940,7 @@ server <- function(input, output, session){
                           padding:12px;
                           margin-top:10px;
                           margin-top:80px;
-                          max-width:500px;
+                          max-width:650px;
                           ",
                           tags$p(style = "margin-bottom:10px;",
                                  tags$a("View Species Profile on the SAR Registry",
