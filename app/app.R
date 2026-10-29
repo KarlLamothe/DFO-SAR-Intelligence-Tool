@@ -302,7 +302,6 @@ province_selector_ui <- column(
 
 ui <- fluidPage(
   #application theme
-  theme = bs_theme(version = 5, bootswatch = "cosmo"),
   tags$head(
     tags$style(HTML("
       .small-box {
@@ -401,6 +400,15 @@ ui <- fluidPage(
        margin-bottom: 0;
        font-weight: 500;
       }
+      .footer-card {
+      background:#f8f9fa;
+      border-radius:8px;
+      border: 1px solid #343a40;
+      padding:15px;
+      max-width: 700px;
+      margin-top: 20px;
+      font-size:0.9em;
+      }
       .badge-na {
       background-color: #e9ecef;
       color: #495057;
@@ -409,8 +417,19 @@ ui <- fluidPage(
       font-size: 12px;
       font-weight: 700;
       }
-    "))
-  ),
+      .content-card {
+      background:white;
+      border:1px solid #dee2e6;
+      border-radius:10px;
+      padding:20px;
+      margin-bottom:15px;
+      }
+      .nav-pills .nav-link.active {
+      background-color: #2f6fb6;
+      font-weight: 700 !important;
+      border-radius: 8px;
+}"))),
+  theme = bs_theme(version = 5, bootswatch = "cosmo"),
   
   # Main application title displayed at the top of every page.
   titlePanel(div(style = "font-size:36px;
@@ -419,11 +438,11 @@ ui <- fluidPage(
                  "Canadian Species at Risk Explorer")),
   
   # Main navigation tabs
-      tabsetPanel(id = "main_tabs",
+      tabsetPanel(id = "main_tabs",type="pills",
                   
                   # DASHBOARD
                   tabPanel(
-                     "Dashboard",
+                     tagList(icon("house"),"Dashboard"),
                      br(),
                      h3("About This Application"),
                      p("The Canadian Species at Risk Explorer provides access to species profiles, threat information, recovery documents, and recovery planning information for ", tags$i("Species at Risk Act")," (SARA) Schedule 1 species. This tool was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize."),
@@ -446,34 +465,31 @@ ui <- fluidPage(
                                "threat groups")))))),
                   
                   # SPECIES INFORMATION
-                  tabPanel("Species Information",
+                  tabPanel(tagList(icon("fish"),"Species Information"),
                            br(),
                            fluidRow(species_selector_ui,column(9,
                                     style = "margin-top: -8px;",
                                     uiOutput("species_header"),
+                                    div(class="content-card",
                                     h3("Description"),
                                     textOutput("description"),
-                                    br(),
                                     h3("Population"),
                                     textOutput("population"),
-                                    br(),
                                     h3("Habitat"),
                                     textOutput("habitat"),
-                                    br(),
                                     h3("Biology"),
                                     textOutput("biology"),
-                                    br(),
                                     h3("Threats"),
-                                    textOutput("profile_threats"),
-                                    br(),
-                                    h3(textOutput("n_threats")),
+                                    textOutput("profile_threats")),
+                                    div(class="content-card",
+                                        h3(textOutput("n_threats")),
                                     DTOutput("threats"),
                                     tags$p(style = "font-style: italic; color: #666666;",
-                                           "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments.")
+                                           "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments."))
                                     ))),
                   
                   # SPECIES DOCUMENTS TAB
-                  tabPanel("Species Documents",
+                  tabPanel(tagList(icon("file-lines"),"Species Documents"),
                            br(),
                            fluidRow(species_documents_selector_ui, 
                                     column(10, 
@@ -489,7 +505,7 @@ ui <- fluidPage(
                                            )))),
                  
                    # RECOVERY PLANNING TAB
-                  tabPanel("Recovery Planning",
+                  tabPanel(tagList(icon("clipboard-list"),"Recovery Planning"),
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                fluidRow(recovery_planning_selector_ui, 
@@ -504,7 +520,7 @@ ui <- fluidPage(
                                                  "Recovery planning coverage is based on recovery strategies, action plans, management plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
                                                  ))))),
                   # THREAT SUMMARY TAB
-                  tabPanel("Threat Summary",
+                  tabPanel(tagList(icon("triangle-exclamation"),"Threat Summary"),
                     div(style = "max-width:1200px; margin-left:10px;",
                         br(),
                         fluidRow(column(2,
@@ -532,7 +548,7 @@ ui <- fluidPage(
                                                      style = "text-align:center; margin-top:0;"),
                                                    DTOutput("common_threats")))))))),
                   # EXPLORE THREATS TAB
-                  tabPanel("Explore Threats",
+                  tabPanel(tagList(icon("magnifying-glass"),"Explore Threats"),
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                h3("Explore Threats"),
@@ -544,7 +560,7 @@ ui <- fluidPage(
                                                DTOutput("explore_species"))
                                         ))),
                   # PROVINCIAL SUMMARY TAB
-                  tabPanel("Province Summary",
+                  tabPanel(tagList(icon("map"),"Province Summary"),
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                fluidRow(province_selector_ui,
@@ -577,7 +593,8 @@ ui <- fluidPage(
     margin-top:20px;
     margin-bottom:20px;
   ",
-    "Canadian Species at Risk Explorer v2.0",
+    class = "footer-card",
+    "Canadian Species at Risk Explorer v3.0",
     tags$br(),
     "Data sources: Species at Risk Public Registry, species profile pages, recovery planning documents, and associated public information.",
     tags$br(),
