@@ -152,29 +152,18 @@ species_documents_export <- species_documents_export %>%
       
       TRUE ~ NA_character_))
 
-# remove proposed docs if there is a final version
+# remove proposed planning documents when a non-proposed
+# version exists for the same species and document type
 species_documents_export <- species_documents_export %>%
-  mutate(
-    is_proposed = grepl(
-      "proposed",
-      attachment_title,
-      ignore.case = TRUE
-    ),
-    base_title = attachment_title %>%
-      gsub("\\[[^]]*proposed[^]]*\\]", "",
-           ., ignore.case = TRUE) %>%
-      gsub("\\([^)]*proposed[^)]*\\)", "",
-           ., ignore.case = TRUE) %>%
-      gsub("\\[[^]]*final[^]]*\\]", "",
-           ., ignore.case = TRUE) %>%
-      gsub("\\([^)]*final[^)]*\\)", "",
-           ., ignore.case = TRUE) %>%
-      trimws()
-  ) %>%
-  group_by(record_name, base_title) %>%
+  mutate(is_proposed = grepl("proposed", attachment_title, ignore.case = TRUE)) %>%
+  group_by(record_name, planning_document_type) %>%
   filter(!(is_proposed & any(!is_proposed))) %>%
   ungroup() %>%
-  select(-is_proposed, -base_title)
+  select(-is_proposed)
+
+species_documents_export %>%
+  filter(grepl("proposed", attachment_title, ignore.case = TRUE)) %>%
+  count(planning_document_type, sort = TRUE)
 
 write_csv(species_documents_export, "data_processed/all_species_documents.csv")
 write_csv(species_document_summary, "data_processed/all_species_document_summary.csv")
