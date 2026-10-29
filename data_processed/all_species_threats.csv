@@ -6311,11 +6311,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 639-100,Transportation and Service Corridors,railroad,Grizzly Bear - Northwestern population,Grizzly Bear,Ursus arctos,No Status
 639-100,Human Intrusions and Disturbance,recreation,Grizzly Bear - Northwestern population,Grizzly Bear,Ursus arctos,No Status
 639-100,Natural Systems Modification,fire,Grizzly Bear - Northwestern population,Grizzly Bear,Ursus arctos,No Status
-621-248,Agriculture and Aquaculture,agriculture,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Transportation and Service Corridors,road,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Natural Systems Modification,fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Natural Systems Modification,habitat fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Other Limiting Factors,small population,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
 1075-742,Residential and Commercial Development,urban,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1075-742,Residential and Commercial Development,industrial,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1075-742,Residential and Commercial Development,habitat loss,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
@@ -6329,3 +6324,8 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1075-742,Pollution,pollution,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1075-742,Climate Change,climate,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1075-742,Other Limiting Factors,habitat loss,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
+621-248,Agriculture and Aquaculture,agriculture,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Transportation and Service Corridors,road,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Natural Systems Modification,fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Natural Systems Modification,habitat fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Other Limiting Factors,small population,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered

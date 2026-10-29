@@ -1,4 +1,3 @@
-source("scripts/00_setup.R")
 
 # revise photo copyrights before saving
 species_master <- read.csv("data_processed/all_species_master.csv")

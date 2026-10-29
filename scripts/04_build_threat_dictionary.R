@@ -1,5 +1,3 @@
-source("scripts/00_setup.R")
-
 # load data
 species_profiles <- read.csv("data_processed/all_species_profiles.csv")
 species_master <- read.csv("data_processed/all_species_master.csv")
@@ -68,12 +66,8 @@ find_threats <- function(text){
     terms <- threat_dictionary[[category]]
     for(term in terms){
       if(stringr::str_detect(text, term)){
-        matches <- bind_rows(matches,
-                             tibble(threat_category = category,
-                                    matched_term = term))
-      }
-    }
-  }
+        matches <- bind_rows(matches, tibble(threat_category = category,
+                                             matched_term = term))}}}
   matches %>%
     distinct()
 }
@@ -84,37 +78,34 @@ species_threats <- purrr::map_dfr(
   function(i){
     hits <- find_threats(species_profiles$threats[i])
     if(is.null(hits)){
-      return(NULL)
-    }
-    bind_cols(tibble(id = species_profiles$id[i]), hits)
-  }
-)
+      return(NULL)}
+    bind_cols(tibble(id = species_profiles$id[i]), hits)})
 
-# add species information
-colnames(species_master)
+## add species information
+#colnames(species_master)
 species_threats <- species_threats %>%
   left_join(species_master %>%
               select(id, record_name, common_name, scientific_name, sara_status), by = "id")
-head(species_threats)
+#head(species_threats)
 
 # export
 write_csv(species_threats,"data_processed/all_species_threats.csv")
 
-# checks
-species_threats %>%
-  count(threat_category, sort = TRUE)
-
-species_threats %>%
-  filter(threat_category == "Climate Change")
-
-# more checks
-species_threats %>%
-  count(threat_category, sort = TRUE)
-
-species_threats %>%
-  count(record_name, sort = TRUE)
-
-# summary file
+## checks
+#species_threats %>%
+#  count(threat_category, sort = TRUE)
+#
+#species_threats %>%
+#  filter(threat_category == "Climate Change")
+#
+## more checks
+#species_threats %>%
+#  count(threat_category, sort = TRUE)
+#
+#species_threats %>%
+#  count(record_name, sort = TRUE)
+#
+## summary file
 species_threat_summary <- species_threats %>%
   distinct(id,record_name,common_name,threat_category) %>%
   group_by(id,record_name,common_name) %>%
@@ -123,24 +114,28 @@ species_threat_summary <- species_threats %>%
             .groups = "drop")
 write_csv(species_threat_summary,"data_processed/all_species_threats_summary.csv")
 
-# look for species with unusually high threat counts
-species_threats %>%
-  filter(record_name == "Nooksack Dace") %>%
-  distinct(threat_category) %>%
-  arrange(threat_category)
-
-# which threat categories are driving a given record
-species_threats %>%
-  distinct(record_name, threat_category) %>%
-  count(threat_category, sort = TRUE)
-
-species_threats %>%
-  distinct(record_name, threat_category) %>%
-  count(threat_category, sort = TRUE)
-
-# threat category frequency
+## look for species with unusually high threat counts
+#species_threats %>%
+#  filter(record_name == "Nooksack Dace") %>%
+#  distinct(threat_category) %>%
+#  arrange(threat_category)
+#
+## which threat categories are driving a given record
+#species_threats %>%
+#  distinct(record_name, threat_category) %>%
+#  count(threat_category, sort = TRUE)
+#
+#species_threats %>%
+#  distinct(record_name, threat_category) %>%
+#  count(threat_category, sort = TRUE)
+#
+## threat category frequency
 threat_category_frequency <- species_threats %>%
   distinct(id, record_name, threat_category) %>%
   count( threat_category, sort = TRUE)
 
 write_csv(threat_category_frequency,"data_processed/all_threat_category_frequency.csv")
+
+message(sprintf(
+    "Threat extraction complete: %s threat records, %s species summaries, and %s threat categories exported.",
+    nrow(species_threats), nrow(species_threat_summary), nrow(threat_category_frequency)))

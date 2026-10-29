@@ -66,10 +66,6 @@ species_master_app <- species_master_app %>%
                                tolower() %>%
                                gsub(" ", "_", .),".jpg"))
 
-species_master_app %>%
-  filter(grepl("Smoker", common_name)) %>%
-  select(common_name, local_image_file, imageFileName)
-
 ################################################################################
 # THREAT DATA USED BY APP
 # Restrict threat analyses to the same SARA statuses used elsewhere in the app.
@@ -430,10 +426,10 @@ ui <- fluidPage(
                      "Dashboard",
                      br(),
                      h3("About This Application"),
-                     p("The Canadian Species at Risk Explorer provides access to species profiles, threat information, recovery documents, and recovery planning information for Species at Risk Act (SARA) Schedule 1 species. This tool was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize."),
+                     p("The Canadian Species at Risk Explorer provides access to species profiles, threat information, recovery documents, and recovery planning information for ", tags$i("Species at Risk Act")," (SARA) Schedule 1 species. This tool was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize."),
                      h4("Important Notes"),
                      tags$ul(tags$li("Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information and should not be interpreted as formal threat assessments."),
-                             tags$li("Recovery planning metrics are based on Recovery Strategies, Action Plans, and Progress Reports identified within Registry planning documents.")),
+                             tags$li("Recovery planning metrics are based on Recovery Strategies, Action Plans, Management Plans, and Progress Reports identified within Registry planning documents.")),
                      fluidRow(column(6,h4("Data Sources"),
                          tags$ul(
                            tags$li("Species at Risk Public Registry"),
@@ -489,7 +485,7 @@ ui <- fluidPage(
                                            tags$p(
                                              style = "font-size:12px; color:gray;",
                                              tags$b("Document Notes: "),
-                                             "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for Species at Risk Act (SARA) listed species."
+                                             "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for ", tags$i("Species at Risk Act"), " listed species. Efforts were made to removed 'Proposed' documents."
                                            )))),
                  
                    # RECOVERY PLANNING TAB

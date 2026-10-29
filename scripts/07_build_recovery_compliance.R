@@ -17,8 +17,6 @@
 #
 ################################################################################
 
-source("scripts/00_setup.R")
-
 species_documents <- read.csv("data_processed/all_species_documents.csv")
 species_master <- read.csv("data_processed/all_species_master.csv")
 
@@ -81,15 +79,15 @@ compliance <- compliance %>%
                                        days_late <= 0 ~"On Time",
                                        days_late > 0 ~"Late"))
 
-# QA CHECKS
-compliance %>%
-  count(compliance_status)
-
-compliance %>%
-  arrange(desc(days_late)) %>%
-  select(record_name, sara_status, listing_date, first_recovery_strategy_date, days_late)
-
-# EXPORT
+## QA CHECKS
+#compliance %>%
+#  count(compliance_status)
+#
+#compliance %>%
+#  arrange(desc(days_late)) %>%
+#  select(record_name, sara_status, listing_date, first_recovery_strategy_date, days_late)
+#
+## EXPORT
 write.csv(compliance,"data_processed/all_recovery_compliance.csv")
 
 ################################################################################
@@ -166,12 +164,23 @@ progress_compliance <- progress_compliance %>%
 progress_compliance <- progress_compliance %>%
   mutate(years_late = round(days_late / 365.25, 1))
 
-# QA CHECKS
-progress_compliance %>%
-  count(compliance_status)
-
-progress_compliance %>%
-  arrange(desc(days_late))
-
-# EXPORT
+## QA CHECKS
+#progress_compliance %>%
+#  count(compliance_status)
+#
+#progress_compliance %>%
+#  arrange(desc(days_late))
+#
+## EXPORT
 write.csv(progress_compliance, "data_processed/all_progress_report_compliance.csv",)
+
+message(
+  paste0(
+    "Recovery compliance analysis complete.\n",
+    "- Recovery strategies assessed: ", nrow(compliance), "\n",
+    "- Progress reporting assessments: ", nrow(progress_compliance), "\n",
+    "- Recovery strategies on file: ",
+    sum(!is.na(compliance$first_recovery_strategy_date)), "\n",
+    "- Progress reports on file: ",
+    sum(!is.na(progress_compliance$latest_progress_report_date)), "\n",
+    "- Files written: all_recovery_compliance.csv, all_progress_report_compliance.csv"))

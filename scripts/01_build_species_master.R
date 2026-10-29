@@ -1,5 +1,6 @@
 source('scripts/00_setup.R')
 
+# Retrieve species records
 get_species_page <- function(skip = 0, top = 100){
   payload <- list(count = TRUE, search = "*", searchMode = "all",
                   queryType = "full", skip = skip, top = top)
@@ -11,65 +12,41 @@ get_species_page <- function(skip = 0, top = 100){
 }
 
 # all species
-all_species <- purrr::map_dfr(
-  seq(0, 1200, by = 100),
-  get_species_page
-)
-nrow(all_species)
-colnames(all_species)
-head(all_species)
+all_species <- purrr::map_dfr(seq(0, 1500, by = 100), get_species_page)
+#nrow(all_species)
+#colnames(all_species)
+#head(all_species)
 
-## subset freshwater species
-#freshwater_species <- all_species %>%
-#  filter(taxonomyId == "Fishes (freshwater)")
-#nrow(freshwater_species)
-#
-## include RecordName
-#freshwater_species <- freshwater_species %>%
-#  mutate(
-#    recordName = case_when(
-#      !is.na(cosewicPopulation) &
-#        cosewicPopulation != "" ~
-#        paste(commonName, "-", cosewicPopulation),
-#      TRUE ~ commonName
-#    )
-#  )
-#colnames(freshwater_species)
-#
-## only include columns that are useful
-#freshwater_species<-freshwater_species[c(2,3,7,11,12,14:20,22:29,31,33,35,36,37,40:45)]
-#
-#freshwater_species <- freshwater_species %>%
-#  mutate(range_text = sapply(ranges,function(x) paste(x, collapse = "; ")))
-#
-## clean up html text
-#freshwater_species <- freshwater_species %>%
-#  mutate(across(where(is.character), clean_html))
-#
-## save raw master
-#write_csv(freshwater_species, "data_processed/freshwater_species_master_raw.csv")
-
-# include RecordName
+# Build record names
 all_species <- all_species %>%
-  mutate(
-    recordName = case_when(
-      !is.na(cosewicPopulation) &
-        cosewicPopulation != "" ~
-        paste(commonName, "-", cosewicPopulation),
-      TRUE ~ commonName
-    )
-  )
+  mutate(recordName = case_when(
+    !is.na(cosewicPopulation) & cosewicPopulation != "" ~
+        paste(commonName, "-", cosewicPopulation), TRUE ~ commonName))
 colnames(all_species)
 
-# only include columns that are useful
-all_species<-all_species[c(2,3,7,11,12,14:20,22:29,31,33,35,36,37,40:45)]
-
+# Keep required fields
 all_species <- all_species %>%
-  mutate(range_text = sapply(ranges,function(x) paste(x, collapse = "; ")))
+  select(id, commonName, taxonomyId, cosewicCommonName, cosewicScientificName,
+         cosewicStatusCriteria, cosewicStatusHis, cosewicReasonDes,
+         cosewicPopulation, cosewicLastAssessmentDate, emergencyAssessment,
+         cosewicStatusId, legalCommonName, legalScientificName,
+         legalStatusHistory, legalPopulation, legalDateListing,
+         underConsiderationId, legalStatusId, legalScheduleId,azSpecies,
+         profiles, ministerReceiptDate, statusChange, ranges, 
+         imageFileName, lastGicDecisionDate, currentGicDecisionId, 
+         hasRelatedSpeciesOnScheduleOne, photoCopyright, Id, recordName)
 
-# clean up html text
+# Derived fields
+all_species <- all_species %>%
+  mutate(range_text = purrr::map_chr(ranges, ~ paste(.x, collapse = "; ")))
+
+# Clean html text
 all_species <- all_species %>%
   mutate(across(where(is.character), clean_html))
 
+# Export
 write_csv(all_species, "data_processed/all_species_raw.csv")
 
+# completion message for when running full data refresh
+message(sprintf("Species extraction complete: %s records saved.",
+                nrow(all_species)))
