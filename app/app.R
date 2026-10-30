@@ -39,7 +39,9 @@ library(bslib)
 #   Recovery planning and registry documents associated with each DU.
 ################################################################################
 
-species_master <- readRDS("data/species_master.rds")
+species_data <- readRDS("data/species_master.rds")
+species_master <- species_data$data
+scrape_date <- species_data$scrape_date
 species_profiles <- readRDS("data/species_profiles.rds")
 species_threats <- readRDS("data/species_threats.rds")
 species_documents <- readRDS("data/species_documents.rds")
@@ -207,7 +209,7 @@ recovery_coverage <- recovery_coverage %>%
 species_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:13px;",
       "Filter species records by status, range, species, and DU."),
   selectInput("taxa", "Taxonomic Group",
@@ -225,7 +227,7 @@ species_selector_ui <- column(
 species_documents_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:13px;",
              "Filter species records by status, range, species, and DU."),
       selectInput("taxa_docs", "Taxonomic Group",
@@ -242,7 +244,7 @@ species_documents_selector_ui <- column(
 explore_selector_ui <- column(
   width = 3,
   div(class = "threat-card",
-      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:13px;",
       "Filter species records by threat category, status, and range."),
       selectInput("explore_taxa", "Taxonomic Group",
@@ -258,7 +260,7 @@ explore_selector_ui <- column(
 recovery_planning_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:13px;",
              "Filter species records by status and range."),
       selectInput("planning_taxa", "Taxonomic Group",
@@ -275,7 +277,7 @@ recovery_planning_selector_ui <- column(
 province_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4("Filters", style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
       tags$p(style = "color:#6c757d; font-size:12px;",
              "Filter species records by range."),
       selectInput("province_taxa", "Taxonomic Group",
@@ -343,8 +345,8 @@ ui <- fluidPage(
       font-weight: 700;
       }
       .threat-card {
-      background: white;
-      border: 1px solid #dee2e6;
+      background-color: #f8f9fa;
+      border: 1px solid #d0d7de;
       border-radius: 8px;
       padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
@@ -401,12 +403,8 @@ ui <- fluidPage(
        font-weight: 500;
       }
       .footer-card {
-      background:#f8f9fa;
-      border-radius:8px;
-      border: 1px solid #343a40;
       padding:15px;
       max-width: 700px;
-      margin-top: 20px;
       font-size:0.9em;
       }
       .badge-na {
@@ -431,21 +429,47 @@ ui <- fluidPage(
 }"))),
   theme = bs_theme(version = 5, bootswatch = "cosmo"),
   
-  # Main application title displayed at the top of every page.
-  titlePanel(div(style = "font-size:36px;
-                 font-weight:bold;
-                 color:#2c3e50;",
-                 "Canadian Species at Risk Explorer")),
-  
   # Main navigation tabs
+  div(style = "padding: 10px 15px 0px 15px;",
       tabsetPanel(id = "main_tabs",type="pills",
                   
                   # DASHBOARD
                   tabPanel(
                      tagList(icon("house"),"Dashboard"),
                      br(),
-                     h3("About This Application"),
-                     p("The Canadian Species at Risk Explorer provides access to species profiles, threat information, recovery documents, and recovery planning information for ", tags$i("Species at Risk Act")," (SARA) Schedule 1 species. This tool was developed to make information available through the Species at Risk Public Registry easier to access, explore, and summarize."),
+                     div(style = "background-color:#f8f9fa;
+                     border:1px solid #dee2e6;
+                     border-radius:10px;
+                     padding:15px;
+                     margin-bottom:5px;
+                     margin-top:10px;",
+                         h2(strong("Canadian Species at Risk Explorer"),
+                            style = "margin-top:0; margin-bottom:5px; color:#2c5aa0;"),
+                         p(style = "margin-bottom:0; font-size:16px;",
+                           "Explore species profiles, threats, and recovery planning information for SARA Schedule 1 species.")),
+                     tags$img(
+                       src = "images/dashboard_banner.jpg",
+                       style = " width:100%;
+                       height:180px;
+                       object-fit:cover;
+                       border-radius:10px;
+                       background-color:#f8f9fa;
+                       border:1px solid #dee2e6;
+                       margin-top:15px;
+                       margin-bottom:15px;"),
+                     div(
+                       style = "background-color:#f8f9fa;
+                       border:1px solid #dee2e6;
+                       border-radius:10px;
+                       padding:15px;
+                       margin-top:5px;
+                       margin-bottom:15px;",
+                     h3("Quick Start",style = "margin-top:0;"),
+                     tags$ol(
+                       tags$li("Use Species Information to explore species profiles and recovery information."),
+                       tags$li("Use Species Documents to review recovery strategies, action plans, management plans, and progress reports."),
+                       tags$li("Use Threat Summary and Explore Threats to examine threats affecting species recovery."),
+                       tags$li("Use Province Summary to summarize species and recovery planning information by jurisdiction.")),
                      h4("Important Notes"),
                      tags$ul(tags$li("Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information and should not be interpreted as formal threat assessments."),
                              tags$li("Recovery planning metrics are based on Recovery Strategies, Action Plans, Management Plans, and Progress Reports identified within Registry planning documents.")),
@@ -454,7 +478,7 @@ ui <- fluidPage(
                            tags$li("Species at Risk Public Registry"),
                            tags$li("Species profile pages"),
                            tags$li("Recovery and planning documents"))),
-                       column(6,h4("Coverage"),
+                       column(6,h4("Application Coverage"),
                          tags$ul(
                            tags$li(
                              paste(n_distinct(species_master_app$record_name),
@@ -462,25 +486,27 @@ ui <- fluidPage(
                            tags$li(paste(n_distinct(species_documents$document_id),
                                "documents")),
                            tags$li(paste(n_distinct(species_threats_app$threat_category),
-                               "threat groups")))))),
+                               "threat groups"))))))),
                   
                   # SPECIES INFORMATION
                   tabPanel(tagList(icon("fish"),"Species Information"),
                            br(),
-                           fluidRow(species_selector_ui,column(9,
+                           fluidRow(species_selector_ui,
+                                    column(9,
                                     style = "margin-top: -8px;",
                                     uiOutput("species_header"),
-                                    div(class="content-card",
-                                    h3("Description"),
+                                    br(),
+                                    h3("Description",style = "margin-top:10px;"),
                                     textOutput("description"),
-                                    h3("Population"),
+                                    h3("Population",style = "margin-top:10px;"),
                                     textOutput("population"),
-                                    h3("Habitat"),
+                                    h3("Habitat",style = "margin-top:10px;"),
                                     textOutput("habitat"),
-                                    h3("Biology"),
+                                    h3("Biology",style = "margin-top:10px;"),
                                     textOutput("biology"),
-                                    h3("Threats"),
-                                    textOutput("profile_threats")),
+                                    h3("Threats",style = "margin-top:10px;"),
+                                    textOutput("profile_threats"),
+                                    br(),
                                     div(class="content-card",
                                         h3(textOutput("n_threats")),
                                     DTOutput("threats"),
@@ -508,52 +534,55 @@ ui <- fluidPage(
                   tabPanel(tagList(icon("clipboard-list"),"Recovery Planning"),
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
+                               h3("Recovery Planning Coverage"),
+                               tags$p(class = "text-muted", style = "margin-bottom:20px;",
+                                 "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for SARA-listed species."),
                                fluidRow(recovery_planning_selector_ui, 
                                         column(10,
-                                               tagList(
-                                                 h3("Recovery Planning Coverage"),
-                                                 p(class = "text-muted",
-                                                   "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for Species at Risk Act (SARA) listed species.")),
                                                uiOutput("planning_summary"),
                                                DTOutput("recovery_coverage", width = "100%"),
                                                tags$p(style = "font-style: italic; color: #666666;",
                                                  "Recovery planning coverage is based on recovery strategies, action plans, management plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
                                                  ))))),
                   # THREAT SUMMARY TAB
-                  tabPanel(tagList(icon("triangle-exclamation"),"Threat Summary"),
+                  tabPanel(
+                    tagList(icon("triangle-exclamation"), "Threat Summary"),
                     div(style = "max-width:1200px; margin-left:10px;",
-                        br(),
-                        fluidRow(column(2,
-                                        div(class = "threat-card",
-                                          h4("Filters",style = "margin-top:0; color:#2c5aa0;"),
-                                          tags$p(style="color:#6c757d; font-size:13px;",
-                                                 "Filter threat summaries by range and taxonomic group."),
-                                          selectInput("threat_taxa", "Taxonomic Group",
-                                                      choices = c("All",
-                                                                  sort(unique(species_master_app$taxonomyId))),
-                                                      selected = "All" ),
-                                          selectInput("threat_range","Range",
-                                                      choices = range_choices, selected = "All"))),
-                          column(10, tagList(
-                            h3("Threats to Species Recovery"),
-                            p(class = "text-muted",
-                              "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information.")),
-                            fluidRow(column(6,
-                                            div(class = "threat-card",
-                                                h3("DUs with the Most Threat Categories",
-                                                   style = "text-align:center; margin-top:0;"),
-                                                DTOutput("top_threat_species"))),
-                                     column(6, div(class = "threat-card",
-                                                   h3("Most Common Threat Categories",
-                                                     style = "text-align:center; margin-top:0;"),
-                                                   DTOutput("common_threats")))))))),
+                      br(),
+                      h3("Threats to Species Recovery"),
+                      tags$p(class = "text-muted", style = "margin-bottom:20px;",
+                        "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."),
+                      fluidRow(column(2,
+                          div(class = "threat-card",
+                            h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+                            tags$p(style = "color:#6c757d; font-size:13px;",
+                              "Filter threat summaries by range and taxonomic group."),
+                            selectInput("threat_taxa", "Taxonomic Group",
+                                        choices = c("All",
+                                                    sort(unique(species_master_app$taxonomyId))),
+                                        selected = "All"),
+                            selectInput("threat_range", "Range",
+                                        choices = range_choices, selected = "All"))),
+                        # Main content
+                        column(10,fluidRow(
+                            column(6,
+                              div(class = "threat-card",
+                                h3("DUs with the Most Threat Categories",
+                                   style = "text-align:center; margin-top:0;"),
+                                DTOutput("top_threat_species"))),
+                            column(6,
+                              div(class = "threat-card",
+                                h3("Most Common Threat Categories",
+                                  style = "text-align:center; margin-top:0;"),
+                                DTOutput("common_threats")))))))),
+                  
                   # EXPLORE THREATS TAB
                   tabPanel(tagList(icon("magnifying-glass"),"Explore Threats"),
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                h3("Explore Threats"),
                                tags$p(class = "text-muted",
-                                      "Explore DUs associated with a selected threat category and filter results by SARA status or range."),
+                                      "Explore DUs associated with a selected threat category."),
                                fluidRow(explore_selector_ui,
                                         column(9,
                                                h3(textOutput("explore_species_count")),
@@ -583,26 +612,16 @@ ui <- fluidPage(
                                         ),
                                br(),
                                h3("Species Records"),
-                               DTOutput("province_species_table")))),
+                               DTOutput("province_species_table"))))),
   # FOOTER INFORMATION
   hr(),
-  tags$div(
-    style = "
-    font-size:12px;
-    color:#6c757d;
-    margin-top:20px;
-    margin-bottom:20px;
-  ",
+  tags$div(style = "font-size:12px;",
     class = "footer-card",
     "Canadian Species at Risk Explorer v3.0",
     tags$br(),
-    "Data sources: Species at Risk Public Registry, species profile pages, recovery planning documents, and associated public information.",
+    paste("Registry data last refreshed:", format(scrape_date, "%Y-%m-%d")),
     tags$br(),
-    paste("Application updated:", format(Sys.Date(), "%Y-%m-%d")),
-    tags$br(),
-    "Contact: Karl Lamothe, Fisheries and Oceans Canada"
-  )
-)
+    paste("Application updated:", format(Sys.Date(), "%Y-%m-%d"))))
 
 ################################################################################
 ################################################################################
@@ -923,53 +942,76 @@ server <- function(input, output, session){
   output$species_header <- renderUI({
     sp <- selected_species()
     species_url <- paste0(
-      "https://species-registry.canada.ca/index-en.html#/species/", sp$id[1])
+      "https://species-registry.canada.ca/index-en.html#/species/",
+      sp$id[1])
     img_file <- sp$local_image_file[1]
-    if(is.na(img_file) || !file.exists(file.path(
-      "www","images",img_file))){
-      img_file <- "no_image_available.jpg"
-    }
-    # widen the left panel for long species names
-    left_width <- if(nchar(sp$common_name[1]) > 25) 5 else 4
-    right_width <- 12 - left_width
-    tagList(fluidRow(column(left_width, 
-                            h3(sp$common_name, style = "margin-top:0; margin-bottom:5px;"),
-                            tags$h4(tags$em(sp$scientific_name),
-                            style = "margin-top:0;margin-bottom:10px;color:#495057;"),
-                            tags$img(src = paste0("images/", img_file),
-                            style = "width:100%;max-height:200px;
-                            object-fit:contain;background-color:white;
-                            border-radius:8px;border:1px solid #d9d9d9;"),
+    has_image <- !is.na(img_file) &&
+      file.exists(file.path("www", "images", img_file))
+    info_box_width <- if (has_image) "550px" else "450px"
+    
+    info_box <- tags$div(
+      style = paste0("background-color:#f8f9fa;
+      border:1px solid #dee2e6;
+      border-radius:10px;
+      padding:12px;
+      line-height:1.8;
+      max-width:", info_box_width, ";"),
+      
+      tags$p(style = "margin-bottom:10px;",
+        tags$a("View Species Profile on the SAR Registry",
+               href = species_url,target = "_blank")),
+      
+      tags$div(tags$b("Designatable Unit: "), sp$record_name),
+      tags$div(tags$b("SARA Status: "), sp$sara_status, style = "margin-top:4px;"),
+      tags$div(tags$b("COSEWIC Status: "), sp$cosewic_status, style = "margin-top:4px;"),
+      tags$div(tags$b("Range: "), sp$range_text, style = "margin-top:4px;"))
+    
+    if (!has_image) {
+      tagList(
+        h3(sp$common_name, style = "margin-top:0; margin-bottom:5px;"),
+        tags$h4(tags$em(sp$scientific_name),
+          style = "margin-top:0; margin-bottom:15px; color:#495057;"),
+        info_box)
+      
+    } else {
+      
+      tagList(
+        h3(sp$common_name, style = "margin-top:0; margin-bottom:5px;"),
+        tags$h4(tags$em(sp$scientific_name),
+                style = "margin-top:0; margin-bottom:15px; color:#495057;"),
+        tags$div(style = "display:flex;
+                 align-items:flex-start;
+                 gap:25px;
+                 flex-wrap:wrap;",
+                 tags$div(style = "flex:0 0 auto;",
+                          tags$div(style = "
+                          height:220px;
+                          display:flex;
+                          align-items:flex-start;
+                          justify-content:flex-start;",
+                                   tags$img(
+                src = paste0("images/", img_file),
+                style = "
+                max-width:300px;
+                max-height:220px;
+                object-fit:contain;
+                border-radius:8px;
+                display:block;")),
+            
+            if (
+              !is.na(sp$photoCopyright[1]) &&
+              sp$photoCopyright[1] != ""
+            ) {
+              tags$p(style = "font-size:11px;
+              color:grey;
+              margin-top:5px;
+              margin-bottom:0;",
+                     sp$photoCopyright[1])}),
           
-                            if (!is.na(sp$photoCopyright[1]) &&
-                                sp$photoCopyright[1] != "") {
-                              tags$p(style =  "font-size:11px;
-                                     color:grey; margin-top:5px;",
-                                     sp$photoCopyright[1])}),
-                     
-                     column(right_width,
-                            tags$div(style = "margin-top:15px;line-height:1.8;",
-                        tags$div(
-                          style = "
-                          background-color:#f8f9fa;
-                          border:1px solid #dee2e6;
-                          border-radius:10px;
-                          padding:12px;
-                          margin-top:10px;
-                          margin-top:80px;
-                          max-width:650px;
-                          ",
-                          tags$p(style = "margin-bottom:10px;",
-                                 tags$a("View Species Profile on the SAR Registry",
-                                        href = species_url, 
-                                        target = "_blank")),
-                          tags$div(tags$b("Designatable Unit: "),sp$record_name),
-                          tags$div(tags$b("SARA Status: "), sp$sara_status,
-                                   style = "margin-top:4px;"),
-                          tags$div(tags$b("COSEWIC Status: "), sp$cosewic_status,
-                                   style = "margin-top:4px;" ),
-                          tags$div(tags$b("Range: "), sp$range_text,style = "margin-top:4px;" ))))))})
+            tags$div(style = "flex:0 0 auto;", info_box)))
+  }})
   
+        
 # description
 output$description <- renderText({
   selected_profile() %>%
@@ -1000,7 +1042,7 @@ output$n_threats <- renderText({
     filter(record_name == input$record) %>%
     distinct(threat_category) %>%
     nrow()
-  paste(n, "Threat Categories")
+  paste(n, ifelse(n == 1, "Threat Category", "Threat Categories"))
   
 })
 
