@@ -984,30 +984,28 @@ server <- function(input, output, session){
                  gap:25px;
                  flex-wrap:wrap;",
                  tags$div(style = "flex:0 0 auto;",
-                          tags$div(style = "
-                          height:220px;
-                          display:flex;
-                          align-items:flex-start;
-                          justify-content:flex-start;",
-                                   tags$img(
-                src = paste0("images/", img_file),
-                style = "
-                max-width:300px;
-                max-height:220px;
-                object-fit:contain;
-                border-radius:8px;
-                display:block;")),
-            
-            if (
-              !is.na(sp$photoCopyright[1]) &&
-              sp$photoCopyright[1] != ""
-            ) {
-              tags$p(style = "font-size:11px;
-              color:grey;
-              margin-top:5px;
-              margin-bottom:0;",
-                     sp$photoCopyright[1])}),
-          
+                          tags$div(
+                            style = "display:flex;
+                            flex-direction:column;
+                            align-items:flex-start;",
+                            tags$img(
+                              src = paste0("images/", img_file),
+                              style = "
+                              max-width:300px;
+                              max-height:220px;
+                              object-fit:contain;
+                              border-radius:8px;
+                              display:block;"),
+                            
+                            if (
+                              !is.na(sp$photoCopyright[1]) &&
+                              sp$photoCopyright[1] != ""
+                            ) {
+                              tags$p(style = "font-size:11px;
+                              color:grey;
+                              margin-top:5px;
+                                     margin-bottom:0;",
+                                     sp$photoCopyright[1])})),
             tags$div(style = "flex:0 0 auto;", info_box)))
   }})
   
