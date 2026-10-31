@@ -209,7 +209,7 @@ recovery_coverage <- recovery_coverage %>%
 species_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), " Filters", class = "card-title"),
       tags$p(style = "color:#6c757d; font-size:13px;",
       "Filter species records by status, range, species, and DU."),
   selectInput("taxa", "Taxonomic Group",
@@ -227,7 +227,7 @@ species_selector_ui <- column(
 species_documents_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), " Filters",class = "card-title"),
       tags$p(style = "color:#6c757d; font-size:13px;",
              "Filter species records by status, range, species, and DU."),
       selectInput("taxa_docs", "Taxonomic Group",
@@ -244,7 +244,7 @@ species_documents_selector_ui <- column(
 explore_selector_ui <- column(
   width = 3,
   div(class = "threat-card",
-      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), " Filters", class = "card-title"),
       tags$p(style = "color:#6c757d; font-size:13px;",
       "Filter species records by threat category, status, and range."),
       selectInput("explore_taxa", "Taxonomic Group",
@@ -260,7 +260,7 @@ explore_selector_ui <- column(
 recovery_planning_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter"), " Filters", class = "card-title"),
       tags$p(style = "color:#6c757d; font-size:13px;",
              "Filter species records by status and range."),
       selectInput("planning_taxa", "Taxonomic Group",
@@ -277,7 +277,7 @@ recovery_planning_selector_ui <- column(
 province_selector_ui <- column(
   width = 2,
   div(class = "threat-card",
-      h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+      h4(icon("filter")," Filters", class = "card-title"),
       tags$p(style = "color:#6c757d; font-size:12px;",
              "Filter species records by range."),
       selectInput("province_taxa", "Taxonomic Group",
@@ -328,6 +328,9 @@ ui <- fluidPage(
       table.dataTable.stripe tbody tr.odd {
       background-color: #fafafa;
       }
+      table.dataTable thead th {
+      font-weight: 700;
+      }
       .badge-yes {
       background-color: #d4edda;
       color: #155724;
@@ -348,9 +351,12 @@ ui <- fluidPage(
       background-color: #f8f9fa;
       border: 1px solid #d0d7de;
       border-radius: 8px;
-      padding: 15px;
+      padding: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      }
+      .form-group {
+      margin-bottom: 10px;
       }
       .status-endangered {
       background-color: #f8d7da;
@@ -407,6 +413,10 @@ ui <- fluidPage(
       max-width: 700px;
       font-size:0.9em;
       }
+      .card-title {
+      color: #2c5aa0;
+      font-weight: 600;
+      }
       .badge-na {
       background-color: #e9ecef;
       color: #495057;
@@ -422,9 +432,16 @@ ui <- fluidPage(
       padding:20px;
       margin-bottom:15px;
       }
+      .nav-pills .nav-link {
+      color: #2c5aa0 !important;
+      }
+      .nav-pills .nav-link:hover {
+      background-color: #eef4ff;
+      }
       .nav-pills .nav-link.active {
-      background-color: #2f6fb6;
+      background-color: #2c5aa0;
       font-weight: 700 !important;
+      color:white !important;
       border-radius: 8px;
 }"))),
   theme = bs_theme(version = 5, bootswatch = "cosmo"),
@@ -434,8 +451,7 @@ ui <- fluidPage(
       tabsetPanel(id = "main_tabs",type="pills",
                   
                   # DASHBOARD
-                  tabPanel(
-                     tagList(icon("house"),"Dashboard"),
+                  tabPanel(title = tagList(icon("house"),"Dashboard"), value = "dashboard",
                      br(),
                      div(style = "background-color:#f8f9fa;
                      border:1px solid #dee2e6;
@@ -447,8 +463,7 @@ ui <- fluidPage(
                             style = "margin-top:0; margin-bottom:5px; color:#2c5aa0;"),
                          p(style = "margin-bottom:0; font-size:16px;",
                            "Explore species profiles, threats, and recovery planning information for SARA Schedule 1 species.")),
-                     tags$img(
-                       src = "images/dashboard_banner.jpg",
+                     tags$img(src = "images/dashboard_banner.jpg",
                        style = " width:100%;
                        height:180px;
                        object-fit:cover;
@@ -457,8 +472,7 @@ ui <- fluidPage(
                        border:1px solid #dee2e6;
                        margin-top:15px;
                        margin-bottom:15px;"),
-                     div(
-                       style = "background-color:#f8f9fa;
+                     div(style = "background-color:#f8f9fa;
                        border:1px solid #dee2e6;
                        border-radius:10px;
                        padding:15px;
@@ -489,23 +503,35 @@ ui <- fluidPage(
                                "threat groups"))))))),
                   
                   # SPECIES INFORMATION
-                  tabPanel(tagList(icon("fish"),"Species Information"),
+                  tabPanel(title = tagList(icon("fish"),"Species Information"),
+                           value = "species_info",
                            br(),
                            fluidRow(species_selector_ui,
                                     column(9,
                                     style = "margin-top: -8px;",
                                     uiOutput("species_header"),
                                     br(),
-                                    h3("Description",style = "margin-top:10px;"),
+                                    
+                                    hr(style = "margin-top:20px; margin-bottom:20px;"),
+                                    h3("Description"),
                                     textOutput("description"),
-                                    h3("Population",style = "margin-top:10px;"),
+                                    
+                                    hr(style = "margin-top:20px; margin-bottom:20px;"),
+                                    h3("Population"),
                                     textOutput("population"),
-                                    h3("Habitat",style = "margin-top:10px;"),
+                                    
+                                    hr(style = "margin-top:20px; margin-bottom:20px;"),
+                                    h3("Habitat"),
                                     textOutput("habitat"),
-                                    h3("Biology",style = "margin-top:10px;"),
+                                    
+                                    hr(style = "margin-top:20px; margin-bottom:20px;"),
+                                    h3("Biology"),
                                     textOutput("biology"),
-                                    h3("Threats",style = "margin-top:10px;"),
+                                    
+                                    hr(style = "margin-top:20px; margin-bottom:20px;"),
+                                    h3("Threats"),
                                     textOutput("profile_threats"),
+                                    
                                     br(),
                                     div(class="content-card",
                                         h3(textOutput("n_threats")),
@@ -515,23 +541,26 @@ ui <- fluidPage(
                                     ))),
                   
                   # SPECIES DOCUMENTS TAB
-                  tabPanel(tagList(icon("file-lines"),"Species Documents"),
+                  tabPanel(title = tagList(icon("file-lines"),"Species Documents"),
+                           value = "species_docs",
                            br(),
                            fluidRow(species_documents_selector_ui, 
-                                    column(10, 
+                                    column(10,
+                                           uiOutput("documents_species_banner"),
+                                           div(class = "threat-card",
                                            h3("Species Recovery Documents Compliance"),
-                                           uiOutput("compliance_summary"),
-                                           br(),
-                                           h3("Legislated Recovery Documents"),
+                                           uiOutput("compliance_summary")),
+                                           div(class = "threat-card",
+                                           h3("Legislated Recovery Documents", style = "margin-top:0;"),
                                            DTOutput("documents"),
-                                           tags$p(
-                                             style = "font-size:12px; color:gray;",
+                                           tags$p(style = "font-size:12px; color:gray;",
                                              tags$b("Document Notes: "),
                                              "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for ", tags$i("Species at Risk Act"), " listed species. Efforts were made to removed 'Proposed' documents."
-                                           )))),
+                                           ))))),
                  
                    # RECOVERY PLANNING TAB
-                  tabPanel(tagList(icon("clipboard-list"),"Recovery Planning"),
+                  tabPanel(title = tagList(icon("clipboard-list"),"Recovery Planning"),
+                           value = "recovery_plan",
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                h3("Recovery Planning Coverage"),
@@ -539,14 +568,16 @@ ui <- fluidPage(
                                  "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for SARA-listed species."),
                                fluidRow(recovery_planning_selector_ui, 
                                         column(10,
+                                               div(class = "threat-card",
                                                uiOutput("planning_summary"),
                                                DTOutput("recovery_coverage", width = "100%"),
                                                tags$p(style = "font-style: italic; color: #666666;",
                                                  "Recovery planning coverage is based on recovery strategies, action plans, management plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
-                                                 ))))),
+                                                 )))))),
+                  
                   # THREAT SUMMARY TAB
-                  tabPanel(
-                    tagList(icon("triangle-exclamation"), "Threat Summary"),
+                  tabPanel(title = tagList(icon("triangle-exclamation"), "Threat Summary"),
+                           value = "threat_sum",
                     div(style = "max-width:1200px; margin-left:10px;",
                       br(),
                       h3("Threats to Species Recovery"),
@@ -554,7 +585,7 @@ ui <- fluidPage(
                         "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."),
                       fluidRow(column(2,
                           div(class = "threat-card",
-                            h4(icon("filter"), strong("Filters"), style = "margin-top:0; color:#2c5aa0;"),
+                            h4(class = "card-title", icon("filter"), " Filters"),
                             tags$p(style = "color:#6c757d; font-size:13px;",
                               "Filter threat summaries by range and taxonomic group."),
                             selectInput("threat_taxa", "Taxonomic Group",
@@ -577,7 +608,8 @@ ui <- fluidPage(
                                 DTOutput("common_threats")))))))),
                   
                   # EXPLORE THREATS TAB
-                  tabPanel(tagList(icon("magnifying-glass"),"Explore Threats"),
+                  tabPanel(title = tagList(icon("magnifying-glass"),"Explore Threats"),
+                           value = "explore_thr",
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                h3("Explore Threats"),
@@ -585,11 +617,15 @@ ui <- fluidPage(
                                       "Explore DUs associated with a selected threat category."),
                                fluidRow(explore_selector_ui,
                                         column(9,
-                                               h3(textOutput("explore_species_count")),
+                                               div(class = "threat-card",
+                                                   uiOutput("explore_species_count"),
+                                               tags$p(class = "text-muted",
+                                                 "Click a species record to open the Species Information tab."),
                                                DTOutput("explore_species"))
-                                        ))),
+                                        )))),
                   # PROVINCIAL SUMMARY TAB
-                  tabPanel(tagList(icon("map"),"Province Summary"),
+                  tabPanel(title = tagList(icon("map"),"Province Summary"),
+                           value = "prov_sum",
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
                                fluidRow(province_selector_ui,
@@ -598,21 +634,25 @@ ui <- fluidPage(
                                                fluidRow(uiOutput("province_cards")))),
                                br(),
                                fluidRow(column(6,
+                                               div(class = "threat-card",
                                                h3("Species Records by SARA Status",
                                                   style="text-align:center;"),
-                                               DTOutput("province_status"),
+                                               DTOutput("province_status")),
                                                br(),
+                                               div(class = "threat-card",
                                                h3("Recovery Planning Status",
                                                   style = "text-align:center"),
-                                               uiOutput("province_recovery_summary")),
+                                               uiOutput("province_recovery_summary"))),
                                         column(6,
+                                               div(class = "threat-card",
                                                h3("Most Common Threat Categories",
                                                   style="text-align:center;"),
-                                               DTOutput("province_top_threats"))
+                                               DTOutput("province_top_threats")))
                                         ),
                                br(),
+                               div(class = "threat-card",
                                h3("Species Records"),
-                               DTOutput("province_species_table"))))),
+                               DTOutput("province_species_table")))))),
   # FOOTER INFORMATION
   hr(),
   tags$div(style = "font-size:12px;",
@@ -653,6 +693,7 @@ server <- function(input, output, session){
     progress_compliance %>%
       filter(record_name == input$record_docs)
   })
+  
   ##############################################################################
   # THREAT EXPLORATION REACTIVES
   ##############################################################################
@@ -872,18 +913,15 @@ server <- function(input, output, session){
     selected <- explore_results()[row, ]
     selected_record_from_explore(selected$record_name)
     updateSelectInput(session,"species", selected = selected$common_name)
-    updateTabsetPanel(session, "main_tabs", selected = "Species Information")
+    updateTabsetPanel(session, "main_tabs", selected = "species_info")
   })
   
-  # cARRY CURRENT SPEICES INFORMATION SELECTIONS INTO SPECIES DOCUMENTS WHEN
+  # CARRY CURRENT SPEICES INFORMATION SELECTIONS INTO SPECIES DOCUMENTS WHEN
   # TAB IS OPEN
   observeEvent(input$main_tabs, {
-    if(input$main_tabs == "Species Documents") {
-      updateSelectInput(session, "taxa_docs", selected = input$taxa)
-      updateSelectInput(session, "status_docs", selected = input$status)
-      updateSelectInput(session, "range_docs", selected = input$range)
+    req(input$species)
+    if(input$main_tabs == "species_docs") {
       updateSelectInput(session, "species_docs", selected = input$species)
-      updateSelectInput(session, "record_docs", selected = input$record)
     }
   })
   
@@ -1221,15 +1259,7 @@ output$compliance_summary <- renderUI({
     prog_status == "Not Yet Due" ~ "#6c757d",
     TRUE ~ "#6c757d")
   
-  tags$div(style = "
-      background-color:#f8f9fa;
-      border:1px solid #dee2e6;
-      border-radius:10px;
-      padding:15px;
-      margin-bottom:20px;
-      max-width:650px;
-      box-shadow:0 1px 3px rgba(0,0,0,0.08);
-    ",
+  tags$div(
     
     tags$div(tags$b("SARA Listing Date: "), format(as.Date(comp$listing_date[1]), "%d %b %Y")),
     tags$div(tags$b("Recovery Strategy Due: "), format(as.Date(comp$required_date[1]), "%d %b %Y")),
@@ -1274,6 +1304,20 @@ output$compliance_summary <- renderUI({
              ifelse(is.na(prog$next_progress_report_due_date[1]),
                     "Not Available",
                     format(as.Date(prog$next_progress_report_due_date[1]), "%d %b %Y"))))
+})
+
+output$documents_species_banner <- renderUI({
+  req(input$species_docs)
+  div(style = "
+      background-color:#f8f9fa;
+      border:1px solid #dee2e6;
+      font-size: 24px;
+      border-radius:10px;
+      padding:15px;
+      margin-bottom:15px;",
+    tags$b("Viewing Documents for: "),
+    tags$span(style = "color:#2c5aa0; font-weight:600;",strong(input$species_docs))
+    )
 })
 
 ##############################################################################
@@ -1356,8 +1400,29 @@ output$explore_species <- renderDT({
                              list(width = "15%", targets=2)
                            )))}, server = FALSE)
 
-output$explore_species_count <- renderText({
-  paste(nrow(explore_results()), "Species Records")})
+output$explore_species_count <- renderUI({
+  matching <- nrow(explore_results())
+  total_records <- species_master_app
+  if(input$explore_range != "All"){
+    total_records <- total_records %>%
+      filter(grepl(input$explore_range, range_text, fixed = TRUE))
+  }
+  if(input$explore_taxa != "All"){
+    total_records <- total_records %>%
+      filter(taxonomyId == input$explore_taxa)
+  }
+  if(input$explore_status != "All"){
+    total_records <- total_records %>%
+      filter(sara_status == input$explore_status)
+  }
+  total_records <- n_distinct(total_records$record_name)
+  prevalence <- round(100 * matching / total_records, 1)
+  tagList(h3(input$explore_threat, style = "margin-bottom:5px;"),
+          tags$p(style = "color:#6c757d; font-size:16px; margin-bottom:15px;",
+                 paste0(matching, " of ", total_records, " species records (",
+                        prevalence,"%)")))
+})
+
 
 ##############################################################################
 # PROVINCE SUMMARY OUTPUTS
