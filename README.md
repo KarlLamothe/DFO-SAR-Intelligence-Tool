@@ -4,6 +4,14 @@ An interactive Shiny application for exploring Canadian species listed under Sch
 
 The application brings together species profiles, threat information, recovery-planning documents, management-planning information, compliance metrics, and species imagery in a single interface. The tool is designed to support exploration and summarization of publicly available information from the Species at Risk Public Registry across multiple taxonomic groups.
 
+<p align="center">
+  <img src="screenshots/dashboard.png"
+       width="900">
+</p>
+<p align="center">
+  <em>Figure 1. Dashboard page of the Canadian Species at Risk Explorer.</em>
+</p>
+
 ## Features
 
 - Browse Schedule 1 species listed under SARA.
@@ -59,6 +67,9 @@ Access recovery planning and assessment documents associated with each DU.
 - Action Plans
 - Management Plans
 - COSEWIC Assessments and Status Reports
+- Direct links to source documents
+- Recovery planning compliance summaries
+- Legislative due dates and reporting status
 - Direct links to source documents
 
 **Filters:**
@@ -134,6 +145,8 @@ Allows users to identify species affected by specific threat categories.
 **Includes:**
 
 - Interactive species results table
+- Threat prevalence summaries
+- Species record counts and proportions associated with selected threats
 - Direct navigation to Species Information records
 
 ### Province Summary
