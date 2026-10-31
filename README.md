@@ -4,8 +4,9 @@ An interactive Shiny application for exploring Canadian species listed under Sch
 
 The application brings together species profiles, threat information, recovery-planning documents, management-planning information, compliance metrics, and species imagery in a single interface. The tool is designed to support exploration and summarization of publicly available information from the Species at Risk Public Registry across multiple taxonomic groups.
 
-![Dashboard](screenshots/DashboardScreenshot.png)
-
+<p align="center">
+  <img src="screenshots/DashboardScreenshot.png" width="900">
+</p>
 <p align="center">
   <em>Figure 1. Dashboard page of the Canadian Species at Risk Explorer.</em>
 </p>
