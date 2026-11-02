@@ -208,16 +208,6 @@ library(bslib)
 runApp("app/app.R")
 ```
 
-## Updating Application Data
-
-The application is built from static data snapshots derived from the Species at Risk Public Registry.
-
-To refresh all datasets, run:
-
-```r
-source("refresh_data.R")
-```
-
 ## Project Structure
 
 ```text
@@ -275,6 +265,10 @@ DFO-SAR-Intelligence-Tool/
 └── run_app.R
 
 ```
+## Important Note
+
+- The application includes instructions for refreshing the source data. Access to the source API is required and credentials are not distributed with this repository. Configure the required environment variables prior to running the refresh workflow.
+- Data are refreshed periodically from the source API. Update frequency is not fixed and will depend on the availability of new information and maintenance capacity. Please contact Karl Lamothe if you wish to have the data updated.
 
 ## Known Limitations
 

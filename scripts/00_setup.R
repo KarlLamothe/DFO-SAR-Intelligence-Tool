@@ -81,7 +81,7 @@ clean_html <- function(x){
   x <- stringr::str_remove_all(x, "<.*?>")
   stringr::str_squish(x)}
 
-# get api
+# Obtain an API key from the source website or API provider
 api_key <- Sys.getenv("SAR_API_KEY")
 endpoint <- Sys.getenv("SAR_ENDPOINT")
 document_endpoint <- Sys.getenv("SAR_DOCUMENT_ENDPOINT")

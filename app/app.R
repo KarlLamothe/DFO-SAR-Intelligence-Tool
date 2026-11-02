@@ -485,7 +485,8 @@ ui <- fluidPage(
                        tags$li("Use Threat Summary and Explore Threats to examine threats affecting species recovery."),
                        tags$li("Use Province Summary to summarize species and recovery planning information by jurisdiction.")),
                      h4("Important Notes"),
-                     tags$ul(tags$li("Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information and should not be interpreted as formal threat assessments."),
+                     tags$ul(tags$li("Data are refreshed periodically from the source API. Update frequency is not fixed and will depend on the availability of new information and maintenance capacity."),
+                             tags$li("Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information and should not be interpreted as formal threat assessments."),
                              tags$li("Recovery planning metrics are based on Recovery Strategies, Action Plans, Management Plans, and Progress Reports identified within Registry planning documents.")),
                      fluidRow(column(6,h4("Data Sources"),
                          tags$ul(
