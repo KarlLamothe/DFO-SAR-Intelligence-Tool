@@ -8,6 +8,44 @@ species_master <- species_master %>%
     "© His Majesty The King in Right of Canada; photo: Fisheries and Oceans Canada",
     "© Fisheries and Oceans Canada", photoCopyright))
 
+aquatic_molluscs <- c(
+  "Kidneyshell",
+  "Mapleleaf",
+  "Threehorn Wartyback",
+  "Round Hickorynut",
+  "Eastern Pondmussel",
+  "Brook Floater",
+  "Northern Abalone",
+  "Lilliput",
+  "Olympia Oyster",
+  "Purple Wartyback",
+  "Atlantic Mud-piddock",
+  "Yellow Lampmussel",
+  "Mapleleaf",
+  "Hickorynut",
+  "Snuffbox",
+  "Salamander Mussel",
+  "Rocky Mountain Ridged Mussel",
+  "Rainbow",
+  "Rayed Bean",
+  "Northern Riffleshell",
+  "Round Pigtoe",
+  "Wavy-rayed Lampmussel",
+  "Dwarf Wedge Mussel",
+  "Eastern Pondmussel",
+  "Fawnsfoot"
+)
+
+species_master <- species_master %>%
+  mutate(taxonomy_display = case_when(
+    taxonomyId == "Molluscs" & common_name %in% aquatic_molluscs ~ "Molluscs (Bivalves)",
+      taxonomyId == "Molluscs" ~"Molluscs (Non-Bivalves)",
+      TRUE ~ taxonomyId))
+
+species_master %>%
+  filter(taxonomyId == "Molluscs") %>%
+  count(taxonomy_display)
+
 species_profiles <- read.csv("data_processed/all_species_profiles.csv")
 species_threats <- read.csv("data_processed/all_species_threats.csv")
 species_documents <- read.csv("data_processed/all_species_documents.csv")

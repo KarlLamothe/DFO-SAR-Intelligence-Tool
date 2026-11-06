@@ -43,7 +43,9 @@ id,record_name,common_name,n_threat_categories,threat_categories
 1055-728,Brook Floater,Brook Floater,4,Agriculture and Aquaculture; Natural Systems Modification; Pollution; Residential and Commercial Development
 1057-731,Bert's Predaceous Diving Beetle,Bert's Predaceous Diving Beetle,7,Agriculture and Aquaculture; Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Natural Systems Modification; Pollution; Residential and Commercial Development
 1058-733,Bogbean Buckmoth,Bogbean Buckmoth,4,"Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Residential and Commercial Development"
+1060-737,Darkblotched Rockfish,Darkblotched Rockfish,2,Biological Resource Use; Residential and Commercial Development
 1061-740,Pale-bellied Frost Lichen,Pale-bellied Frost Lichen,2,Biological Resource Use; Pollution
+1062-741,Quillback Rockfish,Quillback Rockfish,3,Biological Resource Use; Climate Change; Residential and Commercial Development
 1063-739,Northern Barrens Tiger Beetle,Northern Barrens Tiger Beetle,4,Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Residential and Commercial Development
 1064-736,Chestnut-collared Longspur,Chestnut-collared Longspur,9,"Agriculture and Aquaculture; Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development"
 1065-738,Atlantic Mud-piddock,Atlantic Mud-piddock,5,Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Natural Systems Modification; Pollution
@@ -105,6 +107,7 @@ id,record_name,common_name,n_threat_categories,threat_categories
 1164-805,Eulachon - Fraser River population,Eulachon,7,Agriculture and Aquaculture; Biological Resource Use; Climate Change; Human Intrusions and Disturbance; Natural Systems Modification; Pollution; Residential and Commercial Development
 1165-845,American Burying Beetle,American Burying Beetle,6,"Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development; Transportation and Service Corridors"
 1166-841,Okanagan Efferia,Okanagan Efferia,9,"Agriculture and Aquaculture; Climate Change; Energy Production and Gas; Human Intrusions and Disturbance; Invasive Species and other Problematic Species, Genes, and Diseases; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development"
+1168-846,North Pacific Spiny Dogfish,North Pacific Spiny Dogfish,3,Biological Resource Use; Energy Production and Gas; Residential and Commercial Development
 1169-844,Collared Pika,Collared Pika,4,Climate Change; Human Intrusions and Disturbance; Natural Systems Modification; Residential and Commercial Development
 117-113,Spotted Gar,Spotted Gar,6,Biological Resource Use; Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Pollution; Residential and Commercial Development
 1170-840,Eastern Baccharis,Eastern Baccharis,5,Agriculture and Aquaculture; Human Intrusions and Disturbance; Other Limiting Factors; Residential and Commercial Development; Transportation and Service Corridors
@@ -499,6 +502,7 @@ id,record_name,common_name,n_threat_categories,threat_categories
 311-217,Banff Springs Snail,Banff Springs Snail,4,Human Intrusions and Disturbance; Natural Systems Modification; Pollution; Residential and Commercial Development
 317-18,Western Silvery Minnow,Western Silvery Minnow,3,Climate Change; Natural Systems Modification; Pollution
 32-31,Sage Thrasher,Sage Thrasher,2,Agriculture and Aquaculture; Residential and Commercial Development
+325-630,Northern Fur Seal,Northern Fur Seal,4,Climate Change; Other Limiting Factors; Pollution; Residential and Commercial Development
 326-331,Steller Sea Lion,Steller Sea Lion,6,"Agriculture and Aquaculture; Biological Resource Use; Energy Production and Gas; Invasive Species and other Problematic Species, Genes, and Diseases; Other Limiting Factors; Pollution"
 33-32,Spotted Owl caurina subspecies,Spotted Owl caurina subspecies,6,Biological Resource Use; Human Intrusions and Disturbance; Natural Systems Modification; Other Limiting Factors; Residential and Commercial Development; Transportation and Service Corridors
 331-218,Bowhead Whale - Eastern Arctic population,Bowhead Whale,2,Biological Resource Use; Residential and Commercial Development

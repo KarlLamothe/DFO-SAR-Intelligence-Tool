@@ -52,8 +52,24 @@ progress_compliance <- readRDS("data/progress_report_compliance.rds")
 # APPLICATION DATASETS
 ################################################################################
 
+target_status <- c("Endangered", "Threatened", "Extirpated", "Special Concern")
+
 species_master_app <- species_master %>%
-  filter(sara_status %in% c("Threatened", "Endangered","Extirpated","Special Concern"))
+  filter(sara_status %in% target_status | cosewic_status %in% target_status)%>%
+  mutate(listing_status = case_when(
+    sara_status %in% target_status ~ "SARA Listed",
+    cosewic_status %in% target_status ~ "COSEWIC Assessed",TRUE ~ "Other")) %>%
+  mutate(sara_status = case_when(sara_status %in% c("No Data", NA_character_) ~ "No Status", TRUE ~ sara_status),
+      listing_status = case_when(
+        sara_status %in% target_status ~ "SARA Listed",
+        currentGicDecisionId == "Pending" ~ "Under Consideration",
+        currentGicDecisionId == "Not to list" ~"Not Listed",
+        currentGicDecisionId == "Refer back" ~ "Referred Back",
+        cosewic_status %in% target_status ~ "COSEWIC Assessed",
+        TRUE ~ "Other"))
+
+species_lookup <- species_master_app %>%
+  distinct(record_name, range_text, taxonomy_display, listing_status)
 
 ################################################################################
 # IMAGE FILE REFERENCES
@@ -74,7 +90,9 @@ species_master_app <- species_master_app %>%
 ################################################################################
 
 species_threats_app <- species_threats %>%
-  filter(sara_status %in% c("Threatened", "Endangered", "Extirpated","Special Concern"))
+  left_join(species_lookup, by = "record_name") %>%
+  mutate(sara_status = case_when(
+    sara_status %in% c("No Data", NA_character_) ~ "No Status",TRUE ~ sara_status))
 
 ################################################################################
 # RANGE, SARA STATUS, PANEL STYLE FILTER OPTIONS
@@ -84,7 +102,20 @@ range_choices <- c("All", sort(unique(
   unlist(strsplit(paste(species_master_app$range_text,
                         collapse = "; "),"; ")))))
 
-sara_choices <- c("All","Endangered","Threatened","Extirpated","Special Concern")
+taxa_choices <- c("Molluscs", unique(species_master_app$taxonomy_display))
+taxa_choices <- c("All", sort(unique(taxa_choices)))
+
+listing_status_levels <- c("SARA Listed", "Under Consideration", "COSEWIC Assessed", 
+                           "Referred Back", "Not Listed")
+
+sara_status_levels <- c("Extirpated", "Endangered", "Threatened",
+                        "Special Concern", "No Status")
+
+sara_choices <- c( "All", sara_status_levels)
+
+listing_choices <- c("All", 
+                     listing_status_levels[listing_status_levels %in%
+                                             unique(species_master_app$listing_status)])
 
 panel_style <- "
   background-color: #f8f9fa;
@@ -119,7 +150,7 @@ summary_card <- function(value, label, bg, border){
 # derived recovery data dataset
 recovery_coverage <- species_master_app %>%
   # ensure one record per DU
-  distinct(record_name, sara_status, range_text) %>%
+  distinct(record_name, sara_status, cosewic_status, listing_status, range_text) %>%
   # join recovery planning metrics
   left_join(species_documents %>%
       group_by(record_name) %>%
@@ -192,7 +223,7 @@ recovery_coverage <- recovery_coverage %>%
 
 recovery_coverage <- recovery_coverage %>%
   left_join(species_master_app %>%
-      select(record_name, common_name, taxonomyId), by = "record_name")
+      select(record_name, common_name, taxonomy_display), by = "record_name")
 
 ################################################################################
 # REUSABLE UI COMPONENTS
@@ -212,9 +243,10 @@ species_selector_ui <- column(
       h4(icon("filter"), " Filters", class = "card-title"),
       tags$p(style = "color:#6c757d; font-size:13px;",
       "Filter species records by status, range, species, and DU."),
-  selectInput("taxa", "Taxonomic Group",
-              choices = c( "All", sort(unique(species_master_app$taxonomyId))), 
-              selected = "All"),   
+  selectInput("taxa", "Taxonomic Group", choices = taxa_choices, 
+              selected = "All"),
+  selectInput("listing_filter", "Listing Status", 
+              choices = listing_choices, selected = "All"),
   selectInput("status","SARA Status", choices = sara_choices),
   selectInput("range","Range", choices = range_choices),
   selectInput("species","Species",
@@ -231,8 +263,10 @@ species_documents_selector_ui <- column(
       tags$p(style = "color:#6c757d; font-size:13px;",
              "Filter species records by status, range, species, and DU."),
       selectInput("taxa_docs", "Taxonomic Group",
-                  choices = c("All", sort(unique(species_master_app$taxonomyId))),
+                  choices = taxa_choices,
                   selected = "All"),
+      selectInput("listing_filter_docs", "Listing Status",
+                  choices = listing_choices, selected = "All"),
     selectInput("status_docs", "SARA Status", choices = sara_choices),
     selectInput("range_docs","Range", choices = range_choices),
     selectInput("species_docs","Species", choices = sort(unique(species_master_app$common_name)) ),
@@ -248,8 +282,10 @@ explore_selector_ui <- column(
       tags$p(style = "color:#6c757d; font-size:13px;",
       "Filter species records by threat category, status, and range."),
       selectInput("explore_taxa", "Taxonomic Group",
-                  choices = c("All", sort(unique(species_master_app$taxonomyId))),
+                  choices = taxa_choices,
                   selected = "All"),
+      selectInput("explore_listing_filter", "Listing Status",
+                  choices = listing_choices,  selected = "All"),
     selectInput("explore_threat", "Threat Group",choices = NULL),
     selectInput("explore_status", "SARA Status",choices = sara_choices,selected = "All"),
     selectInput("explore_range","Range",choices = range_choices)))
@@ -264,7 +300,7 @@ recovery_planning_selector_ui <- column(
       tags$p(style = "color:#6c757d; font-size:13px;",
              "Filter species records by status and range."),
       selectInput("planning_taxa", "Taxonomic Group",
-                  choices = c("All", sort(unique(species_master_app$taxonomyId))),
+                  choices = taxa_choices,
                   selected = "All"),
             selectInput("planning_status", "SARA Status", choices = sara_choices,
                         selected = "All"),
@@ -281,7 +317,7 @@ province_selector_ui <- column(
       tags$p(style = "color:#6c757d; font-size:12px;",
              "Filter species records by range."),
       selectInput("province_taxa", "Taxonomic Group",
-                  choices = c("All", sort(unique(species_master_app$taxonomyId))),
+                  choices = taxa_choices,
                   selected = "All"),
   selectInput("province_range", "Range", choices = range_choices)))
 
@@ -462,7 +498,7 @@ ui <- fluidPage(
                          h2(strong("Canadian Species at Risk Explorer"),
                             style = "margin-top:0; margin-bottom:5px; color:#2c5aa0;"),
                          p(style = "margin-bottom:0; font-size:16px;",
-                           "Explore species profiles, threats, and recovery planning information for SARA Schedule 1 species.")),
+                           "Explore species profiles, threats, and recovery planning information for SARA-listed species and COSEWIC-assessed species under consideration for listing.")),
                      tags$img(src = "images/dashboard_banner.jpg",
                        style = " width:100%;
                        height:180px;
@@ -590,9 +626,10 @@ ui <- fluidPage(
                             tags$p(style = "color:#6c757d; font-size:13px;",
                               "Filter threat summaries by range and taxonomic group."),
                             selectInput("threat_taxa", "Taxonomic Group",
-                                        choices = c("All",
-                                                    sort(unique(species_master_app$taxonomyId))),
+                                        choices = taxa_choices,
                                         selected = "All"),
+                            selectInput("threat_listing_filter", "Listing Status",
+                              choices = listing_choices, selected = "All"),
                             selectInput("threat_range", "Range",
                                         choices = range_choices, selected = "All"))),
                         # Main content
@@ -639,7 +676,6 @@ ui <- fluidPage(
                                                h3("Species Records by SARA Status",
                                                   style="text-align:center;"),
                                                DTOutput("province_status")),
-                                               br(),
                                                div(class = "threat-card",
                                                h3("Recovery Planning Status",
                                                   style = "text-align:center"),
@@ -658,7 +694,7 @@ ui <- fluidPage(
   hr(),
   tags$div(style = "font-size:12px;",
     class = "footer-card",
-    "Canadian Species at Risk Explorer v3.0",
+    "Canadian Species at Risk Explorer v3.1",
     tags$br(),
     paste("Registry data last refreshed:", format(scrape_date, "%Y-%m-%d")),
     tags$br(),
@@ -677,6 +713,12 @@ server <- function(input, output, session){
   selected_species <- reactive({
     species_master_app %>%
       filter(record_name == input$record)%>%
+      slice(1)
+  })
+  
+  selected_species_docs <- reactive({
+    species_master_app %>%
+      filter(record_name == input$record_docs) %>%
       slice(1)
   })
   
@@ -700,15 +742,20 @@ server <- function(input, output, session){
   ##############################################################################
   explore_results <- reactive({
     dat <- species_threats_app %>%
-      left_join(species_master_app %>%
-                  select(record_name, range_text, taxonomyId),by = "record_name") %>%
       filter(threat_category == input$explore_threat)
+    if(input$explore_listing_filter != "All"){
+      dat <- dat %>%
+        filter(listing_status == input$explore_listing_filter)
+    }
     if(input$explore_range != "All"){
       dat <- dat %>%
         filter(grepl(input$explore_range, range_text, fixed = TRUE))}
-    if(input$explore_taxa != "All"){
+    if(input$explore_taxa == "Molluscs"){
       dat <- dat %>%
-        filter(taxonomyId == input$explore_taxa)
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$explore_taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$explore_taxa)
     }
     if(input$explore_status != "All"){
       dat <- dat %>%
@@ -716,7 +763,7 @@ server <- function(input, output, session){
     dat %>%
       distinct(common_name, record_name, sara_status)
   })
-  
+
   selected_profile <- reactive({
     prof <- species_profiles %>%
       filter(record_name == input$record)
@@ -744,9 +791,12 @@ server <- function(input, output, session){
       dat <- dat %>%
         filter(grepl(input$province_range, range_text, fixed = TRUE))
     }
-    if(input$province_taxa != "All"){
+    if(input$province_taxa == "Molluscs"){
       dat <- dat %>%
-        filter(taxonomyId == input$province_taxa)
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$province_taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$province_taxa)
     }
     dat
   })
@@ -757,9 +807,12 @@ server <- function(input, output, session){
       dat <- dat %>%
         filter(grepl(input$province_range, range_text, fixed = TRUE))
     }
-    if(input$province_taxa != "All"){
+    if(input$province_taxa == "Molluscs"){
       dat <- dat %>%
-        filter(taxonomyId == input$province_taxa)
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$province_taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$province_taxa)
     }
     dat %>%
       count(compliance_status)
@@ -768,16 +821,21 @@ server <- function(input, output, session){
   ##############################################################################
   # CASCADING FILTER OBSERVERS
   ##############################################################################
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # SPECIES FILTER OBSERVERS
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # dynamic range selector
   observe({
     req(input$taxa)
     dat <- species_master_app
-    if(input$taxa != "All"){
+    if(input$listing_filter != "All"){
       dat <- dat %>%
-        filter(taxonomyId == input$taxa)
+        filter(listing_status == input$listing_filter)
+    }
+    if(input$taxa == "Molluscs"){
+      dat <- dat %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$taxa)
     }
     if(!is.null(input$status) && input$status != "All"){
       dat <- dat %>%
@@ -795,17 +853,29 @@ server <- function(input, output, session){
   observe({
     req(input$taxa)
     dat <- species_master_app
-    if(input$taxa != "All"){
+    if(input$listing_filter != "All"){
       dat <- dat %>%
-        filter(taxonomyId == input$taxa)
+        filter(listing_status == input$listing_filter)
+    }
+    if(input$taxa == "Molluscs"){
+      dat <- dat %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$taxa)
     }
     updateSelectInput(session, "status",
-                      choices = c("All", sort(unique(dat$sara_status))))
+                      choices = c("All", sara_status_levels[
+                          sara_status_levels %in% unique(dat$sara_status)]))
   })
   
   # species selector
   observe({
     species_choices <- species_master_app
+    if(input$listing_filter != "All"){
+      species_choices <- species_choices %>%
+        filter(listing_status == input$listing_filter)
+    }
     if(input$status != "All"){
       species_choices <- species_choices %>%
         filter(sara_status == input$status)
@@ -814,9 +884,12 @@ server <- function(input, output, session){
       species_choices <- species_choices %>%
         filter(grepl(input$range, range_text, fixed = TRUE))
     }
-    if(input$taxa != "All"){
+    if(input$taxa == "Molluscs"){
       species_choices <- species_choices %>%
-        filter(taxonomyId == input$taxa)
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa != "All"){
+      species_choices <- species_choices %>%
+        filter(taxonomy_display == input$taxa)
     }
     choices <- sort(unique(species_choices$common_name))
     selected_species <- if(
@@ -837,9 +910,16 @@ server <- function(input, output, session){
   observe({
     req(input$taxa_docs)
     dat <- species_master_app
-    if(input$taxa_docs != "All"){
+    if(input$listing_filter_docs != "All"){
       dat <- dat %>%
-        filter(taxonomyId == input$taxa_docs)
+        filter(listing_status == input$listing_filter_docs)
+    }
+    if(input$taxa_docs == "Molluscs"){
+      dat <- dat %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa_docs != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$taxa_docs)
     }
     if(!is.null(input$status_docs) &&
        input$status_docs != "All"){
@@ -855,11 +935,20 @@ server <- function(input, output, session){
   observe({
     req(input$taxa_docs)
     dat <- species_master_app
-    if(input$taxa_docs != "All"){
+    if(input$listing_filter_docs != "All"){
       dat <- dat %>%
-        filter(taxonomyId == input$taxa_docs)
+        filter(listing_status == input$listing_filter_docs)
     }
-    statuses <- c("All", sort(unique(dat$sara_status)))
+    
+    if(input$taxa_docs == "Molluscs"){
+      dat <- dat %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa_docs != "All"){
+      dat <- dat %>%
+        filter(taxonomy_display == input$taxa_docs)
+    }
+    statuses <- c("All", sara_status_levels[
+        sara_status_levels %in% unique(dat$sara_status)])
     updateSelectInput(session, "status_docs",
                       choices = statuses,
                       selected = if(
@@ -870,6 +959,10 @@ server <- function(input, output, session){
   # Document selector
   observe({
     species_choices <- species_master_app
+    if(input$listing_filter_docs != "All"){
+      species_choices <- species_choices %>%
+        filter(listing_status == input$listing_filter_docs)
+    }
     if(input$status_docs != "All"){
       species_choices <- species_choices %>%
         filter(sara_status == input$status_docs)
@@ -878,9 +971,12 @@ server <- function(input, output, session){
       species_choices <- species_choices %>%
         filter(grepl(input$range_docs,range_text, fixed = TRUE))
     }
-    if(input$taxa_docs != "All"){
+    if(input$taxa_docs == "Molluscs"){
       species_choices <- species_choices %>%
-        filter(taxonomyId == input$taxa_docs)
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa_docs != "All"){
+      species_choices <- species_choices %>%
+        filter(taxonomy_display == input$taxa_docs)
     }
     choices <- sort(unique(species_choices$common_name))
 
@@ -933,6 +1029,10 @@ server <- function(input, output, session){
     {req(input$species)
       records <- species_master_app %>%
         filter(common_name == input$species)
+      if(input$listing_filter != "All"){
+        records <- records %>%
+          filter(listing_status == input$listing_filter)
+      }
       if(input$status != "All"){
         records <- records %>%
           filter(sara_status == input$status)
@@ -941,9 +1041,12 @@ server <- function(input, output, session){
         records <- records %>%
           filter(grepl(input$range, range_text,fixed = TRUE))
       }
-      if(input$taxa != "All"){
+      if(input$taxa == "Molluscs"){
         records <- records %>%
-          filter(taxonomyId == input$taxa)
+          filter(grepl("^Molluscs", taxonomy_display))
+      } else if(input$taxa != "All"){
+        records <- records %>%
+          filter(taxonomy_display == input$taxa)
       }
       records <- records %>%
         arrange(record_name) %>%
@@ -953,9 +1056,14 @@ server <- function(input, output, session){
                           records[1] else character(0))})
 
   observeEvent(
-    c(input$species_docs, input$status_docs, input$range_docs, input$taxa_docs),
+    c(input$species_docs, input$status_docs, input$range_docs, input$taxa_docs,
+      input$listing_filter_docs),
     {records <- species_master_app %>%
         filter(common_name == input$species_docs)
+    if(input$listing_filter_docs != "All"){
+      records <- records %>%
+        filter(listing_status == input$listing_filter_docs)
+    }
       if(input$status_docs != "All"){
         records <- records %>%
           filter(sara_status == input$status_docs)
@@ -964,9 +1072,12 @@ server <- function(input, output, session){
         records <- records %>%
           filter(grepl(input$range_docs,range_text,fixed = TRUE))
       }
-    if(input$taxa_docs != "All"){
+    if(input$taxa_docs == "Molluscs"){
       records <- records %>%
-        filter(taxonomyId == input$taxa_docs)
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa_docs != "All"){
+      records <- records %>%
+        filter(taxonomy_display == input$taxa_docs)
     }
       records <- records %>%
         arrange(record_name) %>%
@@ -1001,7 +1112,8 @@ server <- function(input, output, session){
                href = species_url,target = "_blank")),
       
       tags$div(tags$b("Designatable Unit: "), sp$record_name),
-      tags$div(tags$b("SARA Status: "), sp$sara_status, style = "margin-top:4px;"),
+      tags$div(tags$b("SARA Schedule 1 Status: "), sp$sara_status, style = "margin-top:4px;"),
+      tags$div(tags$b("Listing Status: "), sp$listing_status, style = "margin-top:4px;"),
       tags$div(tags$b("COSEWIC Status: "), sp$cosewic_status, style = "margin-top:4px;"),
       tags$div(tags$b("Range: "), sp$range_text, style = "margin-top:4px;"))
     
@@ -1110,18 +1222,31 @@ output$recovery_coverage <- renderDT({
   if(input$planning_range != "All"){
     dat <- dat %>%
       filter(grepl(input$planning_range, range_text, fixed = TRUE))}
-  if(input$planning_taxa != "All"){
+  if(input$planning_taxa == "Molluscs"){
     dat <- dat %>%
-      filter(taxonomyId == input$planning_taxa)}
+      filter(grepl("^Molluscs", taxonomy_display))
+  } else if(input$planning_taxa != "All"){
+    dat <- dat %>%
+      filter(taxonomy_display == input$planning_taxa)
+  }
   dat %>%
     mutate(`Recovery Strategy` = case_when(
+      
+      listing_status == "COSEWIC Assessed" ~
+        '<span class="badge-na">Not Applicable</span>',
+      
       sara_status == "Special Concern" ~
         '<span class="badge-na">Not Required</span>',
+      
       coalesce(has_recovery_strategy, FALSE) ~
         '<span class="badge-yes">Available</span>',
-        TRUE ~ '<span class="badge-no">Not Available</span>'),
+      
+      TRUE ~ '<span class="badge-no">Not Available</span>'
+    ),
       
       `Action Plan` = case_when(
+        listing_status == "COSEWIC Assessed" ~
+          '<span class="badge-na">Not Applicable</span>',
         sara_status == "Special Concern" ~
           '<span class="badge-na">Not Required</span>',
         coalesce(has_action_plan, FALSE) ~
@@ -1129,6 +1254,8 @@ output$recovery_coverage <- renderDT({
         TRUE ~'<span class="badge-no">Not Available</span>'),
       
       `Management Plan` = case_when(
+        listing_status == "COSEWIC Assessed" ~
+          '<span class="badge-na">Not Applicable</span>',
         coalesce(has_management_plan, FALSE) ~
           '<span class="badge-yes">Available</span>',
         sara_status %in% c("Endangered", "Threatened", "Extirpated") ~
@@ -1145,6 +1272,9 @@ output$recovery_coverage <- renderDT({
     arrange(factor(compliance_status,
                    levels = c("🔴 Report Overdue","🟡 Not Yet Required",
                               "✅Up to Date", "⚪ Not Required")), record_name) %>%
+    
+    mutate(sara_status = factor(sara_status, levels = sara_status_levels)) %>%
+    arrange(sara_status, record_name) %>%
     
     select(record_name, sara_status, `Recovery Strategy`, `Action Plan`,
            `Management Plan`, compliance_status) %>%
@@ -1214,17 +1344,31 @@ output$documents <- renderDT({
 output$compliance_summary <- renderUI({
   comp <- selected_compliance()
   prog <- selected_progress_compliance()
+  if(
+    nrow(selected_species_docs()) > 0 &&
+    selected_species_docs()$sara_status[1] == "No Status"
+  ){
+    return(tags$div(style = "background-color:#f8f9fa;
+                    border:1px solid #dee2e6;
+                    border-radius:10px;
+                    padding:15px;",
+                    tags$p(tags$b("COSEWIC-Assessed Species")),
+                    tags$p(
+          "This species has been assessed by COSEWIC but is not currently listed under Schedule 1 of SARA."),
+          tags$p(
+          "Recovery Strategies, Action Plans, and Progress Reports are not currently required under SARA.")))
+  }
   if(nrow(comp) == 0){return(tags$p("No compliance information available."))}
-  if(nrow(selected_species()) > 0 &&
-    !is.na(selected_species()$sara_status[1]) &&
-    selected_species()$sara_status[1] == "Special Concern") {
+  if(nrow(selected_species_docs()) > 0 &&
+    !is.na(selected_species_docs()$sara_status[1]) &&
+    selected_species_docs()$sara_status[1] == "Special Concern") {
     return(tags$div(style = "
                     background-color:#f8f9fa;
                     border:1px solid #dee2e6;
                     border-radius:10px;
                     padding:15px; ",
         tags$p( tags$b("Special Concern Species")),
-        tags$p("Recovery Strategy and Progress Report requirements do not apply. Management planning requirements may apply under SARA.")))}
+        tags$p("Special Concern species are managed through SARA Management Plans rather than Recovery Strategies and Action Plans.")))}
   
   # Recovery Strategy Compliance -------------------------------------------
   
@@ -1308,32 +1452,48 @@ output$compliance_summary <- renderUI({
 })
 
 output$documents_species_banner <- renderUI({
-  req(input$species_docs)
-  div(style = "
+  sp <- selected_species_docs()
+  
+  req(nrow(sp) > 0)
+  
+  div(
+    style = "
       background-color:#f8f9fa;
       border:1px solid #dee2e6;
-      font-size: 24px;
+      font-size:24px;
       border-radius:10px;
       padding:15px;
       margin-bottom:15px;",
+    
     tags$b("Viewing Documents for: "),
-    tags$span(style = "color:#2c5aa0; font-weight:600;",strong(input$species_docs))
+    
+    tags$span(
+      style = "color:#2c5aa0; font-weight:600;",
+      strong(sp$record_name[1])
     )
+  )
 })
 
 ##############################################################################
 # THREAT SUMMARY OUTPUTS
 ##############################################################################
 output$common_threats <- renderDT({
-  dat <- species_threats_app %>%
-    left_join(species_master_app %>%
-                select(record_name, range_text, taxonomyId),by = "record_name")
+  dat <- species_threats_app
+  if(input$threat_listing_filter != "All"){
+    dat <- dat %>%
+      filter(listing_status == input$threat_listing_filter)
+  }
+  
   if(input$threat_range != "All"){
     dat <- dat %>%
       filter(grepl(input$threat_range, range_text, fixed = TRUE))}
-  if(input$threat_taxa != "All"){
+  if(input$threat_taxa == "Molluscs"){
     dat <- dat %>%
-      filter(taxonomyId == input$threat_taxa)}
+      filter(grepl("^Molluscs", taxonomy_display))
+  } else if(input$threat_taxa != "All"){
+    dat <- dat %>%
+      filter(taxonomy_display == input$threat_taxa)
+  }
   dat %>%
     distinct(record_name, threat_category) %>%
     count(threat_category,sort = TRUE, name = "Designatable Units") %>%
@@ -1347,16 +1507,23 @@ output$common_threats <- renderDT({
 
 # top species threats table
 output$top_threat_species <- renderDT({
-  dat <- species_threats_app %>%
-    left_join(species_master_app %>%
-        select(record_name, range_text, taxonomyId), by = "record_name")
+  dat <- species_threats_app
+  if(input$threat_listing_filter != "All"){
+    dat <- dat %>%
+      filter(listing_status == input$threat_listing_filter)
+  }
+  
   if(input$threat_range != "All"){
     dat <- dat %>%
       filter(grepl(input$threat_range,
                    range_text,fixed = TRUE))}
-  if(input$threat_taxa != "All"){
+  if(input$threat_taxa == "Molluscs"){
     dat <- dat %>%
-      filter(taxonomyId == input$threat_taxa)}
+      filter(grepl("^Molluscs", taxonomy_display))
+  } else if(input$threat_taxa != "All"){
+    dat <- dat %>%
+      filter(taxonomy_display == input$threat_taxa)
+  }
   dat %>%
     distinct(record_name, threat_category) %>%
     count(record_name, sort = TRUE,
@@ -1390,6 +1557,9 @@ output$explore_species <- renderDT({
       `SARA Status` == "Extirpated" ~
         '<span class="status-extirpated">Extirpated</span>',
       
+      `SARA Status` == "No Status" ~
+        '<span class="badge-na">No Status</span>',
+      
       TRUE ~ `SARA Status`))
   datatable(dat, rownames = FALSE, escape = FALSE,
             selection = list(mode = "single",target = "row"),
@@ -1404,13 +1574,20 @@ output$explore_species <- renderDT({
 output$explore_species_count <- renderUI({
   matching <- nrow(explore_results())
   total_records <- species_master_app
+  if(input$explore_listing_filter != "All"){
+    total_records <- total_records %>%
+      filter(listing_status == input$explore_listing_filter)
+  }
   if(input$explore_range != "All"){
     total_records <- total_records %>%
       filter(grepl(input$explore_range, range_text, fixed = TRUE))
   }
-  if(input$explore_taxa != "All"){
+  if(input$explore_taxa == "Molluscs"){
     total_records <- total_records %>%
-      filter(taxonomyId == input$explore_taxa)
+      filter(grepl("^Molluscs", taxonomy_display))
+  } else if(input$explore_taxa != "All"){
+    total_records <- total_records %>%
+      filter(taxonomy_display == input$explore_taxa)
   }
   if(input$explore_status != "All"){
     total_records <- total_records %>%
@@ -1437,20 +1614,17 @@ output$province_title <- renderText({
 })
 
 output$province_overview <- renderUI({
-  dat <- province_species()
+  dat <- species_threats_app
   n_records <- n_distinct(dat$record_name)
   n_endangered <- dat %>%
     filter(sara_status == "Endangered") %>%
     nrow()
-  
   n_threatened <- dat %>%
     filter(sara_status == "Threatened") %>%
     nrow()
-  
   n_extirpated <- dat %>%
     filter(sara_status == "Extirpated") %>%
     nrow()
-  
   tags$ul(
     style = "font-size:16px;",
     tags$li(paste("DU records:", n_records)),
@@ -1461,7 +1635,9 @@ output$province_overview <- renderUI({
 
 output$province_status <- renderDT({
   province_species() %>%
+    mutate(sara_status = factor(sara_status, levels = sara_status_levels)) %>%
     count(sara_status, name = "DU Records") %>%
+    arrange(sara_status) %>%
     rename(`SARA Status` = sara_status) %>%
     datatable(rownames = FALSE, 
               options = list(dom = "t",
@@ -1472,34 +1648,39 @@ output$province_status <- renderDT({
 })
 
 output$province_top_threats <- renderDT({
-  dat <- species_threats_app %>%
-    left_join(species_master_app %>%
-                select(record_name, range_text, taxonomyId), by = "record_name")
-  
+  dat <- species_threats_app
   if(input$province_range != "All"){
     dat <- dat %>%
-      filter(grepl(input$province_range, range_text,fixed = TRUE))}
-  
-  if(input$province_taxa != "All"){
+      filter(grepl(input$province_range, range_text, fixed = TRUE))
+  }
+  if(input$province_taxa == "Molluscs"){
     dat <- dat %>%
-      filter(taxonomyId == input$province_taxa)}
-  
+      filter(grepl("^Molluscs", taxonomy_display))
+  } else if(input$province_taxa != "All"){
+    dat <- dat %>%
+      filter(taxonomy_display == input$province_taxa)
+  }
   dat %>%
     distinct(record_name, threat_category) %>%
     count(threat_category, sort = TRUE, name = "DU Records") %>%
     rename(`Threat Category` = threat_category) %>%
-    datatable(rownames = FALSE, options = list(dom = "t",
-                                               columnDefs = list(
-                                                 list(width = "70%", targets = 0),
-                                                 list(width = "30%", targets = 1))))
+    datatable(
+      rownames = FALSE,
+      options = list(
+        dom = "t",
+        columnDefs = list(
+          list(width = "70%", targets = 0),
+          list(width = "30%", targets = 1))))
 })
 
 output$province_species_table <- renderDT({
   province_species() %>%
-    select(common_name, record_name, sara_status) %>%
+    mutate(listing_status = factor(listing_status,levels = listing_status_levels)) %>%
+    select(common_name, record_name, sara_status, listing_status) %>%
     rename(`Common Name` = common_name,
            `Designatable Unit` = record_name,
-           `SARA Status` = sara_status) %>%
+           `SARA Status` = sara_status,
+           `Listing Status` = listing_status) %>%
     arrange(`Common Name`) %>%
     datatable(rownames = FALSE,options = list( pageLength = 10))
 })
@@ -1518,10 +1699,10 @@ output$province_cards <- renderUI({
   n_special_concern <- dat %>%
     filter(sara_status == "Special Concern") %>%
     nrow()
-  fluidRow(column(3,summary_card(n_endangered, "Endangered","#f8d7da", "#f5c2c7")),
+  fluidRow(column(3,summary_card(n_extirpated, "Extirpated","#e2d9f3", "#d1c4e9")),
+           column(3,summary_card(n_endangered, "Endangered","#f8d7da", "#f5c2c7")),
            column(3,summary_card(n_threatened, "Threatened","#fff3cd", "#ffecb5")),
-           column(3, summary_card(n_special_concern,"Special Concern", "#d1ecf1","#bee5eb")),
-           column(3,summary_card(n_extirpated, "Extirpated","#e2d9f3", "#d1c4e9")))
+           column(3, summary_card(n_special_concern,"Special Concern", "#d1ecf1","#bee5eb")))
 })
 
 output$province_recovery_summary <- renderUI({

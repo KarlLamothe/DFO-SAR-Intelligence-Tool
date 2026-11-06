@@ -1576,15 +1576,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1539-1107,Climate Change,climate,Meadow Thistle - Mingan population,Meadow Thistle,Cirsium scariosum,No Status
 1539-1107,Climate Change,drought,Meadow Thistle - Mingan population,Meadow Thistle,Cirsium scariosum,No Status
 1539-1107,Climate Change,storm,Meadow Thistle - Mingan population,Meadow Thistle,Cirsium scariosum,No Status
-1132-778,Residential and Commercial Development,urban,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Residential and Commercial Development,urbanization,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Agriculture and Aquaculture,agriculture,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Agriculture and Aquaculture,aquaculture,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Biological Resource Use,fishing,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Human Intrusions and Disturbance,recreation,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Human Intrusions and Disturbance,recreational,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,Natural Systems Modification,dams,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
-1132-778,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
 493-340,Residential and Commercial Development,development,Harbour Porpoise - Pacific Ocean population,Harbour Porpoise,Phocoena phocoena vomerina,Special Concern
 493-340,Residential and Commercial Development,urban,Harbour Porpoise - Pacific Ocean population,Harbour Porpoise,Phocoena phocoena vomerina,Special Concern
 493-340,Residential and Commercial Development,habitat loss,Harbour Porpoise - Pacific Ocean population,Harbour Porpoise,Phocoena phocoena vomerina,Special Concern
@@ -1612,6 +1603,15 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1076-734,Pollution,pollution,Eastern Sand Darter - Quebec population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1076-734,Climate Change,climate,Eastern Sand Darter - Quebec population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1076-734,Other Limiting Factors,habitat loss,Eastern Sand Darter - Quebec population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
+1132-778,Residential and Commercial Development,urban,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Residential and Commercial Development,urbanization,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Agriculture and Aquaculture,agriculture,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Agriculture and Aquaculture,aquaculture,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Biological Resource Use,fishing,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Human Intrusions and Disturbance,recreation,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Human Intrusions and Disturbance,recreational,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,Natural Systems Modification,dams,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
+1132-778,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Atlantic Salmon - Anticosti Island population,Atlantic Salmon,Salmo salar,No Status
 50-64,Residential and Commercial Development,urban,Ivory Gull,Ivory Gull,Pagophila eburnea,Endangered
 50-64,Energy Production and Gas,oil,Ivory Gull,Ivory Gull,Pagophila eburnea,Endangered
 50-64,Energy Production and Gas,gas,Ivory Gull,Ivory Gull,Pagophila eburnea,Endangered
@@ -2033,13 +2033,15 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1186-856,Biological Resource Use,fishing,Smooth Skate - Laurentian-Scotian population,Smooth Skate,Malacoraja senta,No Status
 1186-856,Biological Resource Use,bycatch,Smooth Skate - Laurentian-Scotian population,Smooth Skate,Malacoraja senta,No Status
 1186-856,Other Limiting Factors,predation,Smooth Skate - Laurentian-Scotian population,Smooth Skate,Malacoraja senta,No Status
+1490-1070,Climate Change,climate,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Rocky Mountain Sculpin,Cottus sp.,No Status
+1490-1070,Climate Change,drought,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Rocky Mountain Sculpin,Cottus sp.,No Status
 1127-774,Residential and Commercial Development,commercial,Atlantic Salmon - South Newfoundland population,Atlantic Salmon,Salmo salar,No Status
 1127-774,Biological Resource Use,fishing,Atlantic Salmon - South Newfoundland population,Atlantic Salmon,Salmo salar,No Status
 1127-774,Human Intrusions and Disturbance,recreation,Atlantic Salmon - South Newfoundland population,Atlantic Salmon,Salmo salar,No Status
 1127-774,Human Intrusions and Disturbance,recreational,Atlantic Salmon - South Newfoundland population,Atlantic Salmon,Salmo salar,No Status
 1127-774,Other Limiting Factors,poorly understood,Atlantic Salmon - South Newfoundland population,Atlantic Salmon,Salmo salar,No Status
-1490-1070,Climate Change,climate,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Rocky Mountain Sculpin,Cottus sp.,No Status
-1490-1070,Climate Change,drought,Rocky Mountain Sculpin - Saskatchewan - Nelson River populations,Rocky Mountain Sculpin,Cottus sp.,No Status
+1060-737,Residential and Commercial Development,commercial,Darkblotched Rockfish,Darkblotched Rockfish,Sebastes crameri,No Status
+1060-737,Biological Resource Use,fishing,Darkblotched Rockfish,Darkblotched Rockfish,Sebastes crameri,No Status
 5-14,Residential and Commercial Development,urban,Fernald's Braya,Fernald's Braya,Braya fernaldii,Endangered
 5-14,Residential and Commercial Development,habitat loss,Fernald's Braya,Fernald's Braya,Braya fernaldii,Endangered
 5-14,Agriculture and Aquaculture,agricultural,Fernald's Braya,Fernald's Braya,Braya fernaldii,Endangered
@@ -2520,6 +2522,10 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 253-440,Pollution,nutrient,Hare-footed Locoweed,Hare-footed Locoweed,Oxytropis lagopus,Threatened
 253-440,Other Limiting Factors,competitor,Hare-footed Locoweed,Hare-footed Locoweed,Oxytropis lagopus,Threatened
 253-440,Other Limiting Factors,habitat loss,Hare-footed Locoweed,Hare-footed Locoweed,Oxytropis lagopus,Threatened
+1062-741,Residential and Commercial Development,commercial,Quillback Rockfish,Quillback Rockfish,Sebastes maliger,No Status
+1062-741,Biological Resource Use,fishing,Quillback Rockfish,Quillback Rockfish,Sebastes maliger,No Status
+1062-741,Biological Resource Use,harvest,Quillback Rockfish,Quillback Rockfish,Sebastes maliger,No Status
+1062-741,Climate Change,temperature,Quillback Rockfish,Quillback Rockfish,Sebastes maliger,No Status
 41-43,Biological Resource Use,logging,White-headed Woodpecker,White-headed Woodpecker,Dryobates albolarvatus,Endangered
 41-43,Natural Systems Modification,fire,White-headed Woodpecker,White-headed Woodpecker,Dryobates albolarvatus,Endangered
 41-43,Natural Systems Modification,fire suppression,White-headed Woodpecker,White-headed Woodpecker,Dryobates albolarvatus,Endangered
@@ -3537,15 +3543,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1065-738,Pollution,sediment,Atlantic Mud-piddock,Atlantic Mud-piddock,Barnea truncata,Threatened
 1065-738,Climate Change,climate,Atlantic Mud-piddock,Atlantic Mud-piddock,Barnea truncata,Threatened
 1065-738,Climate Change,storm,Atlantic Mud-piddock,Atlantic Mud-piddock,Barnea truncata,Threatened
-1131-779,Residential and Commercial Development,urban,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Residential and Commercial Development,urbanization,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Agriculture and Aquaculture,agriculture,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Agriculture and Aquaculture,aquaculture,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Biological Resource Use,fishing,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Human Intrusions and Disturbance,recreation,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Human Intrusions and Disturbance,recreational,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,Natural Systems Modification,dams,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
-1131-779,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
 1530-1100,Residential and Commercial Development,urban,Eastern Sand Darter - West Lake population,Eastern Sand Darter,Ammocrypta pellucida,No Status
 1530-1100,Residential and Commercial Development,industrial,Eastern Sand Darter - West Lake population,Eastern Sand Darter,Ammocrypta pellucida,No Status
 1530-1100,Residential and Commercial Development,habitat loss,Eastern Sand Darter - West Lake population,Eastern Sand Darter,Ammocrypta pellucida,No Status
@@ -3563,6 +3560,15 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 845-588,Pollution,silt,Rocky Mountain Sculpin - Eastslope populations,Rocky Mountain Sculpin,Cottus sp.,Threatened
 845-588,Climate Change,temperature,Rocky Mountain Sculpin - Eastslope populations,Rocky Mountain Sculpin,Cottus sp.,Threatened
 845-588,Climate Change,drought,Rocky Mountain Sculpin - Eastslope populations,Rocky Mountain Sculpin,Cottus sp.,Threatened
+1131-779,Residential and Commercial Development,urban,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Residential and Commercial Development,urbanization,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Agriculture and Aquaculture,agriculture,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Agriculture and Aquaculture,aquaculture,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Biological Resource Use,fishing,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Human Intrusions and Disturbance,recreation,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Human Intrusions and Disturbance,recreational,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,Natural Systems Modification,dams,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
+1131-779,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,"Atlantic Salmon - Quebec Western North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
 29-29,Agriculture and Aquaculture,agricultural,Peregrine Falcon anatum subspecies,Peregrine Falcon anatum subspecies,Falco peregrinus anatum,No Status
 29-29,Pollution,pesticide,Peregrine Falcon anatum subspecies,Peregrine Falcon anatum subspecies,Falco peregrinus anatum,No Status
 29-29,Pollution,contamination,Peregrine Falcon anatum subspecies,Peregrine Falcon anatum subspecies,Falco peregrinus anatum,No Status
@@ -3703,7 +3709,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 196-155,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Spotted Wintergreen,Spotted Wintergreen,Chimaphila maculata,Threatened
 196-155,Pollution,garbage,Spotted Wintergreen,Spotted Wintergreen,Chimaphila maculata,Threatened
 197-156,Agriculture and Aquaculture,farm,Thread-leaved Sundew,Thread-leaved Sundew,Drosera filiformis,Endangered
-204-163,Energy Production and Gas,oil,Illinois Tick-trefoil,Illinois Tick-trefoil,Desmodium illinoense,Extirpated
 208-107,Residential and Commercial Development,urban,Athabasca Thrift,Athabasca Thrift,Armeria maritima ssp. interior,Special Concern
 208-107,Biological Resource Use,hunting,Athabasca Thrift,Athabasca Thrift,Armeria maritima ssp. interior,Special Concern
 208-107,Biological Resource Use,subsistence,Athabasca Thrift,Athabasca Thrift,Armeria maritima ssp. interior,Special Concern
@@ -4208,6 +4213,7 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 810-368,Biological Resource Use,bycatch,Porbeagle,Porbeagle,Lamna nasus,No Status
 1491-1071,Climate Change,climate,Rocky Mountain Sculpin - Missouri River populations,Rocky Mountain Sculpin,Cottus sp.,No Status
 1491-1071,Climate Change,drought,Rocky Mountain Sculpin - Missouri River populations,Rocky Mountain Sculpin,Cottus sp.,No Status
+204-163,Energy Production and Gas,oil,Illinois Tick-trefoil,Illinois Tick-trefoil,Desmodium illinoense,Extirpated
 7-0,Biological Resource Use,hunting,Caribou dawsoni subspecies,Caribou dawsoni subspecies,Rangifer tarandus dawsoni,No Status
 7-0,Climate Change,climate,Caribou dawsoni subspecies,Caribou dawsoni subspecies,Rangifer tarandus dawsoni,No Status
 24-24,Residential and Commercial Development,habitat loss,King Rail,King Rail,Rallus elegans,Endangered
@@ -4745,6 +4751,25 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1544-1112,"Invasive Species and other Problematic Species, Genes, and Diseases",non-native,Northern Oak Hairstreak,Northern Oak Hairstreak,Satyrium favonius ontario,No Status
 1544-1112,Pollution,pesticide,Northern Oak Hairstreak,Northern Oak Hairstreak,Satyrium favonius ontario,No Status
 1544-1112,Climate Change,climate,Northern Oak Hairstreak,Northern Oak Hairstreak,Satyrium favonius ontario,No Status
+860-604,Residential and Commercial Development,development,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Residential and Commercial Development,urban,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Residential and Commercial Development,urbanization,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Residential and Commercial Development,habitat loss,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Agriculture and Aquaculture,agriculture,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Energy Production and Gas,mining,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Human Intrusions and Disturbance,habitat loss,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,"Invasive Species and other Problematic Species, Genes, and Diseases",non-native,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Other Limiting Factors,hybridization,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Other Limiting Factors,hybrid,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Other Limiting Factors,predation,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Other Limiting Factors,competition,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+860-604,Other Limiting Factors,habitat loss,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
+899-633,Residential and Commercial Development,commercial,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
+899-633,Biological Resource Use,bycatch,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
+899-633,Biological Resource Use,incidental capture,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
+899-633,Pollution,pollution,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
+899-633,Other Limiting Factors,predator,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
+899-633,Other Limiting Factors,predators,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
 1130-771,Residential and Commercial Development,urban,"Atlantic Salmon - Quebec Eastern North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
 1130-771,Residential and Commercial Development,urbanization,"Atlantic Salmon - Quebec Eastern North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
 1130-771,Agriculture and Aquaculture,agriculture,"Atlantic Salmon - Quebec Eastern North Shore population, original designation",Atlantic Salmon,Salmo salar,No Status
@@ -4766,25 +4791,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1133-777,Natural Systems Modification,dams,"Atlantic Salmon - Inner St. Lawrence population, original designation",Atlantic Salmon,Salmo salar,No Status
 1133-777,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,"Atlantic Salmon - Inner St. Lawrence population, original designation",Atlantic Salmon,Salmo salar,No Status
 1133-777,Other Limiting Factors,habitat loss,"Atlantic Salmon - Inner St. Lawrence population, original designation",Atlantic Salmon,Salmo salar,No Status
-860-604,Residential and Commercial Development,development,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Residential and Commercial Development,urban,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Residential and Commercial Development,urbanization,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Residential and Commercial Development,habitat loss,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Agriculture and Aquaculture,agriculture,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Energy Production and Gas,mining,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Human Intrusions and Disturbance,habitat loss,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,"Invasive Species and other Problematic Species, Genes, and Diseases",non-native,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Other Limiting Factors,hybridization,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Other Limiting Factors,hybrid,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Other Limiting Factors,predation,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Other Limiting Factors,competition,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-860-604,Other Limiting Factors,habitat loss,Westslope Cutthroat Trout - Pacific populations,Westslope Cutthroat Trout,Oncorhynchus clarkii lewisi,Special Concern
-899-633,Residential and Commercial Development,commercial,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
-899-633,Biological Resource Use,bycatch,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
-899-633,Biological Resource Use,incidental capture,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
-899-633,Pollution,pollution,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
-899-633,Other Limiting Factors,predator,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
-899-633,Other Limiting Factors,predators,White Shark - Atlantic population,White Shark,Carcharodon carcharias,Endangered
 39-37,Residential and Commercial Development,commercial,Marbled Murrelet,Marbled Murrelet,Brachyramphus marmoratus,Threatened
 39-37,Energy Production and Gas,oil,Marbled Murrelet,Marbled Murrelet,Brachyramphus marmoratus,Threatened
 39-37,Pollution,contamination,Marbled Murrelet,Marbled Murrelet,Brachyramphus marmoratus,Threatened
@@ -4859,7 +4865,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 178-137,Other Limiting Factors,competition,Engelmann's Quillwort,Engelmann's Quillwort,Isoetes engelmannii,Endangered
 205-164,Other Limiting Factors,hybridization,American Chestnut,American Chestnut,Castanea dentata,Endangered
 205-164,Other Limiting Factors,hybrid,American Chestnut,American Chestnut,Castanea dentata,Endangered
-213-170,Residential and Commercial Development,urban,Round-leaved Greenbrier - Great Lakes Plains population,Round-leaved Greenbrier,Smilax rotundifolia,Threatened
 222-178,Residential and Commercial Development,development,Kentucky Coffee-tree,Kentucky Coffee-tree,Gymnocladus dioicus,Threatened
 222-178,Agriculture and Aquaculture,agricultural,Kentucky Coffee-tree,Kentucky Coffee-tree,Gymnocladus dioicus,Threatened
 225-181,Human Intrusions and Disturbance,recreation,Pitcher's Thistle,Pitcher's Thistle,Cirsium pitcheri,Special Concern
@@ -5021,9 +5026,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 686-274,Natural Systems Modification,water level,Piping Plover circumcinctus subspecies,Piping Plover circumcinctus subspecies,Charadrius melodus circumcinctus,Endangered
 686-274,Pollution,garbage,Piping Plover circumcinctus subspecies,Piping Plover circumcinctus subspecies,Charadrius melodus circumcinctus,Endangered
 686-274,Climate Change,storm,Piping Plover circumcinctus subspecies,Piping Plover circumcinctus subspecies,Charadrius melodus circumcinctus,Endangered
-689-38,Transportation and Service Corridors,highway,Haller's Apple Moss,Haller's Apple Moss,Bartramia halleriana,Threatened
-689-38,Human Intrusions and Disturbance,work,Haller's Apple Moss,Haller's Apple Moss,Bartramia halleriana,Threatened
-689-38,Other Limiting Factors,competition,Haller's Apple Moss,Haller's Apple Moss,Bartramia halleriana,Threatened
 713-75,Residential and Commercial Development,development,Western Skink,Western Skink,Plestiodon skiltonianus,Special Concern
 713-75,Residential and Commercial Development,residential,Western Skink,Western Skink,Plestiodon skiltonianus,Special Concern
 713-75,Agriculture and Aquaculture,grazing,Western Skink,Western Skink,Plestiodon skiltonianus,Special Concern
@@ -5289,11 +5291,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 3002-2502,Pollution,noise pollution,Eastern Red Bat,Eastern Red Bat,Lasiurus borealis,No Status
 3002-2502,Pollution,pollution,Eastern Red Bat,Eastern Red Bat,Lasiurus borealis,No Status
 3034-2535,Climate Change,climate,Short-billed Dowitcher caurinus subspecies,Short-billed Dowitcher caurinus subspecies,Limnodromus griseus caurinus,No Status
-672-264,Agriculture and Aquaculture,farm,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
-672-264,Natural Systems Modification,barrier,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
-672-264,Natural Systems Modification,fish passage,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
-672-264,Other Limiting Factors,low abundance,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
-672-264,Other Limiting Factors,inbreeding,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
 300-213,Residential and Commercial Development,development,Coastrange Sculpin - Cultus Lake population,Coastrange Sculpin,Cottus aleuticus,Threatened
 300-213,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Coastrange Sculpin - Cultus Lake population,Coastrange Sculpin,Cottus aleuticus,Threatened
 300-213,Pollution,eutrophication,Coastrange Sculpin - Cultus Lake population,Coastrange Sculpin,Cottus aleuticus,Threatened
@@ -5308,6 +5305,15 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 623-880,Transportation and Service Corridors,road,American Badger taxus subspecies,American Badger taxus subspecies,Taxidea taxus taxus,Special Concern
 623-880,Human Intrusions and Disturbance,habitat loss,American Badger taxus subspecies,American Badger taxus subspecies,Taxidea taxus taxus,Special Concern
 623-880,Other Limiting Factors,habitat loss,American Badger taxus subspecies,American Badger taxus subspecies,Taxidea taxus taxus,Special Concern
+672-264,Agriculture and Aquaculture,farm,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
+672-264,Natural Systems Modification,barrier,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
+672-264,Natural Systems Modification,fish passage,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
+672-264,Other Limiting Factors,low abundance,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
+672-264,Other Limiting Factors,inbreeding,"Atlantic Salmon - Inner Bay of Fundy population, original designation",Atlantic Salmon,Salmo salar,Endangered
+689-38,Transportation and Service Corridors,highway,Haller's Apple Moss,Haller's Apple Moss,Bartramia halleriana,Threatened
+689-38,Human Intrusions and Disturbance,work,Haller's Apple Moss,Haller's Apple Moss,Bartramia halleriana,Threatened
+689-38,Other Limiting Factors,competition,Haller's Apple Moss,Haller's Apple Moss,Bartramia halleriana,Threatened
+213-170,Residential and Commercial Development,urban,Round-leaved Greenbrier - Great Lakes Plains population,Round-leaved Greenbrier,Smilax rotundifolia,Threatened
 38-36,Residential and Commercial Development,habitat loss,Loggerhead Shrike Prairie subspecies,Loggerhead Shrike Prairie subspecies,Lanius ludovicianus excubitorides,Threatened
 38-36,Transportation and Service Corridors,road,Loggerhead Shrike Prairie subspecies,Loggerhead Shrike Prairie subspecies,Lanius ludovicianus excubitorides,Threatened
 38-36,Human Intrusions and Disturbance,habitat loss,Loggerhead Shrike Prairie subspecies,Loggerhead Shrike Prairie subspecies,Lanius ludovicianus excubitorides,Threatened
@@ -5771,18 +5777,6 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 3031-2532,Natural Systems Modification,fire,Short-fruited Rush,Short-fruited Rush,Juncus brachycarpus,No Status
 3031-2532,Natural Systems Modification,fire suppression,Short-fruited Rush,Short-fruited Rush,Juncus brachycarpus,No Status
 3031-2532,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Short-fruited Rush,Short-fruited Rush,Juncus brachycarpus,No Status
-1134-775,Residential and Commercial Development,urban,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Residential and Commercial Development,urbanization,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Agriculture and Aquaculture,agriculture,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Agriculture and Aquaculture,aquaculture,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Energy Production and Gas,gas,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Biological Resource Use,fishing,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Human Intrusions and Disturbance,recreation,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Human Intrusions and Disturbance,war,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Human Intrusions and Disturbance,recreational,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Natural Systems Modification,dams,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
-1134-775,Other Limiting Factors,poorly understood,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
 854-607,Biological Resource Use,bycatch,Winter Skate - Southern Gulf of St. Lawrence population,Winter Skate,Leucoraja ocellata,No Status
 854-607,Other Limiting Factors,predation,Winter Skate - Southern Gulf of St. Lawrence population,Winter Skate,Leucoraja ocellata,No Status
 66-49,Residential and Commercial Development,urban,Nooksack Dace,Nooksack Dace,Rhinichthys cataractae,Endangered
@@ -5808,6 +5802,18 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 66-49,Climate Change,flooding,Nooksack Dace,Nooksack Dace,Rhinichthys cataractae,Endangered
 66-49,Climate Change,storm,Nooksack Dace,Nooksack Dace,Rhinichthys cataractae,Endangered
 66-49,Other Limiting Factors,habitat loss,Nooksack Dace,Nooksack Dace,Rhinichthys cataractae,Endangered
+1134-775,Residential and Commercial Development,urban,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Residential and Commercial Development,urbanization,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Agriculture and Aquaculture,agriculture,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Agriculture and Aquaculture,aquaculture,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Energy Production and Gas,gas,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Biological Resource Use,fishing,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Human Intrusions and Disturbance,recreation,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Human Intrusions and Disturbance,war,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Human Intrusions and Disturbance,recreational,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Natural Systems Modification,dams,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
+1134-775,Other Limiting Factors,poorly understood,Atlantic Salmon - Gaspe-Southern Gulf of St. Lawrence population,Atlantic Salmon,Salmo salar,No Status
 19-17,Residential and Commercial Development,development,Acadian Flycatcher,Acadian Flycatcher,Empidonax virescens,Endangered
 19-17,Residential and Commercial Development,residential,Acadian Flycatcher,Acadian Flycatcher,Empidonax virescens,Endangered
 19-17,Agriculture and Aquaculture,agricultural,Acadian Flycatcher,Acadian Flycatcher,Empidonax virescens,Endangered
@@ -6303,6 +6309,11 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 122-89,Agriculture and Aquaculture,agricultural,Warmouth,Warmouth,Lepomis gulosus,Special Concern
 122-89,Human Intrusions and Disturbance,war,Warmouth,Warmouth,Lepomis gulosus,Special Concern
 122-89,"Invasive Species and other Problematic Species, Genes, and Diseases",invasive,Warmouth,Warmouth,Lepomis gulosus,Special Concern
+621-248,Agriculture and Aquaculture,agriculture,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Transportation and Service Corridors,road,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Natural Systems Modification,fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Natural Systems Modification,habitat fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+621-248,Other Limiting Factors,small population,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
 639-100,Residential and Commercial Development,development,Grizzly Bear - Northwestern population,Grizzly Bear,Ursus arctos,No Status
 639-100,Residential and Commercial Development,residential,Grizzly Bear - Northwestern population,Grizzly Bear,Ursus arctos,No Status
 639-100,Agriculture and Aquaculture,agriculture,Grizzly Bear - Northwestern population,Grizzly Bear,Ursus arctos,No Status
@@ -6324,8 +6335,11 @@ id,threat_category,matched_term,record_name,common_name,scientific_name,sara_sta
 1075-742,Pollution,pollution,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1075-742,Climate Change,climate,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
 1075-742,Other Limiting Factors,habitat loss,Eastern Sand Darter - Ontario population,Eastern Sand Darter,Ammocrypta pellucida,Threatened
-621-248,Agriculture and Aquaculture,agriculture,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Transportation and Service Corridors,road,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Natural Systems Modification,fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Natural Systems Modification,habitat fragmentation,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
-621-248,Other Limiting Factors,small population,American Badger jacksoni subspecies - Southwestern Ontario population,American Badger jacksoni subspecies,Taxidea taxus jacksoni,Endangered
+1168-846,Residential and Commercial Development,commercial,North Pacific Spiny Dogfish,North Pacific Spiny Dogfish,Squalus suckleyi,No Status
+1168-846,Energy Production and Gas,oil,North Pacific Spiny Dogfish,North Pacific Spiny Dogfish,Squalus suckleyi,No Status
+1168-846,Biological Resource Use,fishing,North Pacific Spiny Dogfish,North Pacific Spiny Dogfish,Squalus suckleyi,No Status
+1168-846,Biological Resource Use,overfishing,North Pacific Spiny Dogfish,North Pacific Spiny Dogfish,Squalus suckleyi,No Status
+325-630,Residential and Commercial Development,urban,Northern Fur Seal,Northern Fur Seal,Callorhinus ursinus,No Status
+325-630,Pollution,pollution,Northern Fur Seal,Northern Fur Seal,Callorhinus ursinus,No Status
+325-630,Climate Change,climate,Northern Fur Seal,Northern Fur Seal,Callorhinus ursinus,No Status
+325-630,Other Limiting Factors,predation,Northern Fur Seal,Northern Fur Seal,Callorhinus ursinus,No Status

@@ -1,8 +1,8 @@
-# Canadian Species at Risk Explorer
+# Canadian Species at Risk Explorer 
 
-An interactive Shiny application for exploring Canadian species listed under Schedule 1 of the *Species at Risk Act* (SARA).
+### Version 3.1
 
-The application brings together species profiles, threat information, recovery-planning documents, management-planning information, compliance metrics, and species imagery in a single interface. The tool is designed to support exploration and summarization of publicly available information from the Species at Risk Public Registry across multiple taxonomic groups.
+Canadian Species at Risk Explorer provides an interactive interface for exploring species profiles, threats, recovery planning, and registry documents sourced from the Species at Risk Public Registry. Version 3.1 expands coverage beyond SARA Schedule 1 species to include COSEWIC-assessed species undergoing the listing process.
 
 <p align="center">
   <img src="screenshots/DashboardScreenshot.png" width="900">
@@ -13,15 +13,29 @@ The application brings together species profiles, threat information, recovery-p
 
 ## Features
 
-- Browse Schedule 1 species listed under SARA.
-- Explore species profile information and identified threats.
-- Filter results by taxonomic group, SARA status, and geographic range.
+- Browse SARA-listed species and COSEWIC-assessed species included in the listing process.
+- Explore species profiles, threats, recovery planning information, and registry documents.
+- Filter records by Listing Status, Taxonomic Group, SARA Status, and geographic range.
 - Access Recovery Strategies, Action Plans, Management Plans, Progress Reports, and COSEWIC Assessments.
 - Review recovery planning compliance metrics, including:
   - Recovery Strategy publication timelines.
   - Progress Report publication timelines.
   - Legislative due dates and compliance status.
 - Summarize recovery planning coverage and threat occurrence across species and jurisdictions.
+
+## Listing Status Categories
+
+Version 3.1 introduces support for species that are not currently listed under Schedule 1 of SARA.
+
+The application classifies records into the following categories:
+
+| Listing Status | Description |
+|---------------|-------------|
+| SARA Listed | Species listed under Schedule 1 of SARA |
+| Under Consideration | Species currently undergoing the listing process |
+| COSEWIC Assessed | Species assessed by COSEWIC but not currently listed |
+| Referred Back | Listing decision referred back for further consideration |
+| Not Listed | Governor in Council decision not to list |
 
 ### Dashboard
 
@@ -51,6 +65,7 @@ Explore detailed species profile information by species, designatable unit (DU),
 **Filters:**
 
 - Taxonomic Group
+- Listing Status
 - SARA Status
 - Province/Territory
 - Species
@@ -74,6 +89,7 @@ Access recovery planning and assessment documents associated with each DU.
 **Filters:**
 
 - Taxonomic Group
+- Listing Status
 - SARA Status
 - Province/Territory
 - Species
@@ -128,6 +144,7 @@ Summarizes recovery planning progress across species and DUs.
 **Filters:**
 
 - Taxonomic Group
+- Listing Status
 - Province/Territory
 
 ### Explore Threats
@@ -137,6 +154,7 @@ Allows users to identify species affected by specific threat categories.
 **Filter by:**
 
 - Taxonomic Group
+- Listing Status
 - Threat Group
 - SARA Status
 - Province/Territory
