@@ -694,7 +694,7 @@ ui <- fluidPage(
   hr(),
   tags$div(style = "font-size:12px;",
     class = "footer-card",
-    "Canadian Species at Risk Explorer v3.1",
+    "Canadian Species at Risk Explorer v3.2",
     tags$br(),
     paste("Registry data last refreshed:", format(scrape_date, "%Y-%m-%d")),
     tags$br(),

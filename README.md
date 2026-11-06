@@ -1,6 +1,6 @@
 # Canadian Species at Risk Explorer 
 
-### Version 3.1
+### Version 3.2
 
 Canadian Species at Risk Explorer provides an interactive interface for exploring species profiles, threats, recovery planning, and registry documents sourced from the Species at Risk Public Registry. Version 3.1 expands coverage beyond SARA Schedule 1 species to include COSEWIC-assessed species undergoing the listing process.
 
