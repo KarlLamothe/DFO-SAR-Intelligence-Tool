@@ -233,7 +233,6 @@ DFO-SAR-Intelligence-Tool/
 │
 ├── app/
 │   ├── app.R
-│   ├── refresh_data.R
 |   |
 |   ├── data/
 │   |   ├── progress_report_compliance.rds
@@ -280,6 +279,7 @@ DFO-SAR-Intelligence-Tool/
 ├── DFO-SAR-Intelligence-Tool.Rproj
 ├── README.md
 ├── LICENSE
+├── refresh_data.R
 └── run_app.R
 
 ```
@@ -313,4 +313,4 @@ For questions, suggestions, or data updates, please contact:
 Aquatic Science Biologist
 Fisheries and Oceans Canada
 
-karl.lamothe@dfo-mpo.gc.ca
+Email: karl.lamothe@dfo-mpo.gc.ca
