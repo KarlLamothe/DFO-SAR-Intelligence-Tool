@@ -1,5 +1,5 @@
 # read in raw data
-raw_species <- read.csv("data_processed/all_species_raw.csv")
+raw_species <- readRDS("data_processed/all_species_raw.rds")
 #names(raw_species)
 #glimpse(raw_species)
 

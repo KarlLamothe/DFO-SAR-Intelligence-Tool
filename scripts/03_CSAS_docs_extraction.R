@@ -207,8 +207,13 @@ species_coverage <- all_species %>%
 # Get the URLS
 #===============================================================================
 
-matched_publications <- matches %>%
-  distinct(publication_id)
+pdf_candidates <- bind_rows(
+  matches %>%
+    select(publication_id),
+  csas_publications %>%
+    filter(sar_related) %>%
+    select(publication_id)) %>%
+  distinct()
 
 get_csas_pdf <- function(publication_id){
   out <- tryCatch({
@@ -230,18 +235,24 @@ get_csas_pdf <- function(publication_id){
 }
 
 pdf_lookup <- purrr::map_dfr(
-  seq_along(matched_publications$publication_id),
+  seq_along(pdf_candidates$publication_id),
   function(i){
     if(i %% 50 == 0){
-      message(sprintf("%s / %s", i, nrow(matched_publications)))
+      message(sprintf("%s / %s", i,nrow(pdf_candidates)))
     }
-    tibble(publication_id = matched_publications$publication_id[i],
-           pdf_url = get_csas_pdf(matched_publications$publication_id[i]))
+    tibble(publication_id = pdf_candidates$publication_id[i],
+           pdf_url = get_csas_pdf(pdf_candidates$publication_id[i]))
   }
 )
 
 csas_publications <- csas_publications %>%
   left_join(pdf_lookup, by = "publication_id")
+
+csas_publications <- csas_publications %>%
+  mutate(
+    pdf_url = coalesce(pdf_url.y, pdf_url.x)
+  ) %>%
+  select(-pdf_url.x, -pdf_url.y)
 
 #===============================================================================
 # Export Results

@@ -45,7 +45,7 @@ all_species <- all_species %>%
   mutate(across(where(is.character), clean_html))
 
 # Export
-write_csv(all_species, "data_processed/all_species_raw.csv")
+saveRDS(all_species,"data_processed/all_species_raw.rds")
 
 # completion message for when running full data refresh
 message(sprintf("Species extraction complete: %s records saved.",

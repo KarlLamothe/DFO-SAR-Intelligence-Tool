@@ -550,7 +550,9 @@ ui <- fluidPage(
                              paste(n_distinct(species_master_app$record_name),
                                "species records")),
                            tags$li(paste(n_distinct(species_documents$document_id),
-                               "documents")),
+                               "Registry documents")),
+                           tags$li(paste(n_distinct(pdf_candidates$publication_id),
+                               "species-linked CSAS publications")),
                            tags$li(paste(n_distinct(species_threats_app$threat_category),
                                "threat groups"))))))),
                   
@@ -2114,8 +2116,6 @@ output$province_recovery_summary <- renderUI({
                            style = "background:#e9ecef;",
                            h2(not_required),
                            p("Not Required")))))})
-
-
 }
 
 # run app
