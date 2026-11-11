@@ -531,6 +531,7 @@ ui <- fluidPage(
                      tags$ol(
                        tags$li("Use Species Information to explore species profiles and recovery information."),
                        tags$li("Use Species Documents to review recovery strategies, action plans, management plans, and progress reports."),
+                       tags$li("Use CSAS Publications to review documents developed during Canadian Science Advisory Secretariat (CSAS) processes."),
                        tags$li("Use Threat Summary and Explore Threats to examine threats affecting species recovery."),
                        tags$li("Use Province Summary to summarize species and recovery planning information by jurisdiction.")),
                      h4("Important Notes"),
@@ -541,7 +542,8 @@ ui <- fluidPage(
                          tags$ul(
                            tags$li("Species at Risk Public Registry"),
                            tags$li("Species profile pages"),
-                           tags$li("Recovery and planning documents"))),
+                           tags$li("Recovery and planning documents"),
+                           tags$li("CSAS publications"))),
                        column(6,h4("Application Coverage"),
                          tags$ul(
                            tags$li(
@@ -636,6 +638,7 @@ ui <- fluidPage(
                             h3("Canadian Science Advisory Secretariat (CSAS) Publications"),
                             tags$p(class = "text-muted",
                                    "Publications are currently linked at the species level and may include information relevant to multiple populations or designatable units."),
+                            tags$p(style = "color:#6c757d;", textOutput("csas_publication_count")),
                           DTOutput("csas_documents"))))),
                  
                    # RECOVERY PLANNING TAB
@@ -1963,7 +1966,7 @@ output$csas_documents <- renderDT({
                                  title, '</a>'), title )) %>%
     transmute(Year = publication_year, Type = publication_type,
               Number = publication_number, Title )
-  }, escape = FALSE, options = list(pageLength = 15, scrollX = TRUE))
+  }, escape = FALSE, rownames = FALSE, options = list(pageLength = 15, scrollX = TRUE))
 
 output$csas_species_banner <- renderUI({
   sp <- selected_species_csas()
@@ -1978,6 +1981,12 @@ output$csas_species_banner <- renderUI({
     tags$b("Viewing Publications for: "),
     tags$span(style = "color:#2c5aa0; font-weight:600;", strong(sp$common_name[1])))
 })
+
+output$csas_publication_count <- renderText({
+  req(species_csas_docs())
+  paste(nrow(species_csas_docs()), "publications found")
+})
+
 ##############################################################################
 # PROVINCE SUMMARY OUTPUTS
 ##############################################################################
