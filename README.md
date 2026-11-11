@@ -1,8 +1,10 @@
 # Canadian Species at Risk Explorer 
 
-### Version 3.2
+### Version 3.3
 
-Canadian Species at Risk Explorer provides an interactive interface for exploring species profiles, threats, recovery planning, and registry documents sourced from the Species at Risk Public Registry. Version 3.2 expands coverage beyond SARA Schedule 1 species to include COSEWIC-assessed species undergoing the listing process.
+Canadian Species at Risk Explorer provides an interactive interface for exploring species profiles, threats, recovery planning, registry documents, and Canadian Science Advisory Secretariat (CSAS) publications associated with species at risk in Canada.
+
+Version 3.3 expands the application by integrating CSAS science publications and linking them directly to species records using scientific-name matching. Publications can be explored alongside recovery planning documents and other Species at Risk Public Registry resources.
 
 <p align="center">
   <img src="screenshots/DashboardScreenshot.png" width="900">
@@ -22,6 +24,8 @@ Canadian Species at Risk Explorer provides an interactive interface for explorin
   - Progress Report publication timelines.
   - Legislative due dates and compliance status.
 - Summarize recovery planning coverage and threat occurrence across species and jurisdictions.
+- Browse CSAS science publications associated with species records.
+- Access direct links to CSAS publication PDFs where available.
 
 ## Listing Status Categories
 
@@ -46,6 +50,7 @@ Provides a high-level overview of the application and its underlying data source
 - Coverage statistics
   - Species records
   - Species documents
+  - CSAS Publications
   - Threat groups
 - Important notes
 
@@ -85,6 +90,31 @@ Access recovery planning and assessment documents associated with each DU.
 - Recovery planning compliance summaries
 - Legislative due dates and reporting status
 - Direct links to source documents
+
+**Filters:**
+
+- Taxonomic Group
+- Listing Status
+- SARA Status
+- Province/Territory
+- Species
+- DU
+
+### CSAS Publications
+
+Provides access to Canadian Science Advisory Secretariat (CSAS) science publications associated with species records.
+
+CSAS publications are linked at the species level using scientific-name matching and may be relevant to multiple Designatable Units (DUs).
+
+**Includes:**
+
+- Research Documents
+- Science Advisory Reports
+- Science Responses
+- Proceedings
+- Direct links to publication PDFs where available
+- Publication year and document type
+- Species-level publication summaries
 
 **Filters:**
 
@@ -193,6 +223,8 @@ Data are derived from:
 - Management Plans
 - Progress Reports
 - COSEWIC Assessment and Status Reports
+- Canadian Science Advisory Secretariat (CSAS)
+- CSAS Publications Archive
 
 # Threat Group Consolidation
 
@@ -235,6 +267,8 @@ DFO-SAR-Intelligence-Tool/
 │   ├── app.R
 |   |
 |   ├── data/
+│   |   ├── csas_publications.rds
+│   |   ├── csas_species_links.rds
 │   |   ├── progress_report_compliance.rds
 │   |   ├── recovery_compliance.rds
 │   |   ├── species_master.rds
@@ -260,19 +294,23 @@ DFO-SAR-Intelligence-Tool/
 │   ├── all_species_profiles.csv
 │   ├── all_species_threats.csv
 │   ├── all_species_threats_summary.csv
-│   └── all_threat_category_frequency.csv
+│   ├── all_threat_category_frequency.csv
+│   ├── csas_publications.csv
+│   ├── csas_sar_publications.csv
+│   └── csas_species_links.csv
 |
 ├── scripts/
 |   ├── 00_setup.R
 |   ├── 01_build_species_master.R
 |   ├── 02_clean_species_master.R
-|   ├── 03_build_species_profiles.R
-|   ├── 04_build_threat_dictionary.R
-|   ├── 05_build_document_inventory.R
-|   ├── 06_exploratory_analysis.R
-|   ├── 07_build_recovery_compliance.R
-|   ├── 08_download_images.R
-|   ├── 09_prepare_shiny_data.R
+|   ├── 03_CSAS_docs_extraction.R
+|   ├── 04_build_species_profiles.R
+|   ├── 05_build_threat_dictionary.R
+|   ├── 06_build_document_inventory.R
+|   ├── 07_exploratory_analysis.R
+|   ├── 08_build_recovery_compliance.R
+|   ├── 09_download_images.R
+|   ├── 10_prepare_shiny_data.R
 |   └── run_full_refresh.R
 |
 ├── .gitignore
@@ -294,11 +332,13 @@ DFO-SAR-Intelligence-Tool/
 - Threat categories should not be interpreted as formal threat assessments.
 - Recovery planning metrics are derived from identified Registry documents and are intended for exploratory and summary purposes.
 - Species imagery availability varies among species.
+- CSAS publication matching is performed at the species level using scientific names and may not distinguish between Designatable Units.
+- Not all CSAS publications currently have downloadable PDF links available.
+- Publication-species relationships should be considered screening-level linkages and may require expert review for specific applications.
 
 ## Acknowledgements
 
-This application was developed using information obtained from the Species at Risk Public Registry and associated recovery planning resources.
-
+This application was developed using information obtained from the Species at Risk Public Registry, Canadian Science Advisory Secretariat publications, and associated recovery planning resources.
 ## License
 
 This project is licensed under the **MIT License**. See `LICENSE` for complete licensing terms.

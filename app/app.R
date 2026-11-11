@@ -47,6 +47,8 @@ species_threats <- readRDS("data/species_threats.rds")
 species_documents <- readRDS("data/species_documents.rds")
 recovery_compliance <- readRDS("data/recovery_compliance.rds")
 progress_compliance <- readRDS("data/progress_report_compliance.rds")
+csas_publications <- readRDS("data/csas_publications.rds")
+csas_species_links <- readRDS("data/csas_species_links.rds")
 
 ################################################################################
 # APPLICATION DATASETS
@@ -93,6 +95,17 @@ species_threats_app <- species_threats %>%
   left_join(species_lookup, by = "record_name") %>%
   mutate(sara_status = case_when(
     sara_status %in% c("No Data", NA_character_) ~ "No Status",TRUE ~ sara_status))
+
+################################################################################
+# CSAS SPECIES LOOKUP
+################################################################################
+
+csas_species_links <- csas_species_links %>%
+  left_join(species_master %>%
+              select(species_id = id,
+                     common_name,
+                     scientific_name),
+            by = "species_id")
 
 ################################################################################
 # RANGE, SARA STATUS, PANEL STYLE FILTER OPTIONS
@@ -594,6 +607,36 @@ ui <- fluidPage(
                                              tags$b("Document Notes: "),
                                              "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for ", tags$i("Species at Risk Act"), " listed species. Efforts were made to removed 'Proposed' documents."
                                            ))))),
+                  
+                  # CSAS DOCUMENTS TAB
+                  tabPanel(
+                    title = tagList(icon("book"), "CSAS Publications"),
+                    value = "csas_docs",
+                    br(),
+                    fluidRow(column(
+                      width = 2,
+                      div(class = "threat-card",
+                          h4(icon("filter"), " Filters", class = "card-title"),
+                          tags$p(style = "color:#6c757d; font-size:13px;",
+                            "Filter species records by status, range, species, and DU."),
+                          selectInput("taxa_csas", "Taxonomic Group",
+                                      choices = taxa_choices,selected = "All"),
+                          selectInput("listing_filter_csas", "Listing Status",
+                                      choices = listing_choices, selected = "All"),
+                          selectInput("status_csas", "SARA Status", choices = sara_choices),
+                          selectInput("range_csas", "Range", choices = range_choices),
+                          selectInput("species_csas", "Species",
+                            choices = sort(unique(species_master_app$common_name))),
+                          selectInput("record_csas", "Population / Designatable Unit",
+                                      choices = NULL))),
+                      column(
+                        width = 10,
+                        uiOutput("csas_species_banner"),
+                        div(class = "threat-card",
+                            h3("Canadian Science Advisory Secretariat (CSAS) Publications"),
+                            tags$p(class = "text-muted",
+                                   "Publications are currently linked at the species level and may include information relevant to multiple populations or designatable units."),
+                          DTOutput("csas_documents"))))),
                  
                    # RECOVERY PLANNING TAB
                   tabPanel(title = tagList(icon("clipboard-list"),"Recovery Planning"),
@@ -694,7 +737,7 @@ ui <- fluidPage(
   hr(),
   tags$div(style = "font-size:12px;",
     class = "footer-card",
-    "Canadian Species at Risk Explorer v3.2",
+    "Canadian Species at Risk Explorer v3.3",
     tags$br(),
     paste("Registry data last refreshed:", format(scrape_date, "%Y-%m-%d")),
     tags$br(),
@@ -710,22 +753,57 @@ server <- function(input, output, session){
   ##############################################################################
   # SPECIES SELECTION REACTIVES
   ##############################################################################
+  # These reactives return the currently selected species record from each major
+  # tab within the application.
+  #
+  # Species Information tab:
+  #   input$record
+  #
+  # Species Documents tab:
+  #   input$record_docs
+  #
+  # CSAS Publications tab:
+  #   input$record_csas
+  #
+  # Each reactive returns a single-row record from species_master_app containing
+  # the species metadata associated with the current Designatable Unit (DU).
+  ##############################################################################
+  # Currently selected species record from the Species Information tab
   selected_species <- reactive({
     species_master_app %>%
       filter(record_name == input$record)%>%
       slice(1)
   })
   
+  # Currently selected species record from the Species Documents tab
   selected_species_docs <- reactive({
     species_master_app %>%
       filter(record_name == input$record_docs) %>%
       slice(1)
   })
   
+  # Stores species selections made from the Explore Threats table so they can
+  # be carried into other tabs.
   selected_record_from_explore <- reactiveVal(NULL)
+  
+  # Currently selected species record from the CSAS Publications tab
+  selected_species_csas <- reactive({
+    species_master_app %>%
+      filter(record_name == input$record_csas) %>%
+      slice(1)
+  })
   
   ##############################################################################
   # COMPLIANCE REACTIVES
+  ##############################################################################
+  # Retrieve recovery planning compliance information for the currently selected
+  # species record.
+  #
+  # recovery_compliance:
+  #   Recovery Strategy legislative timelines.
+  #
+  # progress_compliance:
+  #   Progress Report legislative timelines.
   ##############################################################################
   selected_compliance <- reactive({
     recovery_compliance %>%
@@ -738,7 +816,47 @@ server <- function(input, output, session){
   })
   
   ##############################################################################
+  # CSAS DOCUMENTS REACTIVES
+  ##############################################################################
+  # Retrieve CSAS publications associated with the currently selected species.
+  #
+  # Important:
+  # CSAS publications are linked at the species level rather than the
+  # Designatable Unit (DU) level.
+  #
+  # Workflow:
+  #   1. Determine the scientific name associated with the selected DU.
+  #   2. Find matching CSAS publication links.
+  #   3. Join publication metadata and PDF URLs.
+  #   4. Remove duplicate publication IDs.
+  #   5. Return publications ordered from newest to oldest.
+  ##############################################################################
+  species_csas_docs <- reactive({
+    req(input$record_csas)
+    sp <- selected_species_csas()
+    req(nrow(sp) > 0)
+    sci_name <- sp$scientific_name[1]
+    csas_species_links %>%
+      filter(scientific_name == sci_name) %>%
+      left_join(csas_publications %>% 
+                  select(publication_id, pdf_url), by = "publication_id") %>%
+      distinct(publication_id, .keep_all = TRUE) %>%
+      arrange(desc(publication_year),publication_number)
+  })
+  
+  ##############################################################################
   # THREAT EXPLORATION REACTIVES
+  ##############################################################################
+  # Returns species records associated with the threat category currently
+  # selected within the Explore Threats tab.
+  #
+  # Additional optional filtering:
+  #   • Listing status
+  #   • SARA status
+  #   • Range
+  #   • Taxonomic group
+  #
+  # Results are reduced to unique species / DU combinations.
   ##############################################################################
   explore_results <- reactive({
     dat <- species_threats_app %>%
@@ -764,6 +882,20 @@ server <- function(input, output, session){
       distinct(common_name, record_name, sara_status)
   })
 
+  ##############################################################################
+  # SPECIES PROFILE REACTIVE
+  ##############################################################################
+  # Retrieves profile text for the currently selected Designatable Unit (DU).
+  #
+  # Some DUs lack profile text despite the species profile existing.
+  # In these cases:
+  #   1. Attempt DU-level matching first.
+  #   2. If no profile text exists, fall back to another profile record from the
+  #      same common name that contains descriptive information.
+  #
+  # This helps avoid empty Species Information pages when Registry profile text
+  # is incomplete at the DU level.
+  ##############################################################################
   selected_profile <- reactive({
     prof <- species_profiles %>%
       filter(record_name == input$record)
@@ -784,6 +916,14 @@ server <- function(input, output, session){
   
   ##############################################################################
   # PROVINCE SUMMARY REACTIVES
+  ##############################################################################
+  # Supporting datasets used by the Province Summary tab.
+  #
+  # province_species():
+  #   Species records matching the current provincial / taxonomic filters.
+  #
+  # province_recovery_summary():
+  #   Recovery planning compliance totals for the same filtered subset.
   ##############################################################################
   province_species <- reactive({
     dat <- species_master_app
@@ -821,7 +961,38 @@ server <- function(input, output, session){
   ##############################################################################
   # CASCADING FILTER OBSERVERS
   ##############################################################################
-  # SPECIES FILTER OBSERVERS
+  # Filter controls are dependent on one another and must be updated dynamically
+  # as the user narrows the available species records.
+  #
+  # Across the Species Information, Species Documents, and CSAS tabs:
+  #
+  #   Taxonomic Group
+  #        ↓
+  #   Listing Status
+  #        ↓
+  #   SARA Status
+  #        ↓
+  #   Range
+  #        ↓
+  #   Species
+  #        ↓
+  #   Designatable Unit (DU)
+  #
+  # These observers ensure that available selections remain valid as upstream
+  # filters change.
+  ##############################################################################
+  ##############################################################################
+  # SPECIES INFORMATION FILTERS
+  ##############################################################################
+  # Dynamic filters used by the Species Information tab.
+  #
+  # These observers update:
+  #   • Available ranges
+  #   • Available SARA statuses
+  #   • Available species selections
+  #
+  # based on the current taxonomic, listing status, and range filters.
+  ##############################################################################
   # dynamic range selector
   observe({
     req(input$taxa)
@@ -903,9 +1074,15 @@ server <- function(input, output, session){
     updateSelectInput(session, "species", choices = choices, selected = selected_species)
   })
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-  # DOCUMENT FILTER OBSERVERS
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  ##############################################################################
+  # SPECIES DOCUMENT FILTERS
+  ##############################################################################
+  # Dynamic filters used by the Species Documents tab.
+  #
+  # Behaviour mirrors the Species Information tab but uses a separate set of
+  # inputs so users can browse documents independently while preserving tab
+  # synchronization behaviour.
+  ##############################################################################
   # dynamic document range selector
   observe({
     req(input$taxa_docs)
@@ -956,7 +1133,7 @@ server <- function(input, output, session){
         input$status_docs %in% statuses) input$status_docs else "All")
   })
   
-  # Document selector
+  # document species selector 
   observe({
     species_choices <- species_master_app
     if(input$listing_filter_docs != "All"){
@@ -994,6 +1171,199 @@ server <- function(input, output, session){
   })
   
   ##############################################################################
+  # CSAS PUBLICATION FILTERS
+  ##############################################################################
+  # Dynamic filters used by the CSAS Publications tab.
+  #
+  # Publications are associated with species-level scientific names, but the
+  # application preserves Designatable Unit (DU) selection for consistency with
+  # other tabs.
+  #
+  # These observers update:
+  #   • Species choices
+  #   • DU choices
+  #
+  # while preserving valid selections whenever possible.
+  ##############################################################################
+  
+  # CSAS species selector
+  observe({
+    species_choices <- species_master_app
+    if(input$listing_filter_csas != "All"){
+      species_choices <- species_choices %>%
+        filter(listing_status == input$listing_filter_csas)
+    }
+    if(input$status_csas != "All"){
+      species_choices <- species_choices %>%
+        filter(sara_status == input$status_csas)
+    }
+    if(input$range_csas != "All"){
+      species_choices <- species_choices %>%
+        filter(grepl(input$range_csas, range_text, fixed = TRUE))
+    }
+    if(input$taxa_csas == "Molluscs"){
+      species_choices <- species_choices %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa_csas != "All"){
+      species_choices <- species_choices %>%
+        filter(taxonomy_display == input$taxa_csas)
+    }
+    choices <- sort(unique(species_choices$common_name))
+    selected_species <- if(!is.null(input$species_csas) && input$species_csas %in% choices){
+      input$species_csas
+    } else if(length(choices) > 0){
+      choices[1]
+    } else {
+      character(0)
+    }
+    updateSelectInput(session,  "species_csas", choices = choices, selected = selected_species)
+  })
+  
+  # CSAS DU selector
+  observeEvent(c(input$species_csas, input$status_csas,
+                 input$range_csas, input$taxa_csas, input$listing_filter_csas),
+    {
+      req(input$species_csas)
+      records <- species_master_app %>%
+        filter(common_name == input$species_csas)
+      if(input$listing_filter_csas != "All"){
+        records <- records %>%
+          filter(listing_status == input$listing_filter_csas)
+      }
+      if(input$status_csas != "All"){
+        records <- records %>%
+          filter(sara_status == input$status_csas)
+      }
+      if(input$range_csas != "All"){
+        records <- records %>%
+          filter(grepl(input$range_csas, range_text,  fixed = TRUE))
+      }
+      if(input$taxa_csas == "Molluscs"){
+        records <- records %>% filter(grepl("^Molluscs", taxonomy_display))
+      } else if(input$taxa_csas != "All"){
+        records <- records %>% filter(taxonomy_display == input$taxa_csas)
+      }
+      records <- records %>%
+        arrange(record_name) %>%
+        pull(record_name)
+      selected_record <- if(
+        !is.null(input$record_csas) &&
+        input$record_csas %in% records
+      ) {
+        input$record_csas
+      } else if(length(records) > 0) {
+        records[1]
+      } else {
+        character(0)
+      }
+      
+      updateSelectInput(
+        session,
+        "record_csas",
+        choices = records,
+        selected = selected_record
+      )
+    })
+  
+  ##############################################################################
+  # CROSS-TAB DESIGNATABLE UNIT (DU) SYNCHRONIZATION
+  ##############################################################################
+  # Species Information, Species Documents, and CSAS Publications maintain
+  # separate selector controls but represent different views of the same species
+  # record.
+  #
+  # When a Designatable Unit (DU) is changed in any tab, the corresponding
+  # species and DU selections are propagated to the other tabs to keep all views
+  # synchronized.
+  #
+  # Synchronization occurs at the DU level using the selected record_name.
+  ##############################################################################
+  
+  observeEvent(input$record, {
+    req(input$record)
+    sp <- selected_species()
+    req(nrow(sp) > 0)
+    updateSelectInput(session, "species_docs", selected = sp$common_name[1])
+    updateSelectInput(session, "record_docs", selected = sp$record_name[1])
+    updateSelectInput(session, "species_csas", selected = sp$common_name[1])
+    updateSelectInput(session, "record_csas", selected = sp$record_name[1])
+    }, ignoreInit = TRUE)
+  
+  observeEvent(input$record_docs, {
+    req(input$record_docs)
+    sp <- selected_species_docs()
+    req(nrow(sp) > 0)
+    updateSelectInput(session, "species", selected = sp$common_name[1])
+    updateSelectInput(session, "record", selected = sp$record_name[1])
+    updateSelectInput(session, "species_csas", selected = sp$common_name[1])
+    updateSelectInput(session, "record_csas", selected = sp$record_name[1])
+    }, ignoreInit = TRUE)
+  
+  observeEvent(input$record_csas, {
+    req(input$record_csas)
+    sp <- selected_species_csas()
+    req(nrow(sp) > 0)
+    updateSelectInput(session, "species", selected = sp$common_name[1])
+    updateSelectInput(session, "record", selected = sp$record_name[1])
+    updateSelectInput(session, "species_docs", selected = sp$common_name[1])
+    updateSelectInput(session, "record_docs", selected = sp$record_name[1])
+    }, ignoreInit = TRUE)
+  
+  ##############################################################################
+  # SPECIES INFORMATION DU SELECTOR
+  ##############################################################################
+  # Updates available Designatable Units (DUs) for the currently selected
+  # species after all Species Information tab filters have been applied.
+  #
+  # Existing selections are preserved whenever they remain valid.
+  ##############################################################################
+  observe({
+    req(input$species)
+    
+    records <- species_master_app %>%
+      filter(common_name == input$species)
+    
+    if(input$listing_filter != "All"){
+      records <- records %>%
+        filter(listing_status == input$listing_filter)
+    }
+    
+    if(input$status != "All"){
+      records <- records %>%
+        filter(sara_status == input$status)
+    }
+    
+    if(input$range != "All"){
+      records <- records %>%
+        filter(grepl(input$range, range_text, fixed = TRUE))
+    }
+    
+    if(input$taxa == "Molluscs"){
+      records <- records %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa != "All"){
+      records <- records %>%
+        filter(taxonomy_display == input$taxa)
+    }
+    
+    records <- records %>%
+      arrange(record_name) %>%
+      pull(record_name)
+    
+    selected_record <- if(
+      !is.null(input$record) &&
+      input$record %in% records
+    ) {
+      input$record
+    } else if(length(records) > 0) {
+      records[1]
+    } else {
+      character(0)
+    }
+    updateSelectInput(session, "record", choices = records, selected = selected_record)
+  })
+
+  ##############################################################################
   # THREAT SELECTOR
   ##############################################################################
   observe({
@@ -1009,52 +1379,19 @@ server <- function(input, output, session){
     if(length(row) == 0) return()
     selected <- explore_results()[row, ]
     selected_record_from_explore(selected$record_name)
-    updateSelectInput(session,"species", selected = selected$common_name)
+    updateSelectInput(session, "species", selected = selected$common_name)
+    updateSelectInput(session, "species_docs", selected = selected$common_name)
     updateTabsetPanel(session, "main_tabs", selected = "species_info")
   })
-  
-  # CARRY CURRENT SPEICES INFORMATION SELECTIONS INTO SPECIES DOCUMENTS WHEN
-  # TAB IS OPEN
-  observeEvent(input$main_tabs, {
-    req(input$species)
-    if(input$main_tabs == "species_docs") {
-      updateSelectInput(session, "species_docs", selected = input$species)
-    }
-  })
-  
-  ##############################################################################
-  # SPECIES / DU SELECTION OBSERVERS
-  ##############################################################################
-  observe(
-    {req(input$species)
-      records <- species_master_app %>%
-        filter(common_name == input$species)
-      if(input$listing_filter != "All"){
-        records <- records %>%
-          filter(listing_status == input$listing_filter)
-      }
-      if(input$status != "All"){
-        records <- records %>%
-          filter(sara_status == input$status)
-      }
-      if(input$range != "All"){
-        records <- records %>%
-          filter(grepl(input$range, range_text,fixed = TRUE))
-      }
-      if(input$taxa == "Molluscs"){
-        records <- records %>%
-          filter(grepl("^Molluscs", taxonomy_display))
-      } else if(input$taxa != "All"){
-        records <- records %>%
-          filter(taxonomy_display == input$taxa)
-      }
-      records <- records %>%
-        arrange(record_name) %>%
-        pull(record_name)
-      updateSelectInput(session, "record", choices = records,
-                        selected = if(length(records) > 0)
-                          records[1] else character(0))})
 
+  ##############################################################################
+  # SPECIES DOCUMENTS DU SELECTOR
+  ##############################################################################
+  # Updates available Designatable Units (DUs) for the currently selected
+  # species within the Species Documents tab.
+  #
+  # Existing selections are preserved whenever they remain valid.
+  ##############################################################################
   observeEvent(
     c(input$species_docs, input$status_docs, input$range_docs, input$taxa_docs,
       input$listing_filter_docs),
@@ -1082,9 +1419,23 @@ server <- function(input, output, session){
       records <- records %>%
         arrange(record_name) %>%
         pull(record_name)
-      updateSelectInput(session, "record_docs", choices = records,
-                        selected = if(length(records) > 0)
-                          records[1] else character(0))})
+      selected_record <- if(
+        !is.null(input$record_docs) &&
+        input$record_docs %in% records
+      ) {
+        input$record_docs
+      } else if(length(records) > 0) {
+        records[1]
+      } else {
+        character(0)
+      }
+      
+      updateSelectInput(
+        session,
+        "record_docs",
+        choices = records,
+        selected = selected_record
+      )})
   
   ##############################################################################
   # SPECIES INFORMATION OUTPUTS
@@ -1601,7 +1952,32 @@ output$explore_species_count <- renderUI({
                         prevalence,"%)")))
 })
 
+##############################################################################
+# CSAS PUBLICATIONS OUTPUTS
+##############################################################################
+output$csas_documents <- renderDT({
+  req(species_csas_docs())
+  species_csas_docs() %>%
+    mutate(Title = ifelse(!is.na(pdf_url) & pdf_url != "",
+                          paste0('<a href="', pdf_url, '" target="_blank">',
+                                 title, '</a>'), title )) %>%
+    transmute(Year = publication_year, Type = publication_type,
+              Number = publication_number, Title )
+  }, escape = FALSE, options = list(pageLength = 15, scrollX = TRUE))
 
+output$csas_species_banner <- renderUI({
+  sp <- selected_species_csas()
+  req(nrow(sp) > 0)
+  div(style = "
+      background-color:#f8f9fa;
+      border:1px solid #dee2e6;
+      font-size:24px;
+      border-radius:10px;
+      padding:15px;
+      margin-bottom:15px;",
+    tags$b("Viewing Publications for: "),
+    tags$span(style = "color:#2c5aa0; font-weight:600;", strong(sp$common_name[1])))
+})
 ##############################################################################
 # PROVINCE SUMMARY OUTPUTS
 ##############################################################################
