@@ -551,8 +551,6 @@ ui <- fluidPage(
                                "species records")),
                            tags$li(paste(n_distinct(species_documents$document_id),
                                "Registry documents")),
-                           tags$li(paste(n_distinct(pdf_candidates$publication_id),
-                               "species-linked CSAS publications")),
                            tags$li(paste(n_distinct(species_threats_app$threat_category),
                                "threat groups"))))))),
                   
