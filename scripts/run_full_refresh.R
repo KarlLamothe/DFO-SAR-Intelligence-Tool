@@ -3,10 +3,9 @@
 # Full Data Refresh Pipeline
 #
 # Purpose:
-# Executes all data acquisition, processing, compliance calculation,
-# image download, CSAS publication integration, and application data
-# preparation scripts required to update the Canadian Species at Risk
-# Explorer.
+# Executes all data acquisition, processing, publication integration,
+# compliance calculation, image download, and application data preparation
+# scripts required to update the Canadian Species at Risk Explorer.
 #
 # Workflow:
 #   1. Load package dependencies and project settings.
@@ -15,10 +14,21 @@
 #   4. Build species profile datasets.
 #   5. Classify and consolidate threat information.
 #   6. Build the Registry document inventory.
-#   7. Build and link CSAS publication datasets.
-#   8. Calculate recovery planning and progress reporting compliance.
-#   9. Download species images for local application use.
-#  10. Prepare application-ready RDS files for the Shiny application.
+#   7. Build CSAS publication datasets and species linkages.
+#   8. Build DFO Science and Canadian Wildlife Service publication datasets
+#      and species linkages.
+#   9. Calculate recovery planning and progress reporting compliance.
+#  10. Download species images for local application use.
+#  11. Prepare application-ready RDS files for the Shiny application.
+#
+# Key Outputs:
+#   • Species master, profiles, threats, and documents
+#   • Recovery planning compliance metrics
+#   • CSAS publication datasets
+#   • DFO Science publication datasets
+#   • Canadian Wildlife Service publication datasets
+#   • Consolidated scientific publication datasets
+#   • Shiny application data objects
 ################################################################################
 
 message("Starting full data refresh...")
@@ -40,29 +50,34 @@ source("scripts/02_clean_species_master.R")
 source("scripts/03_build_csas_publications.R")
 
 ################################################################################
+# SCIENTIFIC PUBLICATIONS
+################################################################################
+source("scripts/04_build_scientific_publications.R")
+
+################################################################################
 # SPECIES PROFILES AND THREATS
 ################################################################################
-source("scripts/04_build_species_profiles.R")
-source("scripts/05_build_threat_dictionary.R")
+source("scripts/05_build_species_profiles.R")
+source("scripts/06_build_threat_dictionary.R")
 
 ################################################################################
 # DOCUMENT INVENTORY
 ################################################################################
-source("scripts/06_build_document_inventory.R")
+source("scripts/07_build_document_inventory.R")
 
 ################################################################################
 # RECOVERY PLANNING COMPLIANCE
 ################################################################################
-source("scripts/08_build_recovery_compliance.R")
+source("scripts/09_build_recovery_compliance.R")
 
 ################################################################################
 # SPECIES IMAGES
 ################################################################################
-source("scripts/09_download_images.R")
+source("scripts/10_download_images.R")
 
 ################################################################################
 # PREPARE SHINY APPLICATION DATA
 ################################################################################
-source("scripts/10_prepare_shiny_data.R")
+source("scripts/11_prepare_shiny_data.R")
 
 message("Data refresh complete.")

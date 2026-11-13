@@ -1,6 +1,7 @@
 # List of packages being used
 list.of.packages <- c("tidyverse","rvest","xml2","httr","DBI","RSQLite","readr",
-                      "janitor","lubridate","stringr","glue","jsonlite","DT","shiny")
+                      "janitor","lubridate","stringr","glue","jsonlite","DT","shiny",
+                      "httr2","jsonlite","purrr","dplyr")
 
 # Identify packages in the list that are not on the computer
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
@@ -13,6 +14,7 @@ library(tidyverse)
 library(rvest)  
 library(xml2)      
 library(httr)   
+library(httr2)   
 library(DBI)    
 library(RSQLite)  
 library(janitor)      
@@ -23,12 +25,16 @@ library(jsonlite)
 library(DT)  
 library(shiny)  
 library(readr)  
+library(jsonlite)  
+library(purrr)
+library(dplyr)
 
 suppressPackageStartupMessages({
   library(tidyverse)      
   library(rvest)  
   library(xml2)      
   library(httr)   
+  library(httr2) 
   library(DBI)    
   library(RSQLite)  
   library(janitor)      
@@ -39,7 +45,9 @@ suppressPackageStartupMessages({
   library(jsonlite)  
   library(readr)  
   library(DT)  
-  
+  library(jsonlite)  
+  library(purrr)
+  library(dplyr)
 })
 
 options(scipen=999) # Remove scientific notation

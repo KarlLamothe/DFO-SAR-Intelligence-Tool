@@ -54,17 +54,9 @@ get_csas_page <- function(page_index = 0, max_attempts = 5) {
 
 # Helper to get URLS
 get_csas_details <- function(publication_id) {
-  
-  url <- paste0(
-    "https://csas-scas-api.dfo-mpo.gc.ca/api/publication/",
-    publication_id
-  )
-  
-  tryCatch(
-    fromJSON(url),
-    error = function(e) NULL
-  )
-  
+  url <- paste0("https://csas-scas-api.dfo-mpo.gc.ca/api/publication/",
+    publication_id)
+  tryCatch(fromJSON(url), error = function(e) NULL)
 }
 
 #===============================================================================
@@ -80,8 +72,7 @@ message("Downloading CSAS publications...")
 all_csas <- map_dfr(0:(page_count - 1),
                     function(i){
                       Sys.sleep(0.5)
-                      get_csas_page(page_index = i, max_attempts = 5)}
-)
+                      get_csas_page(page_index = i, max_attempts = 5)})
 
 message(sprintf("Downloaded %s publications.", nrow(all_csas)))
 
@@ -96,8 +87,7 @@ meeting_titles <- map_chr(
       return(NA_character_)
     }
     x$meetingTitle$english[1]
-  }
-)
+  })
 
 #===============================================================================
 # Build Publication Database
@@ -117,7 +107,75 @@ csas_publications <- tibble(
 # Load Species Data
 #===============================================================================
 
-all_species <- read.csv("data_processed/all_species_raw.csv")
+all_species <- read.csv("data_processed/all_species_master.csv")
+
+#===============================================================================
+# Reformat previous names
+#===============================================================================
+colnames(all_species)
+
+# reformat previous common names
+extract_previous_names <- function(x){
+  if(is.na(x) || x == "" || x == "character(0)"){
+    return(character(0))
+  }
+  # decode html entities
+  x <- gsub("&lt;", "<", x)
+  x <- gsub("&gt;", ">", x)
+  # remove html tags
+  x <- gsub("<[^>]+>", "", x)
+  # handle c("a","b","c") format
+  if(grepl("^c\\(", x)){
+    out <- tryCatch(eval(parse(text = x)), error = function(e) character(0))
+    out <- gsub('\\"', "", out)
+    return(trimws(out))
+  }
+  trimws(x)
+}
+
+previous_aliases <- all_species %>%
+  select(species_id = id, species_name = recordName, previous_common_name) %>%
+  rowwise() %>%
+  mutate(alias = list( extract_previous_names(previous_common_name))) %>%
+  unnest(alias) %>%
+  mutate(alias_source = "previous_common") %>%
+  mutate(alias = stringr::str_squish(alias)) %>%
+  filter(!is.na(alias), alias != "") %>%
+  # remove generic population-only aliases
+  filter(!grepl(" population$| populations$", alias, ignore.case = TRUE)) %>%
+  distinct(species_id, alias, .keep_all = TRUE)
+
+# reformat previous scientific names
+extract_previous_scientific_names <- function(x){
+  if(is.na(x) || x == "" || x == "character(0)"){
+    return(character(0))
+  }
+  # decode encoded HTML entities
+  x <- gsub("&lt;", "<", x)
+  x <- gsub("&gt;", ">", x)
+  if(grepl("^c\\(", x)){
+    out <- tryCatch(eval(parse(text = x)), error = function(e) character(0))
+  } else {
+    out <- x
+  }
+  # remove html tags
+  out <- gsub("<[^>]+>", "", out)
+  # remove escaped quotes
+  out <- gsub('\\"', "", out)
+  out <- trimws(out)
+  out
+}
+
+previous_scientific_aliases <- all_species %>%
+  select(species_id = id, species_name = recordName, previous_scientific_name) %>%
+  rowwise() %>%
+  mutate(alias = list(extract_previous_scientific_names(
+     previous_scientific_name))) %>%
+  unnest(alias) %>%
+  mutate(alias_source = "previous_scientific") %>%
+  mutate(alias = stringr::str_squish(alias)) %>%
+  filter(!is.na(alias), alias != "") %>%
+  distinct(species_id, alias, .keep_all = TRUE)
 
 #===============================================================================
 # Build Species Alias Table
@@ -138,17 +196,15 @@ species_aliases <- bind_rows(
     mutate(alias_source = "cosewic_scientific"),
   all_species %>%
     select(species_id = id, species_name = recordName, alias = legalScientificName) %>%
-    mutate(alias_source = "legal_scientific")) %>%
+    mutate(alias_source = "legal_scientific"),
+  previous_aliases,
+  previous_scientific_aliases) %>%
   filter(!is.na(alias), alias != "") %>%
-  mutate(alias = str_squish(alias)) %>%
+  mutate(alias = stringr::str_squish(alias)) %>%
   distinct(species_id, alias, .keep_all = TRUE)
 
 #===============================================================================
 # Species-Publication Matching
-# Matching hierarchy:
-#   High confidence   = Scientific names
-#   Medium confidence = Common names
-#   Low confidence    = Everything else
 #===============================================================================
 
 message("Matching publications to SAR species...")
@@ -159,18 +215,14 @@ matches <- map_dfr(
     alias <- species_aliases$alias[i]
     hits <- csas_publications %>%
       filter(str_detect(search_text, fixed(str_to_lower(alias))))
-    
     if (nrow(hits) == 0) {
       return(NULL)
     }
-    
     hits %>%
       mutate(species_id = species_aliases$species_id[i],
              species_name = species_aliases$species_name[i],
              matched_alias = alias,
-             alias_source = species_aliases$alias_source[i])
-  }
-)
+             alias_source = species_aliases$alias_source[i])})
 
 #===============================================================================
 # Assign Match Confidence
@@ -178,8 +230,8 @@ matches <- map_dfr(
 
 matches <- matches %>%
   mutate(confidence = case_when(
-    alias_source %in% c("cosewic_scientific", "legal_scientific") ~ "High",
-    alias_source == "common" ~ "Medium",
+    alias_source %in% c("cosewic_scientific", "legal_scientific", "previous_scientific") ~ "High",
+    alias_source %in% c("common", "cosewic_common", "legal_common","previous_common") ~ "Medium",
     TRUE ~ "Low"))
 
 #===============================================================================
@@ -234,6 +286,7 @@ get_csas_pdf <- function(publication_id){
   out
 }
 
+# NOTE: THIS WILL TAKE TIME
 pdf_lookup <- purrr::map_dfr(
   seq_along(pdf_candidates$publication_id),
   function(i){
@@ -247,12 +300,6 @@ pdf_lookup <- purrr::map_dfr(
 
 csas_publications <- csas_publications %>%
   left_join(pdf_lookup, by = "publication_id")
-
-csas_publications <- csas_publications %>%
-  mutate(
-    pdf_url = coalesce(pdf_url.y, pdf_url.x)
-  ) %>%
-  select(-pdf_url.x, -pdf_url.y)
 
 #===============================================================================
 # Export Results

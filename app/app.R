@@ -49,6 +49,8 @@ recovery_compliance <- readRDS("data/recovery_compliance.rds")
 progress_compliance <- readRDS("data/progress_report_compliance.rds")
 csas_publications <- readRDS("data/csas_publications.rds")
 csas_species_links <- readRDS("data/csas_species_links.rds")
+other_publications <- readRDS("data/all_science_publications.rds")
+other_species_links <- readRDS("data/all_species_links.rds")
 
 ################################################################################
 # APPLICATION DATASETS
@@ -97,7 +99,7 @@ species_threats_app <- species_threats %>%
     sara_status %in% c("No Data", NA_character_) ~ "No Status",TRUE ~ sara_status))
 
 ################################################################################
-# CSAS SPECIES LOOKUP
+# CSAS and SCIENCE SPECIES LOOKUP
 ################################################################################
 
 csas_species_links <- csas_species_links %>%
@@ -532,6 +534,7 @@ ui <- fluidPage(
                        tags$li("Use Species Information to explore species profiles and recovery information."),
                        tags$li("Use Species Documents to review recovery strategies, action plans, management plans, and progress reports."),
                        tags$li("Use CSAS Publications to review documents developed during Canadian Science Advisory Secretariat (CSAS) processes."),
+                       tags$li("Use Scientific Publications to identify DFO Science and Canadian Wildlife Service reports related to species at risk."),
                        tags$li("Use Threat Summary and Explore Threats to examine threats affecting species recovery."),
                        tags$li("Use Province Summary to summarize species and recovery planning information by jurisdiction.")),
                      h4("Important Notes"),
@@ -543,7 +546,9 @@ ui <- fluidPage(
                            tags$li("Species at Risk Public Registry"),
                            tags$li("Species profile pages"),
                            tags$li("Recovery and planning documents"),
-                           tags$li("CSAS publications"))),
+                           tags$li("CSAS publications"),
+                           tags$li("DFO Science technical, manuscript, and data reports"),
+                           tags$li("Canadian Wildlife Service technical reports, bulletins, and occasional papers"))),
                        column(6,h4("Application Coverage"),
                          tags$ul(
                            tags$li(
@@ -640,6 +645,37 @@ ui <- fluidPage(
                                    "Publications are currently linked at the species level and may include information relevant to multiple populations or designatable units."),
                             tags$p(style = "color:#6c757d;", textOutput("csas_publication_count")),
                           DTOutput("csas_documents"))))),
+                  
+                  # SCIENCE DOCUMENTS TAB
+                  tabPanel(
+                    title = tagList(icon("book"), "Scientific Publications"),
+                    value = "science_docs",
+                    br(),
+                    fluidRow(column(
+                      width = 2,
+                      div(class = "threat-card",
+                          h4(icon("filter"), " Filters", class = "card-title"),
+                          tags$p(style = "color:#6c757d; font-size:13px;",
+                                 "Filter species records by status, range, species, and DU."),
+                          selectInput("taxa_science", "Taxonomic Group",
+                                      choices = taxa_choices,selected = "All"),
+                          selectInput("listing_filter_science", "Listing Status",
+                                      choices = listing_choices, selected = "All"),
+                          selectInput("status_science", "SARA Status", choices = sara_choices),
+                          selectInput("range_science", "Range", choices = range_choices),
+                          selectInput("species_science", "Species",
+                                      choices = sort(unique(species_master_app$common_name))),
+                          selectInput("record_science", "Population / Designatable Unit",
+                                      choices = NULL))),
+                      column(
+                        width = 10,
+                        uiOutput("science_species_banner"),
+                        div(class = "threat-card",
+                            h3("Scientific Publications"),
+                            tags$p(class = "text-muted",
+                                   "Publications include DFO Science reports, Canadian Wildlife Service technical reports, wildlife management bulletins, and related scientific literature."),
+                            tags$p(style = "color:#6c757d;", textOutput("science_publication_count")),
+                            DTOutput("science_documents"))))),
                  
                    # RECOVERY PLANNING TAB
                   tabPanel(title = tagList(icon("clipboard-list"),"Recovery Planning"),
@@ -740,7 +776,7 @@ ui <- fluidPage(
   hr(),
   tags$div(style = "font-size:12px;",
     class = "footer-card",
-    "Canadian Species at Risk Explorer v3.3",
+    "Canadian Species at Risk Explorer v3.4",
     tags$br(),
     paste("Registry data last refreshed:", format(scrape_date, "%Y-%m-%d")),
     tags$br(),
@@ -796,6 +832,13 @@ server <- function(input, output, session){
       slice(1)
   })
   
+  # Currently selected species record from the Science Publications tab
+  selected_species_science <- reactive({
+    species_master_app %>%
+      filter(record_name == input$record_science) %>%
+      slice(1)
+  })
+
   ##############################################################################
   # COMPLIANCE REACTIVES
   ##############################################################################
@@ -844,9 +887,32 @@ server <- function(input, output, session){
       left_join(csas_publications %>% 
                   select(publication_id, pdf_url), by = "publication_id") %>%
       distinct(publication_id, .keep_all = TRUE) %>%
-      arrange(desc(publication_year),publication_number)
+      arrange(desc(publication_year), publication_number)
   })
   
+  ##############################################################################
+  # SCIENCE DOCUMENTS REACTIVES
+  ##############################################################################
+  # Retrieve Science publications associated with the currently selected species.
+  #
+  # Workflow:
+  #   1. Determine the scientific name associated with the selected DU.
+  #   2. Find matching Science publication links.
+  #   3. Join publication metadata and PDF URLs.
+  #   4. Remove duplicate publication IDs.
+  #   5. Return publications ordered from newest to oldest.
+  ##############################################################################
+  species_science_docs <- reactive({
+    req(input$record_science)
+    sp <- selected_species_science()
+    req(nrow(sp) > 0)
+    sci_name <- sp$scientific_name[1]
+    other_species_links %>%
+      filter(scientific_name == sci_name) %>%
+      left_join(other_publications, by = "publication_id") %>%
+      distinct(publication_id, .keep_all = TRUE)
+  })
+
   ##############################################################################
   # THREAT EXPLORATION REACTIVES
   ##############################################################################
@@ -1269,6 +1335,93 @@ server <- function(input, output, session){
     })
   
   ##############################################################################
+  # Science PUBLICATION FILTERS
+  ##############################################################################
+  # Dynamic filters used by the Science Publications tab.
+  # These observers update:
+  #   • Species choices
+  #   • DU choices
+  ##############################################################################
+  # Science species selector
+  observe({
+    species_choices <- species_master_app
+    if(input$listing_filter_science != "All"){
+      species_choices <- species_choices %>%
+        filter(listing_status == input$listing_filter_science)
+    }
+    if(input$status_science != "All"){
+      species_choices <- species_choices %>%
+        filter(sara_status == input$status_science)
+    }
+    if(input$range_science != "All"){
+      species_choices <- species_choices %>%
+        filter(grepl(input$range_science, range_text, fixed = TRUE))
+    }
+    if(input$taxa_science == "Molluscs"){
+      species_choices <- species_choices %>%
+        filter(grepl("^Molluscs", taxonomy_display))
+    } else if(input$taxa_science != "All"){
+      species_choices <- species_choices %>%
+        filter(taxonomy_display == input$taxa_science)
+    }
+    choices <- sort(unique(species_choices$common_name))
+    selected_species <- if(!is.null(input$species_science) && input$species_science %in% choices){
+      input$species_science
+    } else if(length(choices) > 0){
+      choices[1]
+    } else {
+      character(0)
+    }
+    updateSelectInput(session,  "species_science", choices = choices, selected = selected_species)
+  })
+  
+  # science DU selector
+  observeEvent(c(input$species_science, input$status_science,
+                 input$range_science, input$taxa_science, input$listing_filter_science),
+               {
+                 req(input$species_science)
+                 records <- species_master_app %>%
+                   filter(common_name == input$species_science)
+                 if(input$listing_filter_science != "All"){
+                   records <- records %>%
+                     filter(listing_status == input$listing_filter_science)
+                 }
+                 if(input$status_science != "All"){
+                   records <- records %>%
+                     filter(sara_status == input$status_science)
+                 }
+                 if(input$range_science != "All"){
+                   records <- records %>%
+                     filter(grepl(input$range_science, range_text,  fixed = TRUE))
+                 }
+                 if(input$taxa_science == "Molluscs"){
+                   records <- records %>% filter(grepl("^Molluscs", taxonomy_display))
+                 } else if(input$taxa_science != "All"){
+                   records <- records %>% filter(taxonomy_display == input$taxa_science)
+                 }
+                 records <- records %>%
+                   arrange(record_name) %>%
+                   pull(record_name)
+                 selected_record <- if(
+                   !is.null(input$record_science) &&
+                   input$record_science %in% records
+                 ) {
+                   input$record_science
+                 } else if(length(records) > 0) {
+                   records[1]
+                 } else {
+                   character(0)
+                 }
+                 
+                 updateSelectInput(
+                   session,
+                   "record_science",
+                   choices = records,
+                   selected = selected_record
+                 )
+               })
+  
+  ##############################################################################
   # CROSS-TAB DESIGNATABLE UNIT (DU) SYNCHRONIZATION
   ##############################################################################
   # Species Information, Species Documents, and CSAS Publications maintain
@@ -1290,6 +1443,8 @@ server <- function(input, output, session){
     updateSelectInput(session, "record_docs", selected = sp$record_name[1])
     updateSelectInput(session, "species_csas", selected = sp$common_name[1])
     updateSelectInput(session, "record_csas", selected = sp$record_name[1])
+    updateSelectInput(session, "species_science", selected = sp$common_name[1])
+    updateSelectInput(session, "record_science", selected = sp$record_name[1])
     }, ignoreInit = TRUE)
   
   observeEvent(input$record_docs, {
@@ -1300,6 +1455,8 @@ server <- function(input, output, session){
     updateSelectInput(session, "record", selected = sp$record_name[1])
     updateSelectInput(session, "species_csas", selected = sp$common_name[1])
     updateSelectInput(session, "record_csas", selected = sp$record_name[1])
+    updateSelectInput(session, "species_science", selected = sp$common_name[1])
+    updateSelectInput(session, "record_science", selected = sp$record_name[1])
     }, ignoreInit = TRUE)
   
   observeEvent(input$record_csas, {
@@ -1310,6 +1467,20 @@ server <- function(input, output, session){
     updateSelectInput(session, "record", selected = sp$record_name[1])
     updateSelectInput(session, "species_docs", selected = sp$common_name[1])
     updateSelectInput(session, "record_docs", selected = sp$record_name[1])
+    updateSelectInput(session, "species_science", selected = sp$common_name[1])
+    updateSelectInput(session, "record_science", selected = sp$record_name[1])
+    }, ignoreInit = TRUE)
+  
+  observeEvent(input$record_science, {
+    req(input$record_science)
+    sp <- selected_species_science()
+    req(nrow(sp) > 0)
+    updateSelectInput(session, "species", selected = sp$common_name[1])
+    updateSelectInput(session, "record", selected = sp$record_name[1])
+    updateSelectInput(session, "species_docs", selected = sp$common_name[1])
+    updateSelectInput(session, "record_docs", selected = sp$record_name[1])
+    updateSelectInput(session, "species_csas", selected = sp$common_name[1])
+    updateSelectInput(session, "record_csas", selected = sp$record_name[1])
     }, ignoreInit = TRUE)
   
   ##############################################################################
@@ -1986,6 +2157,41 @@ output$csas_publication_count <- renderText({
   req(species_csas_docs())
   paste(nrow(species_csas_docs()), "publications found")
 })
+
+##############################################################################
+# SCIENCE PUBLICATIONS OUTPUTS
+##############################################################################
+
+output$science_documents <- renderDT({
+  req(species_science_docs())
+  species_science_docs() %>%
+    mutate(Title = ifelse(!is.na(publication_url) &
+                            publication_url != "",
+                          paste0('<a href="', publication_url,
+                                 '" target="_blank">', title, '</a>'), title)) %>%
+    transmute(Source = publication_source, Series = publication_series,
+              Year = publication_year, Title)
+}, escape = FALSE,rownames = FALSE,options = list(pageLength = 15, scrollX = TRUE))
+
+output$science_species_banner <- renderUI({
+  sp <- selected_species_science()
+  req(nrow(sp) > 0)
+  div(style = "
+      background-color:#f8f9fa;
+      border:1px solid #dee2e6;
+      font-size:24px;
+      border-radius:10px;
+      padding:15px;
+      margin-bottom:15px;",
+      tags$b("Viewing Publications for: "),
+      tags$span(style = "color:#2c5aa0; font-weight:600;", strong(sp$common_name[1])))
+})
+
+output$science_publication_count <- renderText({
+  req(species_science_docs())
+  paste(nrow(species_science_docs()), "publications found")
+})
+
 
 ##############################################################################
 # PROVINCE SUMMARY OUTPUTS

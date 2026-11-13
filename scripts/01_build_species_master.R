@@ -26,7 +26,8 @@ colnames(all_species)
 
 # Keep required fields
 all_species <- all_species %>%
-  select(id, commonName, taxonomyId, cosewicCommonName, cosewicScientificName,
+  select(id, prevCosewicCommonName,prevCosewicScientificName,
+         commonName, taxonomyId, cosewicCommonName, cosewicScientificName,
          cosewicStatusCriteria, cosewicStatusHis, cosewicReasonDes,
          cosewicPopulation, cosewicLastAssessmentDate, emergencyAssessment,
          cosewicStatusId, legalCommonName, legalScientificName,

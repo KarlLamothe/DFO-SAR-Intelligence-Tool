@@ -1,5 +1,6 @@
 # read in raw data
 raw_species <- readRDS("data_processed/all_species_raw.rds")
+library(htmltools)
 #names(raw_species)
 #glimpse(raw_species)
 
@@ -8,7 +9,11 @@ species_master <- raw_species %>%
   mutate(common_name = gsub("\u2019", "'",
                             coalesce(legalCommonName, cosewicCommonName)),
     scientific_name = gsub("\u2019", "'",
-                           coalesce(legalScientificName, cosewicScientificName))) %>%
+                           coalesce(legalScientificName, cosewicScientificName)),
+    previous_common_name = gsub("\u2019", "'",
+                                htmlEscape(prevCosewicCommonName, attribute = FALSE)),
+    previous_scientific_name = gsub("\u2019", "'",
+                                    htmlEscape(prevCosewicScientificName, attribute = FALSE))) %>%
   
   mutate(record_name = case_when(
     !is.na(cosewicPopulation) & cosewicPopulation != "" ~
@@ -21,8 +26,8 @@ species_master <- raw_species %>%
 
 # Format status fields
 species_master <- species_master %>%
-  relocate(id, common_name, scientific_name, sara_status, cosewic_status, record_name,
-           schedule, taxonomyId, range_text)
+  relocate(id, common_name, scientific_name, previous_common_name, previous_scientific_name,
+           sara_status, cosewic_status, record_name, schedule, taxonomyId, range_text)
 #unique(species_master$sara_status)
 
 # change to sentence case rather than all caps
