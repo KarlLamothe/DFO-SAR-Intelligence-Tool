@@ -1434,53 +1434,69 @@ server <- function(input, output, session){
   #
   # Synchronization occurs at the DU level using the selected record_name.
   ##############################################################################
+  # CROSS TAB SYNCHRONIZATION HELPERS
+  sync_species <- function(common_name, source_input){
+    species_inputs <- c("species", "species_docs", "species_csas", "species_science")
+    species_inputs <- setdiff(species_inputs, source_input)
+    for(id in species_inputs){
+      current <- isolate(input[[id]])
+      if(!identical(current, common_name)){
+      updateSelectInput(session, id, selected = common_name)}}}
   
+  sync_record <- function(record_name, source_input){
+    record_inputs <- c("record", "record_docs", "record_csas", "record_science")
+    record_inputs <- setdiff(record_inputs, source_input)
+    for(id in record_inputs){
+      current <- isolate(input[[id]])
+      if(!identical(current, record_name)){
+      updateSelectInput(session,id, selected = record_name)}}}
+  
+  # species information
+  observeEvent(input$species, {
+    req(input$species)
+    sync_species(input$species, source_input = "species")
+    }, ignoreInit = TRUE)
+  
+  # species documents
+  observeEvent(input$species_docs, {
+    req(input$species_docs)
+    sync_species(input$species_docs, source_input = "species_docs")
+    }, ignoreInit = TRUE)
+  
+  # CSAS pubs
+  observeEvent(input$species_csas, {
+    req(input$species_csas)
+    sync_species(input$species_csas, source_input = "species_csas")
+    }, ignoreInit = TRUE)
+  
+  # science pubs
+  observeEvent(input$species_science, {
+    req(input$species_science)
+    sync_species(input$species_science, source_input = "species_science")
+    }, ignoreInit = TRUE)
+  
+  # DUs
   observeEvent(input$record, {
     req(input$record)
-    sp <- selected_species()
-    req(nrow(sp) > 0)
-    updateSelectInput(session, "species_docs", selected = sp$common_name[1])
-    updateSelectInput(session, "record_docs", selected = sp$record_name[1])
-    updateSelectInput(session, "species_csas", selected = sp$common_name[1])
-    updateSelectInput(session, "record_csas", selected = sp$record_name[1])
-    updateSelectInput(session, "species_science", selected = sp$common_name[1])
-    updateSelectInput(session, "record_science", selected = sp$record_name[1])
+    sync_record(input$record, source_input = "record")
     }, ignoreInit = TRUE)
   
+  # species docs
   observeEvent(input$record_docs, {
     req(input$record_docs)
-    sp <- selected_species_docs()
-    req(nrow(sp) > 0)
-    updateSelectInput(session, "species", selected = sp$common_name[1])
-    updateSelectInput(session, "record", selected = sp$record_name[1])
-    updateSelectInput(session, "species_csas", selected = sp$common_name[1])
-    updateSelectInput(session, "record_csas", selected = sp$record_name[1])
-    updateSelectInput(session, "species_science", selected = sp$common_name[1])
-    updateSelectInput(session, "record_science", selected = sp$record_name[1])
+    sync_record(input$record_docs, source_input = "record_docs")
     }, ignoreInit = TRUE)
   
+  # CSAS pubs
   observeEvent(input$record_csas, {
     req(input$record_csas)
-    sp <- selected_species_csas()
-    req(nrow(sp) > 0)
-    updateSelectInput(session, "species", selected = sp$common_name[1])
-    updateSelectInput(session, "record", selected = sp$record_name[1])
-    updateSelectInput(session, "species_docs", selected = sp$common_name[1])
-    updateSelectInput(session, "record_docs", selected = sp$record_name[1])
-    updateSelectInput(session, "species_science", selected = sp$common_name[1])
-    updateSelectInput(session, "record_science", selected = sp$record_name[1])
+    sync_record(input$record_csas, source_input = "record_csas")
     }, ignoreInit = TRUE)
   
+  # science pubs
   observeEvent(input$record_science, {
     req(input$record_science)
-    sp <- selected_species_science()
-    req(nrow(sp) > 0)
-    updateSelectInput(session, "species", selected = sp$common_name[1])
-    updateSelectInput(session, "record", selected = sp$record_name[1])
-    updateSelectInput(session, "species_docs", selected = sp$common_name[1])
-    updateSelectInput(session, "record_docs", selected = sp$record_name[1])
-    updateSelectInput(session, "species_csas", selected = sp$common_name[1])
-    updateSelectInput(session, "record_csas", selected = sp$record_name[1])
+    sync_record(input$record_science, source_input = "record_science")
     }, ignoreInit = TRUE)
   
   ##############################################################################
