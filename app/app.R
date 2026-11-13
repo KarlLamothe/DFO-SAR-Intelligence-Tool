@@ -11,6 +11,15 @@
 #
 # Primary data source:
 # Species at Risk Public Registry
+# Additional publication sources:
+#   • Canadian Science Advisory Secretariat (CSAS)
+#   • Fisheries and Oceans Canada Science Publications
+#   • Canadian Wildlife Service Publication Series
+#
+# The application integrates registry information with
+# species-linked scientific publications to support
+# species-at-risk research, recovery planning, and
+# status assessment activities.
 ################################################################################
 
 library(shiny)
@@ -59,18 +68,15 @@ other_species_links <- readRDS("data/all_species_links.rds")
 target_status <- c("Endangered", "Threatened", "Extirpated", "Special Concern")
 
 species_master_app <- species_master %>%
-  filter(sara_status %in% target_status | cosewic_status %in% target_status)%>%
-  mutate(listing_status = case_when(
-    sara_status %in% target_status ~ "SARA Listed",
-    cosewic_status %in% target_status ~ "COSEWIC Assessed",TRUE ~ "Other")) %>%
-  mutate(sara_status = case_when(sara_status %in% c("No Data", NA_character_) ~ "No Status", TRUE ~ sara_status),
-      listing_status = case_when(
-        sara_status %in% target_status ~ "SARA Listed",
-        currentGicDecisionId == "Pending" ~ "Under Consideration",
-        currentGicDecisionId == "Not to list" ~"Not Listed",
-        currentGicDecisionId == "Refer back" ~ "Referred Back",
-        cosewic_status %in% target_status ~ "COSEWIC Assessed",
-        TRUE ~ "Other"))
+  filter(sara_status %in% target_status | cosewic_status %in% target_status) %>%
+  mutate(sara_status = case_when(sara_status %in% c("No Data", NA_character_) ~ "No Status",
+                                 TRUE ~ sara_status),
+         listing_status = case_when(sara_status %in% target_status ~ "SARA Listed",
+                                    currentGicDecisionId == "Pending" ~ "Under Consideration",
+                                    currentGicDecisionId == "Not to list" ~ "Not Listed",
+                                    currentGicDecisionId == "Refer back" ~ "Referred Back",
+                                    cosewic_status %in% target_status ~ "COSEWIC Assessed",
+                                    TRUE ~ "Other"))
 
 species_lookup <- species_master_app %>%
   distinct(record_name, range_text, taxonomy_display, listing_status)
@@ -156,10 +162,17 @@ summary_card <- function(value, label, bg, border){
 
 ################################################################################
 # RECOVERY PLANNING COVERAGE DATASET
-# Create a DU-level recovery planning summary used in the "Recovery Planning" tab.
-# For each Designatable Unit (DU), determine:
-# Document identification is performed using Registry metadata and document
-# titles.
+# Create a Designatable Unit (DU)-level summary of recovery
+# planning document availability and progress reporting status.
+#
+# The dataset is used by the Recovery Planning tab to summarize:
+#   • Recovery Strategy availability
+#   • Action Plan availability
+#   • Management Plan availability
+#   • Progress Report compliance status
+#
+# Document identification is derived from Registry metadata,
+# planning document classifications, and document titles.
 ################################################################################
 
 # derived recovery data dataset
@@ -594,10 +607,10 @@ ui <- fluidPage(
                                         h3(textOutput("n_threats")),
                                     DTOutput("threats"),
                                     tags$p(style = "font-style: italic; color: #666666;",
-                                           "Threat groups indicate the presence of a threat within profile text and should be considered screening-level classifications rather than formal threat assessments."))
+                                           "Threat groups indicate references to threats identified within Species at Risk Public Registry profile text and should be considered screening-level classifications rather than formal threat assessments or threat rankings."))
                                     ))),
                   
-                  # SPECIES DOCUMENTS TAB
+                  # RECOVERY DOCUMENTS TAB
                   tabPanel(title = tagList(icon("file-lines"),"Species Documents"),
                            value = "species_docs",
                            br(),
@@ -612,7 +625,7 @@ ui <- fluidPage(
                                            DTOutput("documents"),
                                            tags$p(style = "font-size:12px; color:gray;",
                                              tags$b("Document Notes: "),
-                                             "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for ", tags$i("Species at Risk Act"), " listed species. Efforts were made to removed 'Proposed' documents."
+                                             "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for ", tags$i("Species at Risk Act"), " listed species. Efforts were made to remove 'Proposed' documents."
                                            ))))),
                   
                   # CSAS DOCUMENTS TAB
@@ -673,7 +686,7 @@ ui <- fluidPage(
                         div(class = "threat-card",
                             h3("Scientific Publications"),
                             tags$p(class = "text-muted",
-                                   "Publications include DFO Science reports, Canadian Wildlife Service technical reports, wildlife management bulletins, and related scientific literature."),
+                                   "Publications include DFO Science reports, Canadian Wildlife Service technical reports, Wildlife Management Bulletins, Occasional Papers, and other government science publication series."),
                             tags$p(style = "color:#6c757d;", textOutput("science_publication_count")),
                             DTOutput("science_documents"))))),
                  
@@ -743,8 +756,8 @@ ui <- fluidPage(
                                                  "Click a species record to open the Species Information tab."),
                                                DTOutput("explore_species"))
                                         )))),
-                  # PROVINCIAL SUMMARY TAB
-                  tabPanel(title = tagList(icon("map"),"Province Summary"),
+                  # JURISDICTION SUMMARY TAB
+                  tabPanel(title = tagList(icon("map"),"Jurisdiction Summary"),
                            value = "prov_sum",
                            div(style = "max-width:1200px; margin-left:10px;",
                                br(),
@@ -984,7 +997,7 @@ server <- function(input, output, session){
   })
   
   ##############################################################################
-  # PROVINCE SUMMARY REACTIVES
+  # JURISDICTIONAL SUMMARY REACTIVES
   ##############################################################################
   # Supporting datasets used by the Province Summary tab.
   #
@@ -2187,7 +2200,13 @@ output$science_documents <- renderDT({
                                  '" target="_blank">', title, '</a>'), title)) %>%
     transmute(Source = publication_source, Series = publication_series,
               Year = publication_year, Title)
-}, escape = FALSE,rownames = FALSE,options = list(pageLength = 15, scrollX = TRUE))
+}, escape = FALSE,rownames = FALSE,
+options = list(pageLength = 15, scrollX = TRUE, autoWidth = TRUE,
+               columnDefs = list(
+                 list(width = "120px", targets = 0),  # Source
+                 list(width = "180px", targets = 1),  # Series
+                 list(width = "70px", targets = 2)   # Year
+               )))
 
 output$science_species_banner <- renderUI({
   sp <- selected_species_science()
