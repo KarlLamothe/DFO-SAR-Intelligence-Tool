@@ -545,7 +545,7 @@ ui <- fluidPage(
                      h3("Quick Start",style = "margin-top:0;"),
                      tags$ol(
                        tags$li("Use Species Information to explore species profiles and recovery information."),
-                       tags$li("Use Species Documents to review recovery strategies, action plans, management plans, and progress reports."),
+                       tags$li("Use Recovery Documents to review recovery strategies, action plans, management plans, and progress reports."),
                        tags$li("Use CSAS Publications to review documents developed during Canadian Science Advisory Secretariat (CSAS) processes."),
                        tags$li("Use Scientific Publications to identify DFO Science and Canadian Wildlife Service reports related to species at risk."),
                        tags$li("Use Threat Summary and Explore Threats to examine threats affecting species recovery."),
@@ -611,7 +611,7 @@ ui <- fluidPage(
                                     ))),
                   
                   # RECOVERY DOCUMENTS TAB
-                  tabPanel(title = tagList(icon("file-lines"),"Species Documents"),
+                  tabPanel(title = tagList(icon("file-lines"),"Recovery Documents"),
                            value = "species_docs",
                            br(),
                            fluidRow(species_documents_selector_ui, 
