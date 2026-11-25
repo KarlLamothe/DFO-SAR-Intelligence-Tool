@@ -2163,6 +2163,7 @@ output$explore_species_count <- renderUI({
   if(input$explore_taxa == "Molluscs"){
     total_records <- total_records %>%
       filter(grepl("^Molluscs", taxonomy_display))
+    
   } else if(input$explore_taxa != "All"){
     total_records <- total_records %>%
       filter(taxonomy_display == input$explore_taxa)
