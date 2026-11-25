@@ -52,7 +52,7 @@ species_master <- species_master %>%
     image_url = paste0(image_base_url, imageFileName))
 
 # export
-write_csv(species_master, "data_processed/all_species_master.csv")
+write_rds(species_master, "data_processed/all_species_master.rds")
 
 # completion message
 message(sprintf("Species master table created: %s species.", nrow(species_master)))

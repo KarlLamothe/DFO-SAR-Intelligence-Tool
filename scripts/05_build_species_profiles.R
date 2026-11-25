@@ -1,10 +1,8 @@
 # read in master
-species_master <- read.csv("data_processed/all_species_master.csv")
-names(all_species)
-head(all_species$profiles, 3)
+species_master <- readRDS("data_processed/all_species_master.rds")
 
 # moving to all species
-species_profiles <- purrr::map2_dfr(all_species$id, all_species$profiles, extract_profile)
+species_profiles <- purrr::map2_dfr(raw_species$id, raw_species$profiles, extract_profile)
 
 # clean this up
 #str(species_profiles)

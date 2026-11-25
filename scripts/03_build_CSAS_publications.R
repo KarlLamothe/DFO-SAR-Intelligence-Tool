@@ -246,7 +246,7 @@ matches <- matches %>%
 #===============================================================================
 
 sar_terms <- c("recovery potential", "recovery potential assessment",
-               "species at risk", "allowable harm","science response",
+               "species at risk", "allowable harm", "science response",
                "critical habitat", "residence description")
 
 csas_publications <- csas_publications %>%

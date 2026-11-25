@@ -60,29 +60,43 @@ remove_html <- function(x) {
 
 # extract species profile
 extract_profile <- function(species_id, profile_obj){
-  if(length(profile_obj) == 0){
+  
+  if(
+    length(profile_obj) == 0 ||
+    is.null(profile_obj) ||
+    all(is.na(profile_obj))
+  ){
     return(
-      tibble(id = species_id,
-             description = NA_character_,
-             population = NA_character_,
-             habitat = NA_character_,
-             biology = NA_character_,
-             threats = NA_character_,
-             critical_habitat = NA_character_,
-             federal_protection = NA_character_,
-             other_protection = NA_character_))}
+      tibble(
+        id = species_id,
+        description = NA_character_,
+        population = NA_character_,
+        habitat = NA_character_,
+        biology = NA_character_,
+        threats = NA_character_,
+        critical_habitat = NA_character_,
+        federal_protection = NA_character_,
+        other_protection = NA_character_
+      )
+    )
+  }
   
-  profile_json <- jsonlite::fromJSON(profile_obj[[1]])
+  json_txt <- profile_obj
   
-  tibble(id = species_id,
-         description = profile_json$description,
-         population = profile_json$population,
-         habitat = profile_json$habitat,
-         biology = profile_json$biology,
-         threats = profile_json$threats,
-         critical_habitat = profile_json$criticalHabitat,
-         federal_protection = profile_json$federalProtection,
-         other_protection = profile_json$otherProtection)}
+  profile_json <- jsonlite::fromJSON(json_txt)
+  
+  tibble(
+    id = species_id,
+    description = profile_json$description,
+    population = profile_json$population,
+    habitat = profile_json$habitat,
+    biology = profile_json$biology,
+    threats = profile_json$threats,
+    critical_habitat = profile_json$criticalHabitat,
+    federal_protection = profile_json$federalProtection,
+    other_protection = profile_json$otherProtection
+  )
+}
 
 # clean html
 clean_html <- function(x){

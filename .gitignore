@@ -5,4 +5,5 @@
 .Renviron
 docs/
 scripts/archive/
+app/data/science_species_links.csv
 docs/project_roadmap.md
