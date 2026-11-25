@@ -837,6 +837,7 @@ server <- function(input, output, session){
   # Stores species selections made from the Explore Threats table so they can
   # be carried into other tabs.
   selected_record_from_explore <- reactiveVal(NULL)
+  shared_du <- reactiveVal(NULL)
   
   # Currently selected species record from the CSAS Publications tab
   selected_species_csas <- reactive({
@@ -1328,12 +1329,13 @@ server <- function(input, output, session){
       records <- records %>%
         arrange(record_name) %>%
         pull(record_name)
+
       selected_record <- if(
         !is.null(input$record_csas) &&
         input$record_csas %in% records
-      ) {
+      ){
         input$record_csas
-      } else if(length(records) > 0) {
+      } else if(length(records) > 0){
         records[1]
       } else {
         character(0)
@@ -1415,12 +1417,13 @@ server <- function(input, output, session){
                  records <- records %>%
                    arrange(record_name) %>%
                    pull(record_name)
+
                  selected_record <- if(
                    !is.null(input$record_science) &&
                    input$record_science %in% records
-                 ) {
+                 ){
                    input$record_science
-                 } else if(length(records) > 0) {
+                 } else if(length(records) > 0){
                    records[1]
                  } else {
                    character(0)
@@ -1456,14 +1459,6 @@ server <- function(input, output, session){
       if(!identical(current, common_name)){
       updateSelectInput(session, id, selected = common_name)}}}
   
-  sync_record <- function(record_name, source_input){
-    record_inputs <- c("record", "record_docs", "record_csas", "record_science")
-    record_inputs <- setdiff(record_inputs, source_input)
-    for(id in record_inputs){
-      current <- isolate(input[[id]])
-      if(!identical(current, record_name)){
-      updateSelectInput(session,id, selected = record_name)}}}
-  
   # species information
   observeEvent(input$species, {
     req(input$species)
@@ -1490,26 +1485,41 @@ server <- function(input, output, session){
   
   # DUs
   observeEvent(input$record, {
-    req(input$record)
-    sync_record(input$record, source_input = "record")
-    }, ignoreInit = TRUE)
+    sp <- species_master_app %>%
+      filter(record_name == input$record) %>%
+      slice(1)
+    req(nrow(sp) > 0)
+    #shared_du(input$record)
+    sync_species(sp$common_name[1],
+                 source_input = "species")
+  }, ignoreInit = TRUE)
   
   # species docs
   observeEvent(input$record_docs, {
-    req(input$record_docs)
-    sync_record(input$record_docs, source_input = "record_docs")
+    sp <- species_master_app %>%
+      filter(record_name == input$record_docs) %>%
+      slice(1)
+    req(nrow(sp) > 0)
+    shared_du(input$record_docs)
+    sync_species(sp$common_name[1], source_input = "species_docs")
     }, ignoreInit = TRUE)
   
   # CSAS pubs
   observeEvent(input$record_csas, {
-    req(input$record_csas)
-    sync_record(input$record_csas, source_input = "record_csas")
+    sp <- species_master_app %>%
+      filter(record_name == input$record_csas) %>%
+      slice(1)
+    req(nrow(sp) > 0)
+    sync_species(sp$common_name[1], source_input = "species_csas")
     }, ignoreInit = TRUE)
   
   # science pubs
   observeEvent(input$record_science, {
-    req(input$record_science)
-    sync_record(input$record_science, source_input = "record_science")
+    sp <- species_master_app %>%
+      filter(record_name == input$record_science) %>%
+      slice(1)
+    req(nrow(sp) > 0)
+    sync_species(sp$common_name[1], source_input = "species_science")
     }, ignoreInit = TRUE)
   
   ##############################################################################
@@ -1553,16 +1563,23 @@ server <- function(input, output, session){
       arrange(record_name) %>%
       pull(record_name)
     
+    desired_du <- shared_du()
     selected_record <- if(
+      !is.null(desired_du) &&
+      desired_du %in% records
+    ){
+      desired_du
+    } else if(
       !is.null(input$record) &&
       input$record %in% records
-    ) {
+    ){
       input$record
-    } else if(length(records) > 0) {
+    } else if(length(records) > 0){
       records[1]
     } else {
       character(0)
     }
+    
     updateSelectInput(session, "record", choices = records, selected = selected_record)
   })
 
@@ -1622,12 +1639,19 @@ server <- function(input, output, session){
       records <- records %>%
         arrange(record_name) %>%
         pull(record_name)
+
+      desired_du <- shared_du()
       selected_record <- if(
+        !is.null(desired_du) &&
+        desired_du %in% records
+      ){
+        desired_du
+      } else if(
         !is.null(input$record_docs) &&
         input$record_docs %in% records
-      ) {
+      ){
         input$record_docs
-      } else if(length(records) > 0) {
+      } else if(length(records) > 0){
         records[1]
       } else {
         character(0)
