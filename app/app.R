@@ -837,8 +837,7 @@ server <- function(input, output, session){
   # Stores species selections made from the Explore Threats table so they can
   # be carried into other tabs.
   selected_record_from_explore <- reactiveVal(NULL)
-  shared_du <- reactiveVal(NULL)
-  
+
   # Currently selected species record from the CSAS Publications tab
   selected_species_csas <- reactive({
     species_master_app %>%
@@ -1500,7 +1499,7 @@ server <- function(input, output, session){
       filter(record_name == input$record_docs) %>%
       slice(1)
     req(nrow(sp) > 0)
-    shared_du(input$record_docs)
+    updateSelectInput(session, "record", selected = input$record_docs)
     sync_species(sp$common_name[1], source_input = "species_docs")
     }, ignoreInit = TRUE)
   
@@ -1563,13 +1562,7 @@ server <- function(input, output, session){
       arrange(record_name) %>%
       pull(record_name)
     
-    desired_du <- shared_du()
     selected_record <- if(
-      !is.null(desired_du) &&
-      desired_du %in% records
-    ){
-      desired_du
-    } else if(
       !is.null(input$record) &&
       input$record %in% records
     ){
@@ -1640,13 +1633,7 @@ server <- function(input, output, session){
         arrange(record_name) %>%
         pull(record_name)
 
-      desired_du <- shared_du()
       selected_record <- if(
-        !is.null(desired_du) &&
-        desired_du %in% records
-      ){
-        desired_du
-      } else if(
         !is.null(input$record_docs) &&
         input$record_docs %in% records
       ){
