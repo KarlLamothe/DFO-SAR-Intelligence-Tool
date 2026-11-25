@@ -59,6 +59,14 @@ get_csas_details <- function(publication_id) {
   tryCatch(fromJSON(url), error = function(e) NULL)
 }
 
+# normalize the text
+normalize_text <- function(x) {
+  x %>%
+    stringi::stri_trans_nfkc() %>%   # normalize unicode
+    stringr::str_replace_all("\\u00A0", " ") %>%   # non-breaking spaces
+    stringr::str_squish()            # collapse whitespace
+}
+
 #===============================================================================
 # Download All CSAS Publications
 #===============================================================================
@@ -99,8 +107,8 @@ csas_publications <- tibble(
   publication_date = as.Date(all_csas$publishedDate),
   publication_year = all_csas$publishedYear,
   publication_type = all_csas$series$title$english,
-  title = clean_html(all_csas$title$english),
-  meeting_title = clean_html(meeting_titles)) %>%
+  title = normalize_text(clean_html(all_csas$title$english)),
+  meeting_title = normalize_text(clean_html(meeting_titles))) %>%
   mutate(search_text = str_to_lower(paste(title, meeting_title)))
 
 #===============================================================================
@@ -112,7 +120,6 @@ all_species <- read.csv("data_processed/all_species_master.csv")
 #===============================================================================
 # Reformat previous names
 #===============================================================================
-colnames(all_species)
 
 # reformat previous common names
 extract_previous_names <- function(x){
@@ -139,7 +146,7 @@ previous_aliases <- all_species %>%
   mutate(alias = list( extract_previous_names(previous_common_name))) %>%
   unnest(alias) %>%
   mutate(alias_source = "previous_common") %>%
-  mutate(alias = stringr::str_squish(alias)) %>%
+  mutate(alias = normalize_text(alias)) %>%
   filter(!is.na(alias), alias != "") %>%
   # remove generic population-only aliases
   filter(!grepl(" population$| populations$", alias, ignore.case = TRUE)) %>%
@@ -173,7 +180,7 @@ previous_scientific_aliases <- all_species %>%
      previous_scientific_name))) %>%
   unnest(alias) %>%
   mutate(alias_source = "previous_scientific") %>%
-  mutate(alias = stringr::str_squish(alias)) %>%
+  mutate(alias = normalize_text(alias)) %>%
   filter(!is.na(alias), alias != "") %>%
   distinct(species_id, alias, .keep_all = TRUE)
 
@@ -200,7 +207,7 @@ species_aliases <- bind_rows(
   previous_aliases,
   previous_scientific_aliases) %>%
   filter(!is.na(alias), alias != "") %>%
-  mutate(alias = stringr::str_squish(alias)) %>%
+  mutate(alias = normalize_text(alias)) %>%
   distinct(species_id, alias, .keep_all = TRUE)
 
 #===============================================================================
@@ -239,7 +246,7 @@ matches <- matches %>%
 #===============================================================================
 
 sar_terms <- c("recovery potential", "recovery potential assessment",
-               "species at risk", "allowable harm",
+               "species at risk", "allowable harm","science response",
                "critical habitat", "residence description")
 
 csas_publications <- csas_publications %>%
