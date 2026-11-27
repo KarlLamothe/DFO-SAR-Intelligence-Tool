@@ -2,9 +2,7 @@
 
 ### Version 3.4
 
-Canadian Species at Risk Explorer provides an interactive interface for exploring species profiles, threats, recovery planning, registry documents, and scientific publications associated with species at risk in Canada.
-
-Version 3.4 expands publication coverage by integrating Canadian Wildlife Service (CWS) Technical Report Series, Wildlife Management Bulletins, and Occasional Papers alongside existing Canadian Science Advisory Secretariat (CSAS) and DFO Science publication datasets.
+Canadian Species at Risk Explorer provides an interactive interface for exploring species profiles, registry documents, and scientific publications associated with species at risk in Canada.
 
 Scientific publications are linked to species records using species names, scientific names, historical aliases, and related taxonomic references. Publications can be explored alongside recovery planning documents and other Species at Risk Public Registry resources.
 
@@ -18,22 +16,15 @@ Scientific publications are linked to species records using species names, scien
 ## Features
 
 - Browse SARA-listed species and COSEWIC-assessed species included in the listing process.
-- Explore species profiles, threats, recovery planning information, and registry documents.
+- Explore species profiles, recovery planning information, and registry documents.
 - Filter records by Listing Status, Taxonomic Group, SARA Status, and geographic range.
 - Access Recovery Strategies, Action Plans, Management Plans, Progress Reports, and COSEWIC Assessments.
-- Review recovery planning compliance metrics, including:
-  - Recovery Strategy publication timelines.
-  - Progress Report publication timelines.
-  - Legislative due dates and compliance status.
-- Summarize recovery planning coverage and threat occurrence across species and jurisdictions.
 - Browse CSAS publications associated with species records.
 - Browse DFO Science and Canadian Wildlife Service scientific publications associated with species records.
 - Access direct links to publication pages and PDFs where available.
 - Explore species-publication relationships derived from scientific-name and alias matching.
 
 ## Listing Status Categories
-
-Version 3.1 introduces support for species that are not currently listed under Schedule 1 of SARA.
 
 The application classifies records into the following categories:
 
@@ -69,8 +60,7 @@ Explore detailed species profile information by species, designatable unit (DU),
 - Population information
 - Habitat information
 - Biology information
-- Species-specific threat summaries
-- Threat category listings
+- Threat information
 
 **Filters:**
 
@@ -91,9 +81,6 @@ Access recovery planning and assessment documents associated with each DU.
 - Action Plans
 - Management Plans
 - COSEWIC Assessments and Status Reports
-- Direct links to source documents
-- Recovery planning compliance summaries
-- Legislative due dates and reporting status
 - Direct links to source documents
 
 **Filters:**
@@ -157,78 +144,7 @@ Scientific publications are linked using scientific names, common names, histori
 - Species
 - DU
 
-### Recovery Planning Compliance
-
-The application calculates legislative recovery-planning metrics using document publication dates from the Species at Risk Public Registry.
-
-Metrics currently include:
-
-- Recovery Strategy tracking
-- Action Plan tracking
-- Management Plan tracking
-- Progress Report status tracking
-- Recovery planning coverage summaries
-
-For species listed as Special Concern, Management Plans are tracked where available. Recovery Strategy and Progress Report requirements may not apply.
-
-These metrics are intended as screening-level indicators and should not be interpreted as formal assessments of regulatory compliance.
-
-### Recovery Planning
-
-Summarizes recovery planning progress across species and DUs.
-
-**Includes:**
-
-- Recovery planning coverage by DU
-- Recovery Strategy tracking
-- Action Plan tracking
-- Management Plan tracking
-- Most recent recovery planning document date
-- Years since publication of the most recent recovery planning document
-- Visual highlighting of older planning documents
-
-**Filters:**
-
-- Taxonomic Group
-- SARA Status
-- Province/Territory
-
-### Threat Summary
-
-- Provides summary information on threats identified within Species at Risk Public Registry profile information.
-
-**Includes:**
-
-- DUs with the greatest number of identified threat categories
-- Most common threat categories across species
-- Threat summaries by taxonomic group and geographic range
-
-**Filters:**
-
-- Taxonomic Group
-- Listing Status
-- Province/Territory
-
-### Explore Threats
-
-Allows users to identify species affected by specific threat categories.
-
-**Filter by:**
-
-- Taxonomic Group
-- Listing Status
-- Threat Group
-- SARA Status
-- Province/Territory
-
-**Includes:**
-
-- Interactive species results table
-- Threat prevalence summaries
-- Species record counts and proportions associated with selected threats
-- Direct navigation to Species Information records
-
-### Province Summary
+### Jurisdictional Summary
 
 Provides an overview of species-at-risk information within a selected province, territory, or region.
 
@@ -236,7 +152,6 @@ Provides an overview of species-at-risk information within a selected province, 
 
 - Species record counts
 - SARA status summaries
-- Most common threat categories
 - Provincial species overview metrics
 
 **Filters:**
@@ -262,25 +177,6 @@ Data are derived from:
   - Technical Report Series
   - Wildlife Management Bulletin
   - Occasional Papers
-
-# Threat Group Consolidation
-
-Threat categories identified within species profile information are consolidated into broader threat groups loosely following the IUCN Threat Classification Scheme.
-
-- Residential and Commercial Development
-- Agriculture and Aquaculture
-- Energy Production and Gas
-- Transportation and Service Corridors
-- Biological Resource Use
-- Human Intrusions and Disturbance
-- Natural Systems Modification
-- Invasive Species and other Problematic Species, Genes, and Diseases
-- Pollution
-- Geological Events
-- Climate Change
-- Other Limiting Factors
-
-Threat categories are intended as **screening-level classifications** and should not be interpreted as formal threat assessments.
 
 ## Running the App
 
@@ -308,11 +204,8 @@ DFO-SAR-Intelligence-Tool/
 │   |   ├── all_species_links.rds
 │   |   ├── csas_publications.rds
 │   |   ├── csas_species_links.rds
-│   |   ├── progress_report_compliance.rds
-│   |   ├── recovery_compliance.rds
 │   |   ├── species_master.rds
 │   |   ├── species_profiles.rds
-│   |   ├── species_threats.rds
 │   |   └── species_documents.rds
 |   |
 │   └── www/
@@ -323,33 +216,26 @@ DFO-SAR-Intelligence-Tool/
 |           └── yukon_wild_buckwheat.jpg
 │
 ├── data_processed/
-│   ├── all_progress_report_compliance.csv
-│   ├── all_recovery_compliance.csv
-│   ├── all_species_document_summary.csv
+│   ├── all_science_publications.csv
+│   ├── all_science_publications.rds
 │   ├── all_species_documents.csv
-│   ├── all_species_full.csv
-│   ├── all_species_master.csv
-│   ├── all_species_master_raw.csv
+│   ├── all_species_links.rds
+│   ├── all_species_master.rds
 │   ├── all_species_profiles.csv
-│   ├── all_species_threats.csv
-│   ├── all_species_threats_summary.csv
-│   ├── all_threat_category_frequency.csv
+│   ├── all_species_raw.rds
 │   ├── csas_publications.csv
-│   ├── csas_sar_publications.csv
 │   └── csas_species_links.csv
 |
 ├── scripts/
 |   ├── 00_setup.R
 |   ├── 01_build_species_master.R
 |   ├── 02_clean_species_master.R
-|   ├── 03_CSAS_docs_extraction.R
-|   ├── 04_build_species_profiles.R
-|   ├── 05_build_threat_dictionary.R
+|   ├── 03_build_CSAS_publications.R
+|   ├── 04_build_scientific_publications.R
+|   ├── 05_build_species_profiles.R
 |   ├── 06_build_document_inventory.R
-|   ├── 07_exploratory_analysis.R
-|   ├── 08_build_recovery_compliance.R
-|   ├── 09_download_images.R
-|   ├── 10_prepare_shiny_data.R
+|   ├── 07_download_images.R
+|   ├── 08_prepare_shiny_data.R
 |   └── run_full_refresh.R
 |
 ├── .gitignore
@@ -367,9 +253,6 @@ DFO-SAR-Intelligence-Tool/
 
 ## Known Limitations
 
-- Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information.
-- Threat categories should not be interpreted as formal threat assessments.
-- Recovery planning metrics are derived from identified Registry documents and are intended for exploratory and summary purposes.
 - Species imagery availability varies among species.
 - CSAS publication matching is performed at the species level using scientific names and may not distinguish between Designatable Units.
 - Scientific publication matching is based on common names, scientific names, historical aliases, and related species nomenclature.
