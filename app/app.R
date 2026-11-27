@@ -5,7 +5,6 @@
 # Interactive Shiny application for exploring Schedule 1 species listed under
 # the Species at Risk Act (SARA). The application integrates:
 #   • Species profile information
-#   • Threat classifications
 #   • Recovery planning documents
 #   • Registry summaries
 #
@@ -40,10 +39,6 @@ library(bslib)
 #   Species profile text scraped from Registry species pages.
 #   Includes description, habitat, biology, threats, population information.
 #
-# species_threats:
-#   Screening-level threat classifications derived from profile text.
-#   One row per DU-threat combination.
-#
 # species_documents:
 #   Recovery planning and registry documents associated with each DU.
 ################################################################################
@@ -52,10 +47,7 @@ species_data <- readRDS("data/species_master.rds")
 species_master <- species_data$data
 scrape_date <- species_data$scrape_date
 species_profiles <- readRDS("data/species_profiles.rds")
-species_threats <- readRDS("data/species_threats.rds")
 species_documents <- readRDS("data/species_documents.rds")
-recovery_compliance <- readRDS("data/recovery_compliance.rds")
-progress_compliance <- readRDS("data/progress_report_compliance.rds")
 csas_publications <- readRDS("data/csas_publications.rds")
 csas_species_links <- readRDS("data/csas_species_links.rds")
 other_publications <- readRDS("data/all_science_publications.rds")
@@ -78,9 +70,6 @@ species_master_app <- species_master %>%
                                     cosewic_status %in% target_status ~ "COSEWIC Assessed",
                                     TRUE ~ "Other"))
 
-species_lookup <- species_master_app %>%
-  distinct(record_name, range_text, taxonomy_display, listing_status)
-
 ################################################################################
 # IMAGE FILE REFERENCES
 # Local species images are stored in:
@@ -93,16 +82,6 @@ species_master_app <- species_master_app %>%
   mutate(image_file = paste0(common_name %>%
                                tolower() %>%
                                gsub(" ", "_", .),".jpg"))
-
-################################################################################
-# THREAT DATA USED BY APP
-# Restrict threat analyses to the same SARA statuses used elsewhere in the app.
-################################################################################
-
-species_threats_app <- species_threats %>%
-  left_join(species_lookup, by = "record_name") %>%
-  mutate(sara_status = case_when(
-    sara_status %in% c("No Data", NA_character_) ~ "No Status",TRUE ~ sara_status))
 
 ################################################################################
 # CSAS and SCIENCE SPECIES LOOKUP
@@ -161,99 +140,6 @@ summary_card <- function(value, label, bg, border){
 }
 
 ################################################################################
-# RECOVERY PLANNING COVERAGE DATASET
-# Create a Designatable Unit (DU)-level summary of recovery
-# planning document availability and progress reporting status.
-#
-# The dataset is used by the Recovery Planning tab to summarize:
-#   • Recovery Strategy availability
-#   • Action Plan availability
-#   • Management Plan availability
-#   • Progress Report compliance status
-#
-# Document identification is derived from Registry metadata,
-# planning document classifications, and document titles.
-################################################################################
-
-# derived recovery data dataset
-recovery_coverage <- species_master_app %>%
-  # ensure one record per DU
-  distinct(record_name, sara_status, cosewic_status, listing_status, range_text) %>%
-  # join recovery planning metrics
-  left_join(species_documents %>%
-      group_by(record_name) %>%
-      summarise(
-        # Recovery Strategy present?
-        has_recovery_strategy = any(grepl("Recovery Strategy",
-                documentTitle,ignore.case = TRUE)),
-        
-        # Action Plan present?
-        has_action_plan =
-          any(primary_document_type == "Action Plan") |
-          any(grepl("Action Plan", documentTitle,ignore.case = TRUE)),
-        
-        # Management Plan present?
-        has_management_plan = any(
-          grepl("Management Plan", documentTitle, ignore.case = TRUE)),
-        
-        # Latest planning document date
-        latest_recovery_planning_document = {
-          planning_idx <- planning_document_type %in% c(
-            "Recovery Strategy","Action Plan", "Progress Report",
-            "Recovery Strategy & Action Plan")
-          
-          dates <- as.Date(documentCreateDate[planning_idx])
-          if(length(dates) == 0 || all(is.na(dates))) {
-            as.Date(NA)
-          } else {
-            max(dates, na.rm = TRUE)}},
-        
-        # Latest planning document type
-        latest_document_type = {
-          
-          planning_idx <- planning_document_type %in% c(
-            "Recovery Strategy", "Action Plan",
-            "Progress Report", "Recovery Strategy & Action Plan")
-          
-          dates <- as.Date(documentCreateDate[planning_idx])
-          types <- planning_document_type[planning_idx]
-          
-          if(length(dates) == 0 || all(is.na(dates))) {
-            NA_character_
-          } else {
-            types[which.max(dates)]}},.groups="drop"), by="record_name")%>%
-  
-  # Calculate document age
-  mutate(latest_recovery_planning_document = as.Date(
-    ifelse(is.infinite(latest_recovery_planning_document), NA,
-           latest_recovery_planning_document),origin = "1970-01-01"),
-    
-    years_since_recovery_planning = round( 
-      as.numeric(Sys.Date() - latest_recovery_planning_document) / 365.25, 1))
-
-recovery_coverage <- recovery_coverage %>%
-  left_join(progress_compliance %>%
-      mutate(latest_progress_report_date = as.Date(latest_progress_report_date)) %>%
-      select( record_name, compliance_status, latest_progress_report_date),by = "record_name") %>%
-  mutate(
-    compliance_status = case_when(
-    sara_status == "Special Concern" ~ "Not Required",TRUE ~ compliance_status),
-    latest_document_date = pmax(
-      latest_recovery_planning_document,latest_progress_report_date,na.rm = TRUE),
-    
-    latest_document_type = case_when(
-      !is.na(latest_progress_report_date) &
-        latest_progress_report_date == latest_document_date ~
-        "Progress Report", TRUE ~ latest_document_type),
-    
-    years_since_recovery_planning = round(
-        as.numeric(Sys.Date() - latest_document_date) / 365.25, 1))
-
-recovery_coverage <- recovery_coverage %>%
-  left_join(species_master_app %>%
-      select(record_name, common_name, taxonomy_display), by = "record_name")
-
-################################################################################
 # REUSABLE UI COMPONENTS
 # Several tabs use similar filtering controls:SARA Status, Range (Province),
 # Species, Designatable Unit (DU)
@@ -301,41 +187,6 @@ species_documents_selector_ui <- column(
     selectInput("record_docs", "Population / Designatable Unit",choices = NULL)))
 
 ################################################################################
-# THREAT EXPLORATION FILTER PANEL
-################################################################################
-explore_selector_ui <- column(
-  width = 3,
-  div(class = "threat-card",
-      h4(icon("filter"), " Filters", class = "card-title"),
-      tags$p(style = "color:#6c757d; font-size:13px;",
-      "Filter species records by threat category, status, and range."),
-      selectInput("explore_taxa", "Taxonomic Group",
-                  choices = taxa_choices,
-                  selected = "All"),
-      selectInput("explore_listing_filter", "Listing Status",
-                  choices = listing_choices,  selected = "All"),
-    selectInput("explore_threat", "Threat Group",choices = NULL),
-    selectInput("explore_status", "SARA Status",choices = sara_choices,selected = "All"),
-    selectInput("explore_range","Range",choices = range_choices)))
-
-################################################################################
-# RECOVERY PLANNING FILTER PANEL
-################################################################################
-recovery_planning_selector_ui <- column(
-  width = 2,
-  div(class = "threat-card",
-      h4(icon("filter"), " Filters", class = "card-title"),
-      tags$p(style = "color:#6c757d; font-size:13px;",
-             "Filter species records by status and range."),
-      selectInput("planning_taxa", "Taxonomic Group",
-                  choices = taxa_choices,
-                  selected = "All"),
-            selectInput("planning_status", "SARA Status", choices = sara_choices,
-                        selected = "All"),
-            selectInput("planning_range","Range",
-                        choices = range_choices)))
-
-################################################################################
 # PROVINCE SUMMARY FILTER PANEL
 ################################################################################
 province_selector_ui <- column(
@@ -357,10 +208,7 @@ province_selector_ui <- column(
 #   1. Dashboard
 #   2. Species Information
 #   3. Species Documents
-#   4. Recovery Planning
-#   5. Threat Summary
-#   6. Explore Threats
-#   7. Province Summary
+#   4. Province Summary
 #
 # Reusable selector panels defined above are inserted into tab layouts to
 # provide consistent filtering behaviour across the application.
@@ -526,7 +374,7 @@ ui <- fluidPage(
                          h2(strong("Canadian Species at Risk Explorer"),
                             style = "margin-top:0; margin-bottom:5px; color:#2c5aa0;"),
                          p(style = "margin-bottom:0; font-size:16px;",
-                           "Explore species profiles, threats, and recovery planning information for SARA-listed species and COSEWIC-assessed species under consideration for listing.")),
+                           "Explore species profiles, recovery documents, CSAS publications, and scientific publications for SARA-listed species and COSEWIC-assessed species under consideration for listing.")),
                      tags$img(src = "images/dashboard_banner.jpg",
                        style = " width:100%;
                        height:180px;
@@ -548,12 +396,9 @@ ui <- fluidPage(
                        tags$li("Use Recovery Documents to review recovery strategies, action plans, management plans, and progress reports."),
                        tags$li("Use CSAS Publications to review documents developed during Canadian Science Advisory Secretariat (CSAS) processes."),
                        tags$li("Use Scientific Publications to identify DFO Science and Canadian Wildlife Service reports related to species at risk."),
-                       tags$li("Use Threat Summary and Explore Threats to examine threats affecting species recovery."),
-                       tags$li("Use Province Summary to summarize species and recovery planning information by jurisdiction.")),
+                       tags$li("Use Jurisdiction Summary to summarize species and recovery planning information by jurisdiction.")),
                      h4("Important Notes"),
-                     tags$ul(tags$li("Data are refreshed periodically from the source API. Update frequency is not fixed and will depend on the availability of new information and maintenance capacity."),
-                             tags$li("Threat categories are screening-level classifications derived from Species at Risk Public Registry profile information and should not be interpreted as formal threat assessments."),
-                             tags$li("Recovery planning metrics are based on Recovery Strategies, Action Plans, Management Plans, and Progress Reports identified within Registry planning documents.")),
+                     tags$ul(tags$li("Data are refreshed periodically from the source API. Update frequency is not fixed and will depend on the availability of new information and maintenance capacity.")),
                      fluidRow(column(6,h4("Data Sources"),
                          tags$ul(
                            tags$li("Species at Risk Public Registry"),
@@ -568,9 +413,7 @@ ui <- fluidPage(
                              paste(n_distinct(species_master_app$record_name),
                                "species records")),
                            tags$li(paste(n_distinct(species_documents$document_id),
-                               "Registry documents")),
-                           tags$li(paste(n_distinct(species_threats_app$threat_category),
-                               "threat groups"))))))),
+                               "Registry documents"))))))),
                   
                   # SPECIES INFORMATION
                   tabPanel(title = tagList(icon("fish"),"Species Information"),
@@ -600,15 +443,7 @@ ui <- fluidPage(
                                     
                                     hr(style = "margin-top:20px; margin-bottom:20px;"),
                                     h3("Threats"),
-                                    textOutput("profile_threats"),
-                                    
-                                    br(),
-                                    div(class="content-card",
-                                        h3(textOutput("n_threats")),
-                                    DTOutput("threats"),
-                                    tags$p(style = "font-style: italic; color: #666666;",
-                                           "Threat groups indicate references to threats identified within Species at Risk Public Registry profile text and should be considered screening-level classifications rather than formal threat assessments or threat rankings."))
-                                    ))),
+                                    textOutput("profile_threats")))),
                   
                   # RECOVERY DOCUMENTS TAB
                   tabPanel(title = tagList(icon("file-lines"),"Recovery Documents"),
@@ -617,11 +452,14 @@ ui <- fluidPage(
                            fluidRow(species_documents_selector_ui, 
                                     column(10,
                                            uiOutput("documents_species_banner"),
-                                           #div(class = "threat-card",
-                                           #h3("Species Recovery Documents Compliance"),
-                                           #uiOutput("compliance_summary")),
                                            div(class = "threat-card",
                                            h3("Legislated Recovery Documents", style = "margin-top:0;"),
+                                           div(style = "margin-bottom:15px;",
+                                               downloadButton("download_document_zip",
+                                                              icon("download"),
+                                                              "Download All Recovery PDFs",
+                                                              class = "btn-success")),
+                                           br(),
                                            DTOutput("documents"),
                                            tags$p(style = "font-size:12px; color:gray;",
                                              tags$b("Document Notes: "),
@@ -657,7 +495,11 @@ ui <- fluidPage(
                             tags$p(class = "text-muted",
                                    "Publications are currently linked at the species level and may include information relevant to multiple populations or designatable units."),
                             tags$p(style = "color:#6c757d;", textOutput("csas_publication_count")),
-                          DTOutput("csas_documents"))))),
+                            div(style = "margin-bottom:15px;",
+                                downloadButton("download_csas_zip",icon("download"),
+                                               "Download All CSAS Documents",class = "btn-success")), 
+                            br(),
+                            DTOutput("csas_documents"))))),
                   
                   # SCIENCE DOCUMENTS TAB
                   tabPanel(
@@ -688,103 +530,26 @@ ui <- fluidPage(
                             tags$p(class = "text-muted",
                                    "Publications include DFO Science reports, Canadian Wildlife Service technical reports, Wildlife Management Bulletins, Occasional Papers, and other government science publication series."),
                             tags$p(style = "color:#6c757d;", textOutput("science_publication_count")),
+                            div(style = "margin-bottom:15px;",
+                                downloadButton("download_science_zip",icon("download"),class = "btn-success",
+                                               "Download All Science Publications")), 
+                            br(),
                             DTOutput("science_documents"))))),
-                 
-                   # RECOVERY PLANNING TAB
-                  tabPanel(title = tagList(icon("clipboard-list"),"Recovery Planning"),
-                           value = "recovery_plan",
-                           div(style = "max-width:1200px; margin-left:10px;",
-                               br(),
-                               h3("Recovery Planning Coverage"),
-                               tags$p(class = "text-muted", style = "margin-bottom:20px;",
-                                 "Track Recovery Strategies, Action Plans, Management Plans, and Progress Reporting obligations for SARA-listed species."),
-                               fluidRow(recovery_planning_selector_ui, 
-                                        column(10,
-                                               div(class = "threat-card",
-                                               uiOutput("planning_summary"),
-                                               DTOutput("recovery_coverage", width = "100%"),
-                                               tags$p(style = "font-style: italic; color: #666666;",
-                                                 "Recovery planning coverage is based on recovery strategies, action plans, management plans, and associated progress reports identified within Species at Risk Public Registry planning documents."
-                                                 )))))),
                   
-                  # THREAT SUMMARY TAB
-                  tabPanel(title = tagList(icon("triangle-exclamation"), "Threat Summary"),
-                           value = "threat_sum",
-                    div(style = "max-width:1200px; margin-left:10px;",
-                      br(),
-                      h3("Threats to Species Recovery"),
-                      tags$p(class = "text-muted", style = "margin-bottom:20px;",
-                        "Threat frequencies are based on threat categories identified from Species at Risk Public Registry species profile information."),
-                      fluidRow(column(2,
-                          div(class = "threat-card",
-                            h4(class = "card-title", icon("filter"), " Filters"),
-                            tags$p(style = "color:#6c757d; font-size:13px;",
-                              "Filter threat summaries by range and taxonomic group."),
-                            selectInput("threat_taxa", "Taxonomic Group",
-                                        choices = taxa_choices,
-                                        selected = "All"),
-                            selectInput("threat_listing_filter", "Listing Status",
-                              choices = listing_choices, selected = "All"),
-                            selectInput("threat_range", "Range",
-                                        choices = range_choices, selected = "All"))),
-                        # Main content
-                        column(10,fluidRow(
-                            column(6,
-                              div(class = "threat-card",
-                                h3("DUs with the Most Threat Categories",
-                                   style = "text-align:center; margin-top:0;"),
-                                DTOutput("top_threat_species"))),
-                            column(6,
-                              div(class = "threat-card",
-                                h3("Most Common Threat Categories",
-                                  style = "text-align:center; margin-top:0;"),
-                                DTOutput("common_threats")))))))),
-                  
-                  # EXPLORE THREATS TAB
-                  tabPanel(title = tagList(icon("magnifying-glass"),"Explore Threats"),
-                           value = "explore_thr",
-                           div(style = "max-width:1200px; margin-left:10px;",
-                               br(),
-                               h3("Explore Threats"),
-                               tags$p(class = "text-muted",
-                                      "Explore DUs associated with a selected threat category."),
-                               fluidRow(explore_selector_ui,
-                                        column(9,
-                                               div(class = "threat-card",
-                                                   uiOutput("explore_species_count"),
-                                               tags$p(class = "text-muted",
-                                                 "Click a species record to open the Species Information tab."),
-                                               DTOutput("explore_species"))
-                                        )))),
                   # JURISDICTION SUMMARY TAB
-                  tabPanel(title = tagList(icon("map"),"Jurisdiction Summary"),
-                           value = "prov_sum",
-                           div(style = "max-width:1200px; margin-left:10px;",
-                               br(),
-                               fluidRow(province_selector_ui,
-                                        column(9,
-                                               h3(textOutput("province_title")),
-                                               fluidRow(uiOutput("province_cards")))),
-                               br(),
-                               fluidRow(column(6,
-                                               div(class = "threat-card",
-                                               h3("Species Records by SARA Status",
-                                                  style="text-align:center;"),
-                                               DTOutput("province_status")),
-                                               div(class = "threat-card",
-                                               h3("Recovery Planning Status",
-                                                  style = "text-align:center"),
-                                               uiOutput("province_recovery_summary"))),
-                                        column(6,
-                                               div(class = "threat-card",
-                                               h3("Most Common Threat Categories",
-                                                  style="text-align:center;"),
-                                               DTOutput("province_top_threats")))
-                                        ),
-                               br(),
-                               div(class = "threat-card",
-                               h3("Species Records"),
-                               DTOutput("province_species_table")))))),
+                  tabPanel(
+                    title = tagList(icon("map"),"Jurisdiction Summary"),
+                    value = "prov_sum",
+                    div(style = "max-width:1200px; margin-left:10px; padding-left:10px;",
+                        br(),
+                        fluidRow(province_selector_ui,
+                        column(10,
+                          h3(textOutput("province_title")),
+                          fluidRow(uiOutput("province_cards")),
+                          br(),
+                          div(class = "threat-card",
+                              h3("Species Records"),
+                              DTOutput("province_species_table")))))))),
   # FOOTER INFORMATION
   hr(),
   tags$div(style = "font-size:12px;",
@@ -834,10 +599,6 @@ server <- function(input, output, session){
       slice(1)
   })
   
-  # Stores species selections made from the Explore Threats table so they can
-  # be carried into other tabs.
-  selected_record_from_explore <- reactiveVal(NULL)
-
   # Currently selected species record from the CSAS Publications tab
   selected_species_csas <- reactive({
     species_master_app %>%
@@ -850,28 +611,6 @@ server <- function(input, output, session){
     species_master_app %>%
       filter(record_name == input$record_science) %>%
       slice(1)
-  })
-
-  ##############################################################################
-  # COMPLIANCE REACTIVES
-  ##############################################################################
-  # Retrieve recovery planning compliance information for the currently selected
-  # species record.
-  #
-  # recovery_compliance:
-  #   Recovery Strategy legislative timelines.
-  #
-  # progress_compliance:
-  #   Progress Report legislative timelines.
-  ##############################################################################
-  selected_compliance <- reactive({
-    recovery_compliance %>%
-      filter(record_name == input$record)
-  })
-  
-  selected_progress_compliance <- reactive({
-    progress_compliance %>%
-      filter(record_name == input$record_docs)
   })
   
   ##############################################################################
@@ -927,44 +666,6 @@ server <- function(input, output, session){
   })
 
   ##############################################################################
-  # THREAT EXPLORATION REACTIVES
-  ##############################################################################
-  # Returns species records associated with the threat category currently
-  # selected within the Explore Threats tab.
-  #
-  # Additional optional filtering:
-  #   • Listing status
-  #   • SARA status
-  #   • Range
-  #   • Taxonomic group
-  #
-  # Results are reduced to unique species / DU combinations.
-  ##############################################################################
-  explore_results <- reactive({
-    dat <- species_threats_app %>%
-      filter(threat_category == input$explore_threat)
-    if(input$explore_listing_filter != "All"){
-      dat <- dat %>%
-        filter(listing_status == input$explore_listing_filter)
-    }
-    if(input$explore_range != "All"){
-      dat <- dat %>%
-        filter(grepl(input$explore_range, range_text, fixed = TRUE))}
-    if(input$explore_taxa == "Molluscs"){
-      dat <- dat %>%
-        filter(grepl("^Molluscs", taxonomy_display))
-    } else if(input$explore_taxa != "All"){
-      dat <- dat %>%
-        filter(taxonomy_display == input$explore_taxa)
-    }
-    if(input$explore_status != "All"){
-      dat <- dat %>%
-        filter(sara_status == input$explore_status)}
-    dat %>%
-      distinct(common_name, record_name, sara_status)
-  })
-
-  ##############################################################################
   # SPECIES PROFILE REACTIVE
   ##############################################################################
   # Retrieves profile text for the currently selected Designatable Unit (DU).
@@ -1004,8 +705,6 @@ server <- function(input, output, session){
   # province_species():
   #   Species records matching the current provincial / taxonomic filters.
   #
-  # province_recovery_summary():
-  #   Recovery planning compliance totals for the same filtered subset.
   ##############################################################################
   province_species <- reactive({
     dat <- species_master_app
@@ -1021,23 +720,6 @@ server <- function(input, output, session){
         filter(taxonomy_display == input$province_taxa)
     }
     dat
-  })
-  
-  province_recovery_summary <- reactive({
-    dat <- recovery_coverage
-    if(input$province_range != "All"){
-      dat <- dat %>%
-        filter(grepl(input$province_range, range_text, fixed = TRUE))
-    }
-    if(input$province_taxa == "Molluscs"){
-      dat <- dat %>%
-        filter(grepl("^Molluscs", taxonomy_display))
-    } else if(input$province_taxa != "All"){
-      dat <- dat %>%
-        filter(taxonomy_display == input$province_taxa)
-    }
-    dat %>%
-      count(compliance_status)
   })
   
   ##############################################################################
@@ -1577,27 +1259,6 @@ server <- function(input, output, session){
   })
 
   ##############################################################################
-  # THREAT SELECTOR
-  ##############################################################################
-  observe({
-    updateSelectInput(session, "explore_threat",
-      choices = sort(unique(species_threats_app$threat_category)))
-  })
-  
-  ##############################################################################
-  # TAB NAVIGATION & SYNCHRONIZATION
-  ##############################################################################
-  observeEvent(input$explore_species_rows_selected, {
-    row <- input$explore_species_rows_selected
-    if(length(row) == 0) return()
-    selected <- explore_results()[row, ]
-    selected_record_from_explore(selected$record_name)
-    updateSelectInput(session, "species", selected = selected$common_name)
-    updateSelectInput(session, "species_docs", selected = selected$common_name)
-    updateTabsetPanel(session, "main_tabs", selected = "species_info")
-  })
-
-  ##############################################################################
   # SPECIES DOCUMENTS DU SELECTOR
   ##############################################################################
   # Updates available Designatable Units (DUs) for the currently selected
@@ -1750,122 +1411,10 @@ output$population <- renderText({
     pull(population)
 })
 
-# number of threats
-output$n_threats <- renderText({
-  n <- species_threats_app %>%
-    filter(record_name == input$record) %>%
-    distinct(threat_category) %>%
-    nrow()
-  paste(n, ifelse(n == 1, "Threat Category", "Threat Categories"))
-  
-})
-
-# threats
+#threats
 output$profile_threats <- renderText({
   selected_profile() %>%
     pull(threats)
-})
-
-# threats
-output$threats <- renderDT({
-  dat <- species_threats_app %>%
-    filter(record_name == input$record) %>%
-    select(threat_category) %>%
-    distinct()
-  names(dat) <- ""
-  datatable(dat, rownames = FALSE, options = list(pageLength = 10, dom = "t"))
-})
-
-##############################################################################
-# RECOVERY PLANNING OUTPUTS
-##############################################################################
-output$recovery_coverage <- renderDT({
-  dat <- recovery_coverage
-  if(input$planning_status != "All"){
-    dat <- dat %>%
-      filter(sara_status == input$planning_status)}
-  if(input$planning_range != "All"){
-    dat <- dat %>%
-      filter(grepl(input$planning_range, range_text, fixed = TRUE))}
-  if(input$planning_taxa == "Molluscs"){
-    dat <- dat %>%
-      filter(grepl("^Molluscs", taxonomy_display))
-  } else if(input$planning_taxa != "All"){
-    dat <- dat %>%
-      filter(taxonomy_display == input$planning_taxa)
-  }
-  dat %>%
-    mutate(`Recovery Strategy` = case_when(
-      
-      listing_status == "COSEWIC Assessed" ~
-        '<span class="badge-na">Not Applicable</span>',
-      
-      sara_status == "Special Concern" ~
-        '<span class="badge-na">Not Required</span>',
-      
-      coalesce(has_recovery_strategy, FALSE) ~
-        '<span class="badge-yes">Available</span>',
-      
-      TRUE ~ '<span class="badge-no">Not Available</span>'
-    ),
-      
-      `Action Plan` = case_when(
-        listing_status == "COSEWIC Assessed" ~
-          '<span class="badge-na">Not Applicable</span>',
-        sara_status == "Special Concern" ~
-          '<span class="badge-na">Not Required</span>',
-        coalesce(has_action_plan, FALSE) ~
-          '<span class="badge-yes">Available</span>',
-        TRUE ~'<span class="badge-no">Not Available</span>'),
-      
-      `Management Plan` = case_when(
-        listing_status == "COSEWIC Assessed" ~
-          '<span class="badge-na">Not Applicable</span>',
-        coalesce(has_management_plan, FALSE) ~
-          '<span class="badge-yes">Available</span>',
-        sara_status %in% c("Endangered", "Threatened", "Extirpated") ~
-          '<span class="badge-na">Not Required</span>',
-        TRUE ~ '<span class="badge-no">Not Available</span>'),
-      
-      compliance_status = case_when(
-        compliance_status == "Up to Date" ~ "✅Up to Date",
-        compliance_status == "Overdue" ~ "🔴 Report Overdue",
-        compliance_status == "Not Yet Due" ~ "🟡 Not Yet Required",
-        compliance_status %in% c("Not Applicable", "Not Required") ~
-          "⚪ Not Required", TRUE ~ compliance_status)) %>%
-    
-    arrange(factor(compliance_status,
-                   levels = c("🔴 Report Overdue","🟡 Not Yet Required",
-                              "✅Up to Date", "⚪ Not Required")), record_name) %>%
-    
-    mutate(sara_status = factor(sara_status, levels = sara_status_levels)) %>%
-    arrange(sara_status, record_name) %>%
-    
-    select(record_name, sara_status, `Recovery Strategy`, `Action Plan`,
-           `Management Plan`, compliance_status) %>%
-    
-    rename(`Designatable Unit` = record_name,
-           `SARA Status` = sara_status,
-           `Progress Report Status` = compliance_status) %>%
-    
-    datatable(rownames = FALSE, width = "100%", escape = FALSE,
-              options = list(pageLength = 10,
-                             columnDefs = list(
-                               list(className = "dt-center", targets = c(1, 2, 3, 4)),
-                               list(width = "200px", targets = 0),
-                               list(width = "110px", targets = 1),
-                               list(width = "110px", targets = 2),
-                               list(width = "110px", targets = 3),
-                               list(width = "120px", targets = 4)))) %>%
-    
-    formatStyle(c("Recovery Strategy", "Action Plan", "Management Plan"),
-                textAlign = "center") %>%
-    
-    formatStyle("Progress Report Status", target = "cell",
-                backgroundColor = styleEqual(c(
-                  "✅Up to Date", "🔴 Report Overdue", 
-                  "🟡 Not Yet Required", "⚪ Not Required"),
-                  c("#d4edda","#f8d7da", "#fff3cd", "#e9ecef")))
 })
 
 ##############################################################################
@@ -1904,267 +1453,19 @@ output$documents <- renderDT({
       list(width = "20%", targets = 2))))
 })
 
-
-# recovery document compliance
-output$compliance_summary <- renderUI({
-  comp <- selected_compliance()
-  prog <- selected_progress_compliance()
-  if(
-    nrow(selected_species_docs()) > 0 &&
-    selected_species_docs()$sara_status[1] == "No Status"
-  ){
-    return(tags$div(style = "background-color:#f8f9fa;
-                    border:1px solid #dee2e6;
-                    border-radius:10px;
-                    padding:15px;",
-                    tags$p(tags$b("COSEWIC-Assessed Species")),
-                    tags$p(
-          "This species has been assessed by COSEWIC but is not currently listed under Schedule 1 of SARA."),
-          tags$p(
-          "Recovery Strategies, Action Plans, and Progress Reports are not currently required under SARA.")))
-  }
-  if(nrow(comp) == 0){return(tags$p("No compliance information available."))}
-  if(nrow(selected_species_docs()) > 0 &&
-    !is.na(selected_species_docs()$sara_status[1]) &&
-    selected_species_docs()$sara_status[1] == "Special Concern") {
-    return(tags$div(style = "
-                    background-color:#f8f9fa;
-                    border:1px solid #dee2e6;
-                    border-radius:10px;
-                    padding:15px; ",
-        tags$p( tags$b("Special Concern Species")),
-        tags$p("Special Concern species are managed through SARA Management Plans rather than Recovery Strategies and Action Plans.")))}
-  
-  # Recovery Strategy Compliance -------------------------------------------
-  
-  status <- comp$compliance_status[1]
-  status_icon <- case_when(
-    status == "On Time" ~ "🟢",
-    status == "Late" ~ "🔴",
-    TRUE ~ "⚪")
-  
-  status_colour <- case_when(
-    status == "On Time" ~ "#198754",
-    status == "Late" ~ "#dc3545",
-    TRUE ~ "#6c757d")
-  
-  # Progress Report Compliance ---------------------------------------------
-  
-  prog_status <- if(nrow(prog) > 0)
-    prog$compliance_status[1]
-  else
-    NA_character_
-  
-  prog_status_icon <- case_when(
-    prog_status == "On Time" ~ "🟢",
-    prog_status == "Late" ~ "🔴",
-    prog_status == "Overdue" ~ "🟠",
-    prog_status == "Not Yet Due" ~ "⚪",
-    TRUE ~ "⚪" )
-  
-  prog_status_colour <- case_when(
-    prog_status == "On Time" ~ "#198754",
-    prog_status == "Late" ~ "#dc3545",
-    prog_status == "Overdue" ~ "#fd7e14",
-    prog_status == "Not Yet Due" ~ "#6c757d",
-    TRUE ~ "#6c757d")
-  
-  tags$div(
-    
-    tags$div(tags$b("SARA Listing Date: "), format(as.Date(comp$listing_date[1]), "%d %b %Y")),
-    tags$div(tags$b("Recovery Strategy Due: "), format(as.Date(comp$required_date[1]), "%d %b %Y")),
-    tags$div(tags$b("First Recovery Strategy Published: "),
-             format(as.Date(comp$first_recovery_strategy_date[1]), "%d %b %Y"),
-             " ",
-             tags$span(style = paste0(
-               "color:", status_colour, "; font-weight:bold;"),
-               paste(status_icon, status)),
-      
-      if(!is.na(comp$days_late[1]) && comp$days_late[1] > 0){
-        paste0( " (",round(comp$days_late[1] / 365.25, 1), " years late)") }),
-    
-    if(
-      !is.na(prog$recovery_strategy_date[1]) &&
-      !is.na(comp$first_recovery_strategy_date[1]) &&
-      prog$recovery_strategy_date[1] !=
-      comp$first_recovery_strategy_date[1]){
-      tags$div(tags$b("Current Recovery Strategy: "),
-        format(as.Date(prog$recovery_strategy_date[1]), "%d %b %Y"))
-    },
-    tags$div(style = "margin-top:8px;"),
-    tags$div(tags$b("Progress Report Due: "),
-             ifelse(is.na(prog$progress_report_due_date[1]),
-                    "Not Available",
-                    format(as.Date(prog$progress_report_due_date[1]), "%d %b %Y"))),
-    
-    tags$div(tags$b("Most Recent Progress Report: "),
-             ifelse(is.na(prog$latest_progress_report_date[1]),
-                    "Not Available",
-                    format(as.Date(prog$latest_progress_report_date[1]), "%d %b %Y")), " ",
-             tags$span(style = paste0("color:", prog_status_colour,
-                                      "; font-weight:bold;"),
-                       paste(prog_status_icon, prog_status)),
-             
-             if(!is.na(prog$days_late[1]) &&
-                prog$days_late[1] > 0 &&
-                prog_status %in% c("Late", "Overdue")){
-               paste0(" (",round(prog$days_late[1] / 365.25, 1)," years late)")}),
-    
-    tags$div(tags$b("Next Progress Report Due: "),
-             ifelse(is.na(prog$next_progress_report_due_date[1]),
-                    "Not Available",
-                    format(as.Date(prog$next_progress_report_due_date[1]), "%d %b %Y"))))
-})
-
 output$documents_species_banner <- renderUI({
   sp <- selected_species_docs()
-  
   req(nrow(sp) > 0)
-  
-  div(
-    style = "
+  div(style = "
       background-color:#f8f9fa;
       border:1px solid #dee2e6;
       font-size:24px;
       border-radius:10px;
       padding:15px;
       margin-bottom:15px;",
-    
     tags$b("Viewing Documents for: "),
-    
-    tags$span(
-      style = "color:#2c5aa0; font-weight:600;",
-      strong(sp$record_name[1])
-    )
-  )
-})
-
-##############################################################################
-# THREAT SUMMARY OUTPUTS
-##############################################################################
-output$common_threats <- renderDT({
-  dat <- species_threats_app
-  if(input$threat_listing_filter != "All"){
-    dat <- dat %>%
-      filter(listing_status == input$threat_listing_filter)
-  }
-  
-  if(input$threat_range != "All"){
-    dat <- dat %>%
-      filter(grepl(input$threat_range, range_text, fixed = TRUE))}
-  if(input$threat_taxa == "Molluscs"){
-    dat <- dat %>%
-      filter(grepl("^Molluscs", taxonomy_display))
-  } else if(input$threat_taxa != "All"){
-    dat <- dat %>%
-      filter(taxonomy_display == input$threat_taxa)
-  }
-  dat %>%
-    distinct(record_name, threat_category) %>%
-    count(threat_category,sort = TRUE, name = "Designatable Units") %>%
-    rename(`Threat Category` = threat_category) %>%
-    datatable(rownames = FALSE, 
-              options = list(pageLength = 10, dom = "t",
-                             ordering = FALSE,
-                             columnDefs = list(list(width = "70%", targets = 0),
-                                               list(width = "30%", targets = 1))))
-})
-
-# top species threats table
-output$top_threat_species <- renderDT({
-  dat <- species_threats_app
-  if(input$threat_listing_filter != "All"){
-    dat <- dat %>%
-      filter(listing_status == input$threat_listing_filter)
-  }
-  
-  if(input$threat_range != "All"){
-    dat <- dat %>%
-      filter(grepl(input$threat_range,
-                   range_text,fixed = TRUE))}
-  if(input$threat_taxa == "Molluscs"){
-    dat <- dat %>%
-      filter(grepl("^Molluscs", taxonomy_display))
-  } else if(input$threat_taxa != "All"){
-    dat <- dat %>%
-      filter(taxonomy_display == input$threat_taxa)
-  }
-  dat %>%
-    distinct(record_name, threat_category) %>%
-    count(record_name, sort = TRUE,
-          name = "Threat Categories") %>%
-    slice_head(n = 10) %>%
-    rename(`Designatable Units` = record_name) %>%
-    datatable(rownames = FALSE, options = list( pageLength = 10,
-                                                dom = "t",
-                                                ordering = FALSE))
-})
-
-##############################################################################
-# EXPLORE THREATS OUTPUTS
-##############################################################################
-output$explore_species <- renderDT({
-  dat <- explore_results() %>%
-    rename(`Common Name` = common_name,
-           `Designatable Unit` = record_name,
-           `SARA Status` = sara_status) %>%
-  mutate(
-    `SARA Status` = case_when(
-      `SARA Status` == "Endangered" ~
-        '<span class="status-endangered">Endangered</span>',
-      
-      `SARA Status` == "Threatened" ~
-        '<span class="status-threatened">Threatened</span>',
-      
-      `SARA Status` == "Special Concern" ~
-        '<span class="status-special">Special Concern</span>',
-      
-      `SARA Status` == "Extirpated" ~
-        '<span class="status-extirpated">Extirpated</span>',
-      
-      `SARA Status` == "No Status" ~
-        '<span class="badge-na">No Status</span>',
-      
-      TRUE ~ `SARA Status`))
-  datatable(dat, rownames = FALSE, escape = FALSE,
-            selection = list(mode = "single",target = "row"),
-            options = list(pageLength = 10,
-                           autowidth = TRUE,
-                           columnDefs = list(
-                             list(width = "35%", targets=0),
-                             list(width = "40%", targets=1),
-                             list(width = "15%", targets=2)
-                           )))}, server = FALSE)
-
-output$explore_species_count <- renderUI({
-  matching <- nrow(explore_results())
-  total_records <- species_master_app
-  if(input$explore_listing_filter != "All"){
-    total_records <- total_records %>%
-      filter(listing_status == input$explore_listing_filter)
-  }
-  if(input$explore_range != "All"){
-    total_records <- total_records %>%
-      filter(grepl(input$explore_range, range_text, fixed = TRUE))
-  }
-  if(input$explore_taxa == "Molluscs"){
-    total_records <- total_records %>%
-      filter(grepl("^Molluscs", taxonomy_display))
-    
-  } else if(input$explore_taxa != "All"){
-    total_records <- total_records %>%
-      filter(taxonomy_display == input$explore_taxa)
-  }
-  if(input$explore_status != "All"){
-    total_records <- total_records %>%
-      filter(sara_status == input$explore_status)
-  }
-  total_records <- n_distinct(total_records$record_name)
-  prevalence <- round(100 * matching / total_records, 1)
-  tagList(h3(input$explore_threat, style = "margin-bottom:5px;"),
-          tags$p(style = "color:#6c757d; font-size:16px; margin-bottom:15px;",
-                 paste0(matching, " of ", total_records, " species records (",
-                        prevalence,"%)")))
+    tags$span(style = "color:#2c5aa0; font-weight:600;",
+              strong(sp$record_name[1])))
 })
 
 ##############################################################################
@@ -2251,26 +1552,6 @@ output$province_title <- renderText({
   }
 })
 
-output$province_overview <- renderUI({
-  dat <- species_threats_app
-  n_records <- n_distinct(dat$record_name)
-  n_endangered <- dat %>%
-    filter(sara_status == "Endangered") %>%
-    nrow()
-  n_threatened <- dat %>%
-    filter(sara_status == "Threatened") %>%
-    nrow()
-  n_extirpated <- dat %>%
-    filter(sara_status == "Extirpated") %>%
-    nrow()
-  tags$ul(
-    style = "font-size:16px;",
-    tags$li(paste("DU records:", n_records)),
-    tags$li(paste("Endangered:", n_endangered)),
-    tags$li(paste("Threatened:", n_threatened)),
-    tags$li(paste("Extirpated:", n_extirpated)))
-})
-
 output$province_status <- renderDT({
   province_species() %>%
     mutate(sara_status = factor(sara_status, levels = sara_status_levels)) %>%
@@ -2283,32 +1564,6 @@ output$province_status <- renderDT({
                                list(width = "50%", targets = 0),
                                list(width = "50%", targets = 1)),
                              ordering = FALSE))
-})
-
-output$province_top_threats <- renderDT({
-  dat <- species_threats_app
-  if(input$province_range != "All"){
-    dat <- dat %>%
-      filter(grepl(input$province_range, range_text, fixed = TRUE))
-  }
-  if(input$province_taxa == "Molluscs"){
-    dat <- dat %>%
-      filter(grepl("^Molluscs", taxonomy_display))
-  } else if(input$province_taxa != "All"){
-    dat <- dat %>%
-      filter(taxonomy_display == input$province_taxa)
-  }
-  dat %>%
-    distinct(record_name, threat_category) %>%
-    count(threat_category, sort = TRUE, name = "DU Records") %>%
-    rename(`Threat Category` = threat_category) %>%
-    datatable(
-      rownames = FALSE,
-      options = list(
-        dom = "t",
-        columnDefs = list(
-          list(width = "70%", targets = 0),
-          list(width = "30%", targets = 1))))
 })
 
 output$province_species_table <- renderDT({
@@ -2343,30 +1598,75 @@ output$province_cards <- renderUI({
            column(3, summary_card(n_special_concern,"Special Concern", "#d1ecf1","#bee5eb")))
 })
 
-output$province_recovery_summary <- renderUI({
-  dat <- province_recovery_summary()
-  up_to_date <- sum(dat$n[dat$compliance_status == "Up to Date"], na.rm = TRUE)
-  not_yet_due <- sum(dat$n[dat$compliance_status == "Not Yet Due"], na.rm = TRUE)
-  overdue <- sum(dat$n[dat$compliance_status == "Overdue"], na.rm = TRUE)
-  not_required <- sum(dat$n[dat$compliance_status %in%
-                              c("Not Required", "Not Applicable")], na.rm = TRUE)
-  div(class = "threat-card",
-      fluidRow(column(3,div(class = "recovery-card",
-                          style = "background:#d4edda;",
-                          h2(up_to_date),
-                          p("Up to Date"))),
-             column(3,div(class = "recovery-card",
-                          style = "background:#fff3cd;",
-                          h2(not_yet_due),
-                          p("Not Yet Required"))),
-             column(3,div(class = "recovery-card",
-                          style = "background:#f8d7da;",
-                          h2(overdue),
-                          p("Overdue"))),
-             column(3, div(class = "recovery-card",
-                           style = "background:#e9ecef;",
-                           h2(not_required),
-                           p("Not Required")))))})
+################################################################################
+# EXPORTING
+################################################################################
+output$download_document_zip <- downloadHandler(
+  filename = function() {
+    paste0(gsub("[^A-Za-z0-9]", "_", input$record_docs),  "_documents.zip")},
+  content = function(file) {
+    docs <- species_documents %>%
+      filter(record_name == input$record_docs)
+    tmpdir <- tempfile()
+    dir.create(tmpdir)
+    downloaded_files <- c()
+    for(i in seq_len(nrow(docs))) {
+      pdf_file <- file.path(tmpdir, paste0(gsub("[^A-Za-z0-9]", "_",
+                                                docs$attachment_title[i]), ".pdf"))
+      try(download.file(docs$document_url[i], pdf_file, mode = "wb", quiet = TRUE),
+        silent = TRUE)
+      
+      if(file.exists(pdf_file)) {
+        downloaded_files <- c(downloaded_files,  pdf_file)
+      }
+    }
+    zip::zipr(zipfile = file, files = downloaded_files)
+  }
+)
+
+output$download_csas_zip <- downloadHandler(
+  filename = function() {
+    paste0(gsub("[^A-Za-z0-9]", "_", input$species_csas), "_CSAS_publications.zip")},
+  content = function(file) {
+    docs <- species_csas_docs() %>%
+      filter(!is.na(pdf_url))
+    tmpdir <- tempfile()
+    dir.create(tmpdir)
+    downloaded <- c()
+    for(i in seq_len(nrow(docs))) {
+      pdf_file <- file.path(tmpdir, paste0(docs$publication_year[i], "_",
+                                           gsub("[^A-Za-z0-9]", "_",
+                                                docs$publication_number[i]),".pdf"))
+      try(download.file(docs$pdf_url[i], pdf_file, mode = "wb", quiet = TRUE),
+          silent = TRUE)
+      if(file.exists(pdf_file))
+        downloaded <- c(downloaded, pdf_file)
+    }
+    zip::zipr(file, downloaded)
+  }
+)
+
+output$download_science_zip <- downloadHandler(
+  filename = function() {
+    paste0(gsub("[^A-Za-z0-9]", "_", input$species_science),
+           "_science_publications.zip")},
+  
+  content = function(file) {
+    docs <- species_science_docs() %>%
+      filter(!is.na(publication_url))
+    tmpdir <- tempfile()
+    dir.create(tmpdir)
+    downloaded <- c()
+    for(i in seq_len(nrow(docs))) {
+      pdf_file <- file.path(tmpdir, paste0(docs$publication_year[i], "_", i, ".pdf"))
+      try(download.file(docs$publication_url[i], pdf_file, mode = "wb", quiet = TRUE),
+        silent = TRUE)
+      if(file.exists(pdf_file))
+        downloaded <- c(downloaded, pdf_file)
+    }
+    zip::zipr(file, downloaded)
+  })
+
 }
 
 # run app
