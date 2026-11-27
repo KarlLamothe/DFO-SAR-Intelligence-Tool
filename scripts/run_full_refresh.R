@@ -11,24 +11,13 @@
 #   1. Load package dependencies and project settings.
 #   2. Build the species master dataset from Registry sources.
 #   3. Clean and standardize species information.
-#   4. Build species profile datasets.
-#   5. Classify and consolidate threat information.
-#   6. Build the Registry document inventory.
-#   7. Build CSAS publication datasets and species linkages.
-#   8. Build DFO Science and Canadian Wildlife Service publication datasets
+#   4. Build CSAS publication datasets and species linkages.
+#   5. Build DFO Science and Canadian Wildlife Service publication datasets
 #      and species linkages.
-#   9. Calculate recovery planning and progress reporting compliance.
-#  10. Download species images for local application use.
-#  11. Prepare application-ready RDS files for the Shiny application.
-#
-# Key Outputs:
-#   • Species master, profiles, threats, and documents
-#   • Recovery planning compliance metrics
-#   • CSAS publication datasets
-#   • DFO Science publication datasets
-#   • Canadian Wildlife Service publication datasets
-#   • Consolidated scientific publication datasets
-#   • Shiny application data objects
+#   6. Build species profile datasets.
+#   7. Build the Registry document inventory.
+#   8. Download species images for local application use.
+#   9. Prepare application-ready RDS files for the Shiny application.
 ################################################################################
 
 message("Starting full data refresh...")
@@ -55,29 +44,23 @@ source("scripts/03_build_csas_publications.R")
 source("scripts/04_build_scientific_publications.R")
 
 ################################################################################
-# SPECIES PROFILES AND THREATS
+# SPECIES PROFILES
 ################################################################################
 source("scripts/05_build_species_profiles.R")
-source("scripts/06_build_threat_dictionary.R")
 
 ################################################################################
 # DOCUMENT INVENTORY
 ################################################################################
-source("scripts/07_build_document_inventory.R")
-
-################################################################################
-# RECOVERY PLANNING COMPLIANCE
-################################################################################
-source("scripts/09_build_recovery_compliance.R")
+source("scripts/06_build_document_inventory.R")
 
 ################################################################################
 # SPECIES IMAGES
 ################################################################################
-source("scripts/10_download_images.R")
+source("scripts/07_download_images.R")
 
 ################################################################################
 # PREPARE SHINY APPLICATION DATA
 ################################################################################
-source("scripts/11_prepare_shiny_data.R")
+source("scripts/08_prepare_shiny_data.R")
 
 message("Data refresh complete.")
