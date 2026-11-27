@@ -1611,14 +1611,12 @@ output$download_document_zip <- downloadHandler(
     dir.create(tmpdir)
     downloaded_files <- c()
     for(i in seq_len(nrow(docs))) {
+      url <- URLencode(docs$document_url[i])
       pdf_file <- file.path(tmpdir, paste0(gsub("[^A-Za-z0-9]", "_",
                                                 docs$attachment_title[i]), ".pdf"))
-      try(download.file(docs$document_url[i], pdf_file, mode = "wb", quiet = TRUE),
-        silent = TRUE)
-      
+      try(download.file(url, pdf_file, mode = "wb", quiet = TRUE), silent = TRUE)
       if(file.exists(pdf_file)) {
-        downloaded_files <- c(downloaded_files,  pdf_file)
-      }
+        downloaded_files <- c(downloaded_files, pdf_file)}
     }
     zip::zipr(zipfile = file, files = downloaded_files)
   }
@@ -1634,13 +1632,13 @@ output$download_csas_zip <- downloadHandler(
     dir.create(tmpdir)
     downloaded <- c()
     for(i in seq_len(nrow(docs))) {
+      url <- URLencode(docs$pdf_url[i])
       pdf_file <- file.path(tmpdir, paste0(docs$publication_year[i], "_",
                                            gsub("[^A-Za-z0-9]", "_",
-                                                docs$publication_number[i]),".pdf"))
-      try(download.file(docs$pdf_url[i], pdf_file, mode = "wb", quiet = TRUE),
-          silent = TRUE)
-      if(file.exists(pdf_file))
-        downloaded <- c(downloaded, pdf_file)
+                                                docs$publication_number[i]), ".pdf"))
+      try(download.file(url, pdf_file, mode = "wb", quiet = TRUE), silent = TRUE)
+      if(file.exists(pdf_file)) {
+        downloaded <- c(downloaded, pdf_file)}
     }
     zip::zipr(file, downloaded)
   }
@@ -1658,11 +1656,12 @@ output$download_science_zip <- downloadHandler(
     dir.create(tmpdir)
     downloaded <- c()
     for(i in seq_len(nrow(docs))) {
-      pdf_file <- file.path(tmpdir, paste0(docs$publication_year[i], "_", i, ".pdf"))
-      try(download.file(docs$publication_url[i], pdf_file, mode = "wb", quiet = TRUE),
-        silent = TRUE)
-      if(file.exists(pdf_file))
-        downloaded <- c(downloaded, pdf_file)
+      url <- URLencode(docs$publication_url[i])
+      pdf_file <- file.path(tmpdir, paste0(docs$publication_year[i], "_",
+                                           i,  ".pdf"))
+      try(download.file(url, pdf_file, mode = "wb", quiet = TRUE), silent = TRUE)
+      if(file.exists(pdf_file)) {
+        downloaded <- c(downloaded, pdf_file)}
     }
     zip::zipr(file, downloaded)
   })

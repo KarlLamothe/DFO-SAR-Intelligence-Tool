@@ -13,16 +13,13 @@ get_species_page <- function(skip = 0, top = 100){
 
 # all species
 all_species <- purrr::map_dfr(seq(0, 1500, by = 100), get_species_page)
-#nrow(all_species)
-#colnames(all_species)
-#head(all_species)
 
 # Build record names
 all_species <- all_species %>%
   mutate(recordName = case_when(
     !is.na(cosewicPopulation) & cosewicPopulation != "" ~
         paste(commonName, "-", cosewicPopulation), TRUE ~ commonName))
-colnames(all_species)
+#colnames(all_species)
 
 # Keep required fields
 all_species <- all_species %>%
@@ -49,5 +46,4 @@ all_species <- all_species %>%
 saveRDS(all_species,"data_processed/all_species_raw.rds")
 
 # completion message for when running full data refresh
-message(sprintf("Species extraction complete: %s records saved.",
-                nrow(all_species)))
+message(sprintf("Species extraction complete: %s records saved.", nrow(all_species)))

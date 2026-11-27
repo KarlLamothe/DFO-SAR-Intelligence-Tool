@@ -13,15 +13,6 @@
 #   species_aliases
 #   matches
 #===============================================================================
-
-library(httr2)
-library(jsonlite)
-library(dplyr)
-library(purrr)
-library(stringr)
-library(tidyr)
-
-#===============================================================================
 # Helper Functions
 #===============================================================================
 
@@ -115,7 +106,7 @@ csas_publications <- tibble(
 # Load Species Data
 #===============================================================================
 
-all_species <- read.csv("data_processed/all_species_master.csv")
+all_species <- readRDS("data_processed/all_species_master.rds")
 
 #===============================================================================
 # Reformat previous names
@@ -213,8 +204,6 @@ species_aliases <- bind_rows(
 #===============================================================================
 # Species-Publication Matching
 #===============================================================================
-
-message("Matching publications to SAR species...")
 
 matches <- map_dfr(
   seq_len(nrow(species_aliases)),
@@ -314,8 +303,6 @@ csas_publications <- csas_publications %>%
 
 write.csv(csas_publications, "data_processed/csas_publications.csv", row.names = FALSE)
 write.csv(matches, "data_processed/csas_species_links.csv", row.names = FALSE)
-write.csv(filter(csas_publications, sar_related),
-          "data_processed/csas_sar_publications.csv", row.names = FALSE)
 
 message(sprintf(
   "CSAS extraction complete: %s publications, %s species-publication matches.",

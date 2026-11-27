@@ -4,12 +4,12 @@ source('scripts/00_setup.R')
 # Load Species Data
 #===============================================================================
 
-all_species <- read.csv("data_processed/all_species_master.csv")
+all_species <- readRDS("data_processed/all_species_master.rds")
 
 #===============================================================================
 # Reformat previous names
 #===============================================================================
-colnames(all_species)
+#colnames(all_species)
 
 # reformat previous common names
 extract_previous_names <- function(x){
@@ -157,11 +157,13 @@ get_cws_series <- function(series_id, series_name){
     mutate(publication_series = series_name)
 }
 
+#===============================================================================
 # scrape
+#===============================================================================
 cws_publications <- map2_dfr(cws_series$series_id,
                              cws_series$series_name,
                              get_cws_series)
-colnames(cws_publications)
+#colnames(cws_publications)
 
 cws_publications <- cws_publications %>%
   mutate(search_text = stringr::str_to_lower(paste(title, publication_id)),
@@ -171,7 +173,9 @@ cws_publications <- cws_publications %>%
   mutate(publication_url = sprintf(
       "https://publications.gc.ca/site/eng/%s/publication.html", publication_id))
 
-message("Matching CWS publications to SAR species...")
+#===============================================================================
+# Matching CWS publications to SAR species
+#===============================================================================
 
 cws_matches <- purrr::map_dfr(
   seq_len(nrow(species_aliases)),
@@ -187,13 +191,13 @@ cws_matches <- purrr::map_dfr(
     bind_cols(species_aliases[i, ],  hits)
   })
 
-saveRDS(cws_publications,"data_processed/cws_publications.rds")
-saveRDS(cws_matches,"data_processed/cws_species_links.rds")
-write.csv(cws_publications, "data_processed/cws_publications.csv", row.names = FALSE)
-write.csv(cws_matches, "data_processed/cws_species_links.csv", row.names = FALSE)
+#saveRDS(cws_publications,"data_processed/cws_publications.rds")
+#saveRDS(cws_matches,"data_processed/cws_species_links.rds")
 
 ################################################################################
+################################################################################
 # DFO SERIES
+################################################################################
 ################################################################################
 report_series <- tibble::tribble(
   ~series_name, ~base_url,
@@ -220,6 +224,7 @@ get_fsln_series <- function(url, series_name){
   n_pages <- first_page$page_count
   purrr::map_dfr(seq_len(n_pages), function(i){
     message(sprintf("%s page %s/%s", series_name, i, n_pages))
+    Sys.sleep(runif(1, 1, 2))
     page <- get_fsln_page(url, i)
     if(is.null(page)){
       return(NULL)
@@ -228,11 +233,13 @@ get_fsln_series <- function(url, series_name){
       mutate(report_series = series_name)})
 }
 
+#===============================================================================
+# Scrape
+#===============================================================================
 all_reports <- purrr::map2_dfr(report_series$base_url,
                                report_series$series_name,
                                get_fsln_series)
-saveRDS(all_reports,"data_processed/data_manuscript_tech_reports.rds")
-all_reports <- readRDS("data_processed/data_manuscript_tech_reports.rds")
+#saveRDS(all_reports,"data_processed/data_manuscript_tech_reports.rds")
 
 fsln_publications <- all_reports %>%
   transmute(
@@ -267,8 +274,6 @@ fsln_publications_export <- fsln_publications %>%
 #===============================================================================
 # Species-Publication Matching
 #===============================================================================
-
-message("Matching publications to SAR species...")
 
 matches <- map_dfr(
   seq_len(nrow(species_aliases)),
@@ -345,8 +350,8 @@ species_publications_export <- species_publications %>%
     paste(as.character(unlist(x)), collapse = "; ")
   })))
 
-write.csv(matches_export, "data_processed/science_species_links.csv", row.names = FALSE)
-write.csv(species_publications_export, "data_processed/science_sar_publications.csv", row.names = FALSE)
+#write.csv(matches_export, "data_processed/science_species_links.csv", row.names = FALSE)
+#write.csv(species_publications_export, "data_processed/science_sar_publications.csv", row.names = FALSE)
 
 #################################################################################
 # combine cws and dfo
@@ -413,5 +418,5 @@ all_species_links_export <- all_species_links %>%
   })))
 
 write.csv(all_publications_export, "data_processed/all_science_publications.csv", row.names = FALSE)
-write.csv(all_species_links_export, "data_processed/all_species_links.csv", row.names = FALSE)
+#write.csv(all_species_links_export, "data_processed/all_species_links.csv", row.names = FALSE)
 

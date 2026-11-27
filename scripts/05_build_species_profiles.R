@@ -5,21 +5,16 @@ species_master <- readRDS("data_processed/all_species_master.rds")
 species_profiles <- purrr::map2_dfr(raw_species$id, raw_species$profiles, extract_profile)
 
 # clean this up
-#str(species_profiles)
-#colnames(species_profiles)
 species_profiles_clean <- species_profiles %>%
   mutate(across(c(description, population, habitat, biology, threats,
                   other_protection, critical_habitat, federal_protection),
                 clean_html))
-#str(species_profiles_clean)
 
 # add species names
 species_profiles_clean <- species_profiles_clean %>%
   left_join(species_master %>%
               select(id, record_name, common_name, scientific_name, 
                      sara_status, cosewic_status), by = "id")
-#colnames(species_profiles_clean)
-#head(species_profiles_clean)
 
 # remove fields without entries across all species
 species_profiles_clean <- species_profiles_clean %>%
@@ -31,7 +26,6 @@ species_profiles_clean <- species_profiles_clean %>%
 # combine data
 species_full <- all_species %>%
   left_join(species_profiles_clean, by = "id")
-#sapply(species_full, class)
 
 ## search for lists
 #list_cols <- names(species_full)[
@@ -41,9 +35,6 @@ species_full <- all_species %>%
 ## remove lists
 species_full_export <- species_full %>%
   select(-profiles)
-
-#names(species_full_export)[sapply(species_full_export, is.list)]
-#head(species_full_export)
 
 species_full_export <- species_full_export %>%
   mutate(range_text = sapply(ranges, function(x) paste(x, collapse = "; "))) %>%
@@ -55,12 +46,9 @@ species_full_export <- species_full_export %>%
     cosewicStatusId, legalStatusId, legalScheduleId, statusChange), ~ .x %>%
       str_replace_all("_", " ") %>% str_to_title()))
 
-#head(species_full_export)
-#head(species_profiles_clean)
-
 # save data
 write.csv(species_profiles_clean, "data_processed/all_species_profiles.csv")
-write.csv(species_full_export, "data_processed/all_species_full.csv")
+#write.csv(species_full_export, "data_processed/all_species_full.csv")
 
 ## quick checks
 #species_full_export %>%

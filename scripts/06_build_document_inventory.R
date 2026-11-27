@@ -1,5 +1,5 @@
 # load data
-species_master <- read.csv("data_processed/all_species_master.csv")
+species_master <- readRDS("data_processed/all_species_master.rds")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -113,21 +113,16 @@ species_documents <- species_documents %>%
   mutate(documentTypeId = purrr::map_chr(documentTypeId, ~ paste(.x, collapse = "; ")))
 
 ## export
-#names(species_documents)
-#head(species_documents)
 species_documents_export <- species_documents %>%
   select(species_id,record_name,common_name,scientific_name,sara_status,
          cosewic_status,document_id,documentTypeId,primary_document_type,documentTitle,
          documentDescription,documentCreateDate,attachment_title,
          attachment_date,document_url)
-#head(species_documents_export)
-#
+
 ## change to sentence case rather than all caps
 species_documents_export <- species_documents_export %>%
   mutate(across(c(documentTypeId, primary_document_type), ~ .x %>%
       str_replace_all("_", " ") %>% str_to_title()))
-#head(species_documents_export)
-#head(species_document_summary)
 
 species_documents_export <- species_documents_export %>%
   mutate(planning_document_type = case_when(
@@ -166,7 +161,7 @@ species_documents_export %>%
   count(planning_document_type, sort = TRUE)
 
 write_csv(species_documents_export, "data_processed/all_species_documents.csv")
-write_csv(species_document_summary, "data_processed/all_species_document_summary.csv")
+#write_csv(species_document_summary, "data_processed/all_species_document_summary.csv")
 
 message(
   paste0(
